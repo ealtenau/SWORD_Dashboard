@@ -1,4 +1,4 @@
-# SWORD_Dashboard
+# SWORD Dashboard
 Source code for developing and maintaining the online SWORD Dashboard.
 
 The "assets" directory contains logos and scripts to produce the SWORD maps, basin maps, and node files contained in a "data" directory. 
