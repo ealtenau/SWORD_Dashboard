@@ -7,7 +7,11 @@ import pandas as pd
 from csv import writer, reader
 import time
 import dash
-import dash_core_components as dcc
+try:
+    from dash import dcc
+except:
+    import dash_core_components as dcc
+    # seems deprecated in latest version
 from dash import html, dash_table
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
