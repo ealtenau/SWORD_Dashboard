@@ -1,5 +1,5 @@
 import os
-os.chdir('/Users/ealteanau/Documents/SWORD_Dev/src/other_src/sword_app/assets/')
+os.chdir('/Users/ealteanau/Documents/SWORD_Dev/src/SWORD_Dashboard/assets/')
 import geopandas as gp
 import numpy as np
 import folium
@@ -120,7 +120,7 @@ def get_data(fn):
 #################################################################################################
 
 # read in and format data
-outdir = '/Users/ealteanau/Documents/SWORD_Dev/src/sword_app/data/'
+outdir = '/Users/ealteanau/Documents/SWORD_Dev/src/SWORD_Dashboard/data/'
 shp_dir = '/Users/ealteanau/Documents/SWORD_Dev/outputs/Reaches_Nodes/v14/shp/'
 shp_paths = [file for file in getListOfFiles(shp_dir) if '.shp' in file and 'reaches' in file]
 shp_paths = np.unique(shp_paths) 
@@ -346,7 +346,7 @@ for ind in list(range(len(shp_paths))):
     parent_map.add_child(BindColormap(facc_layer,facc_cmap_display))
     parent_map.add_child(BindColormap(dist_layer,dist_cmap_display))
     parent_map.add_child(BindColormap(slope_layer,slope_cmap_display))
-    folium.LayerControl('bottomright').add_to(parent_map) 
+    folium.LayerControl('bottomright', collapsed=False).add_to(parent_map) 
     
     if os.path.exists(outdir): 
         outpath =  outdir+b+'_sword_map.html'

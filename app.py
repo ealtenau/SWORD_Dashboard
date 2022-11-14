@@ -242,6 +242,9 @@ app = dash.Dash(external_stylesheets=[dbc.themes.CERULEAN],suppress_callback_exc
 with open("about.md", "r") as f:
     about_md = f.read()
 
+with open("download.md", "r") as d:
+    download_md = d.read()
+
 # Modal pop-up triggered by the "About" button in the header . 
 modal_overlay = dbc.Modal(
     [
@@ -256,6 +259,23 @@ modal_overlay = dbc.Modal(
                 className="howto-bn")),
     ],
     id="modal",
+    size="lg",
+)
+
+# Modal pop-up triggered by the "Download" button in the header . 
+download_overlay = dbc.Modal(
+    [
+        dbc.ModalBody(
+            html.Div([
+                dcc.Markdown(download_md)], 
+                id="download-md")),
+        dbc.ModalFooter(
+            dbc.Button(
+                "Close", 
+                id="download-close", 
+                className="howto-bn")),
+    ],
+    id="download_modal",
     size="lg",
 )
 
@@ -278,8 +298,8 @@ button_download = dbc.Button(
     "Download",
     outline=False,
     color="#2b3b90", #swot dark blue
-    href="https://zenodo.org/record/5643392#.Yv-oeezML0s",
-    id="download-link",
+    # href="https://zenodo.org/record/5643392#.Yv-oeezML0s",
+    id="download-open",
     style={
         "text-transform": "none",
         "margin-left": "5px",
@@ -833,6 +853,7 @@ header = dbc.Navbar(
                                 navbar=True,
                             ),
                             modal_overlay,
+                            download_overlay,
                         ],
                         md=2,
                     ),
@@ -1083,7 +1104,7 @@ def render_content(tab):
                 dbc.Row(
                     [
                         dbc.Col(html.H5(
-                            'Public Version: v3 (Project Version: v14)'),
+                            'Project Version: v14 (Public Version: v3)'),
                             width=8,
                             className='mt-2',
                             style={"textAlign":"left"}),
@@ -1121,7 +1142,7 @@ def render_content(tab):
                 dbc.Row(
                     [
                         dbc.Col(html.H5(
-                            'Public Version: v3 (Project Version: v14)'),
+                            'Project Version: v14 (Public Version: v3)'),
                             width=8,
                             className='mt-2',
                             style={"textAlign":"left"}),
@@ -1159,7 +1180,7 @@ def render_content(tab):
                 dbc.Row(
                     [
                         dbc.Col(html.H5(
-                            'Public Version: v3 (Project Version: v14)'),
+                            'Project Version: v14 (Public Version: v3)'),
                             width=8,
                             className='mt-2',
                             style={"textAlign":"left"}),
@@ -1197,7 +1218,7 @@ def render_content(tab):
                 dbc.Row(
                     [
                         dbc.Col(html.H5(
-                            'Public Version: v3 (Project Version: v14)'),
+                            'Project Version: v14 (Public Version: v3)'),
                             width=8,
                             className='mt-2',
                             style={"textAlign":"left"}),
@@ -1235,7 +1256,7 @@ def render_content(tab):
                 dbc.Row(
                     [
                         dbc.Col(html.H5(
-                            'Public Version: v3 (Project Version: v14)'),
+                            'Project Version: v14 (Public Version: v3)'),
                             width=8,
                             className='mt-2',
                             style={"textAlign":"left"}),
@@ -1273,7 +1294,7 @@ def render_content(tab):
                 dbc.Row(
                     [
                         dbc.Col(html.H5(
-                            'Public Version: v3 (Project Version: v14)'),
+                            'Project Version: v14 (Public Version: v3)'),
                             width=8,
                             className='mt-2',
                             style={"textAlign":"left"}),
@@ -1348,6 +1369,16 @@ def toggle_modal(n1, n2, is_open):
 )
 def toggle_modal(n3, n4, is_open):
     if n3 or n4:
+        return not is_open
+    return is_open
+
+# Callback for "Download" modal popup
+@app.callback(
+    Output("download_modal", "is_open"),
+    [Input("download-open", "n_clicks"), Input("download-close", "n_clicks")],
+    [State("download_modal", "is_open")])
+def toggle_modal(n5, n6, is_open):
+    if n5 or n6:
         return not is_open
     return is_open
 
