@@ -1,6 +1,7 @@
 import base64
 import datetime
 import io
+import os
 import netCDF4 as nc
 import numpy as np
 import pandas as pd
@@ -27,26 +28,28 @@ load_figure_template('CERULEAN')
 
 ### Function for formatting input node data. 
 def get_data(fn):
-    nodes_nc = nc.Dataset(fn)
-    node_df = pd.DataFrame(
-        np.array(
-            [nodes_nc['nodes']['reach_id'][:],
-            nodes_nc['nodes']['node_id'][:],
-            nodes_nc['nodes']['wse'][:],
-            nodes_nc['nodes']['width'][:],
-            nodes_nc['nodes']['facc'][:],
-            nodes_nc['nodes']['dist_out'][:],
-            nodes_nc['nodes']['n_chan_mod'][:],
-            nodes_nc['nodes']['sinuosity'][:],
-            nodes_nc['nodes']['node_order'][:]]).T)
-    node_df.rename(columns = {0:'reach_id', 1:'node_id',
-        2:'wse', 3:'width', 4:'facc', 5:'dist_out',
-        6:'n_chan_mod',7:'sinuosity',8:'node_order'}, inplace = True)
-    try:
-        nodes_all = pd.concat([nodes_all, node_df])
-    except NameError:
-        nodes_all = node_df.copy()
-    del(nodes_nc)
+    nc_files = [file for file in os.listdir(fn) if 'nodes' in file ]
+    for ind in list(range(len(nc_files))):
+        nodes_nc = nc.Dataset(fn+nc_files[ind])
+        node_df = pd.DataFrame(
+            np.array(
+                [nodes_nc['nodes']['reach_id'][:],
+                nodes_nc['nodes']['node_id'][:],
+                nodes_nc['nodes']['wse'][:],
+                nodes_nc['nodes']['width'][:],
+                nodes_nc['nodes']['facc'][:],
+                nodes_nc['nodes']['dist_out'][:],
+                nodes_nc['nodes']['n_chan_mod'][:],
+                nodes_nc['nodes']['sinuosity'][:],
+                nodes_nc['nodes']['node_order'][:]]).T)
+        node_df.rename(columns = {0:'reach_id', 1:'node_id',
+            2:'wse', 3:'width', 4:'facc', 5:'dist_out',
+            6:'n_chan_mod',7:'sinuosity',8:'node_order'}, inplace = True)
+        try:
+            nodes_all = pd.concat([nodes_all, node_df])
+        except NameError:
+            nodes_all = node_df.copy()
+        del(nodes_nc)
     
     return nodes_all
 
@@ -231,7 +234,7 @@ def parse_contents(contents, filename, date):
 #################################################################################################
 
 # Read in node data. 
-node_df = get_data("data/nodes_global.nc")
+node_df = get_data("data/")
 node_df_cp = node_df.copy()
 
 # Trigger app. 
@@ -1103,8 +1106,8 @@ def render_content(tab):
             html.H6(
                 dbc.Row(
                     [
-                        dbc.Col(html.H5(
-                            'Project Version: v14 (Public Version: v3)'),
+                        dbc.Col(html.H3( #was H5
+                            'SWORD Version 14'),
                             width=8,
                             className='mt-2',
                             style={"textAlign":"left"}),
@@ -1141,8 +1144,8 @@ def render_content(tab):
             html.H6(
                 dbc.Row(
                     [
-                        dbc.Col(html.H5(
-                            'Project Version: v14 (Public Version: v3)'),
+                        dbc.Col(html.H3(
+                            'SWORD Version 14'),
                             width=8,
                             className='mt-2',
                             style={"textAlign":"left"}),
@@ -1179,8 +1182,8 @@ def render_content(tab):
             html.H6(
                 dbc.Row(
                     [
-                        dbc.Col(html.H5(
-                            'Project Version: v14 (Public Version: v3)'),
+                        dbc.Col(html.H3(
+                            'SWORD Version 14'),
                             width=8,
                             className='mt-2',
                             style={"textAlign":"left"}),
@@ -1217,8 +1220,8 @@ def render_content(tab):
             html.H6(
                 dbc.Row(
                     [
-                        dbc.Col(html.H5(
-                            'Project Version: v14 (Public Version: v3)'),
+                        dbc.Col(html.H3(
+                            'SWORD Version 14'),
                             width=8,
                             className='mt-2',
                             style={"textAlign":"left"}),
@@ -1255,8 +1258,8 @@ def render_content(tab):
             html.H6(
                 dbc.Row(
                     [
-                        dbc.Col(html.H5(
-                            'Project Version: v14 (Public Version: v3)'),
+                        dbc.Col(html.H3(
+                            'SWORD Version 14'),
                             width=8,
                             className='mt-2',
                             style={"textAlign":"left"}),
@@ -1293,8 +1296,8 @@ def render_content(tab):
             html.H6(
                 dbc.Row(
                     [
-                        dbc.Col(html.H5(
-                            'Project Version: v14 (Public Version: v3)'),
+                        dbc.Col(html.H3(
+                            'SWORD Version 14'),
                             width=8,
                             className='mt-2',
                             style={"textAlign":"left"}),

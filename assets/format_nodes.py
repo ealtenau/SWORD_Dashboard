@@ -90,13 +90,19 @@ def save_nc(nodes, outdir):
 ######################################################################################
 # Primary lines and paths.
 nc_dir = '/Users/ealteanau/Documents/SWORD_Dev/outputs/Reaches_Nodes/v14/netcdf/'
-outdir = '/Users/ealteanau/Documents/SWORD_Dev/src/other_src/sword_app/data/'
-
-if os.path.exists(outdir): 
-    outpath =  outdir + 'nodes_global.nc'
-else:
-    os.makedirs(outdir)
-    outpath =  outdir + 'nodes_global.nc'
+outdir = '/Users/ealteanau/Documents/SWORD_Dev/src/SWORD_Dashboard/data/'
 
 nodes = get_data(nc_dir)
-save_nc(nodes, outpath)
+
+level = np.array([int(str(ind)[0:2]) for ind in nodes.reach_id])
+unq_lvl = np.unique(level)
+for ind in list(range(len(unq_lvl))):
+    vals = np.where(level == unq_lvl[ind])
+    nodes_clip = nodes.iloc[vals]
+    if os.path.exists(outdir): 
+        outpath =  outdir + 'nodes_hb'+str(unq_lvl[ind])+'.nc'
+    else:
+        os.makedirs(outdir)
+        outpath =  outdir + 'nodes_hb'+str(unq_lvl[ind])+'.nc'
+    save_nc(nodes_clip, outpath)
+    nodes_clip = None
