@@ -20,13 +20,13 @@ from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 import dash_bootstrap_components as dbc
 from dash_bootstrap_templates import load_figure_template
-load_figure_template('CERULEAN') 
+load_figure_template("cerulean")
 
 #################################################################################################
 ######################################  FUNCTIONS  ##############################################
 #################################################################################################
 
-### Function for formatting input node data. 
+### Function for formatting input node data.
 def get_data(fn):
     nc_files = [file for file in os.listdir(fn) if 'nodes' in file ]
     for ind in list(range(len(nc_files))):
@@ -50,11 +50,11 @@ def get_data(fn):
         except NameError:
             nodes_all = node_df.copy()
         del(nodes_nc)
-    
+
     return nodes_all
 
 #################################################################################################
-### Function for plotting node level data. 
+### Function for plotting node level data.
 
 def plot_nodes(df, reach=None):
     if reach is None:
@@ -68,96 +68,96 @@ def plot_nodes(df, reach=None):
     fig = make_subplots(rows=3, cols=2)
     fig.add_trace(
         go.Scatter(
-            x=node_reaches['dist_out']/1000, 
+            x=node_reaches['dist_out']/1000,
             y=node_reaches['wse'],
             mode='lines+markers'),
         row=1, col=1
     )
     fig.add_trace(
         go.Scatter(
-            x=node_reaches['dist_out']/1000, 
+            x=node_reaches['dist_out']/1000,
             y=node_reaches['width'],
             mode='lines+markers'),
         row=1, col=2
     )
     fig.add_trace(
         go.Scatter(
-            x=node_reaches['dist_out']/1000, 
+            x=node_reaches['dist_out']/1000,
             y=node_reaches['node_order'],
             mode='lines+markers'),
         row=2, col=1
     )
     fig.add_trace(
         go.Scatter(
-            x=node_reaches['dist_out']/1000, 
+            x=node_reaches['dist_out']/1000,
             y=node_reaches['facc'],
             mode='lines+markers'),
         row=2, col=2
     )
     fig.add_trace(
         go.Scatter(
-            x=node_reaches['dist_out']/1000, 
+            x=node_reaches['dist_out']/1000,
             y=node_reaches['n_chan_mod'],
             mode='lines+markers'),
         row=3, col=1
     )
     fig.add_trace(
         go.Scatter(
-            x=node_reaches['dist_out']/1000, 
+            x=node_reaches['dist_out']/1000,
             y=node_reaches['sinuosity'],
             mode='lines+markers'),
         row=3, col=2
     )
     # Update xaxis properties
     fig.update_xaxes(
-        title_text="Distance from Outlet (km)", 
+        title_text="Distance from Outlet (km)",
         row=1, col=1)
     fig.update_xaxes(
-        title_text="Distance from Outlet (km)", 
+        title_text="Distance from Outlet (km)",
         row=1, col=2)
     fig.update_xaxes(
-        title_text="Distance from Outlet (km)", 
+        title_text="Distance from Outlet (km)",
         row=2, col=1)
     fig.update_xaxes(
-        title_text="Distance from Outlet (km)", 
+        title_text="Distance from Outlet (km)",
         row=2, col=2)
     fig.update_xaxes(
-        title_text="Distance from Outlet (km)", 
+        title_text="Distance from Outlet (km)",
         row=3, col=1)
     fig.update_xaxes(
-        title_text="Distance from Outlet (km)", 
+        title_text="Distance from Outlet (km)",
         row=3, col=2)
     # Update yaxis properties
     fig.update_yaxes(
-        title_text="Water Surface Elevation (m)", 
+        title_text="Water Surface Elevation (m)",
         row=1, col=1)
     fig.update_yaxes(
-        title_text="Width (m)", 
+        title_text="Width (m)",
         row=1, col=2)
     fig.update_yaxes(
-        title_text="Node Order", 
+        title_text="Node Order",
         row=2, col=1)
     fig.update_yaxes(
         title_text="Flow Accumulation (sq.km)",
         row=2, col=2)
     fig.update_yaxes(
-        title_text="Number of Channels", 
+        title_text="Number of Channels",
         row=3, col=1)
     fig.update_yaxes(
-        title_text="Sinuosity", 
+        title_text="Sinuosity",
         row=3, col=2)
     #overall figure properties
     fig.update_layout(
-        height=1000, #width=1400, 
+        height=1000, #width=1400,
         title_text="Reach "+str(rch)+": Node Level Attributes",
         title_x=0.5,
         showlegend=False,
         plot_bgcolor='#dce0e2' #'whitesmoke'
-    ) 
+    )
     return fig
 
 #################################################################################################
-### Function to save bulk files when reporting issues. 
+### Function to save bulk files when reporting issues.
 
 def save_bulk_data(df):
     colnames = list(df)
@@ -200,7 +200,7 @@ def save_bulk_data(df):
     return statement
 
 #################################################################################################
-### Function to parse the contents of an uploaded file. 
+### Function to parse the contents of an uploaded file.
 
 def parse_contents(contents, filename, date):
     content_type, content_string = contents.split(',')
@@ -222,10 +222,10 @@ def parse_contents(contents, filename, date):
                 'There was an error processing this file.',
                 style={'color':'#C42828'}),
             html.Div(
-                'Please make sure the file is in CSV format,', 
+                'Please make sure the file is in CSV format,',
                 style={'color':'#C42828'}),
             html.P(
-                'and file headers/columns are in the correct format.', 
+                'and file headers/columns are in the correct format.',
                 style={'color':'#C42828'}),
             ])
 
@@ -233,56 +233,56 @@ def parse_contents(contents, filename, date):
 ###############################  START OF APP CODE  #############################################
 #################################################################################################
 
-# Read in node data. 
+# Read in node data.
 node_df = get_data("data/")
 node_df_cp = node_df.copy()
 
-# Trigger app. 
-app = dash.Dash(external_stylesheets=[dbc.themes.CERULEAN],suppress_callback_exceptions=True) 
+# Trigger app.
+app = dash.Dash(external_stylesheets=[dbc.themes.CERULEAN],suppress_callback_exceptions=True)
 
 #################################################################################################
-### Opens 'About SWORD' markdown document used in the modal overlay. 
+### Opens 'About SWORD' markdown document used in the modal overlay.
 with open("about.md", "r") as f:
     about_md = f.read()
 
 with open("download.md", "r") as d:
     download_md = d.read()
 
-# Modal pop-up triggered by the "About" button in the header . 
+# Modal pop-up triggered by the "About" button in the header .
 modal_overlay = dbc.Modal(
     [
         dbc.ModalBody(
             html.Div([
-                dcc.Markdown(about_md)], 
+                dcc.Markdown(about_md)],
                 id="about-md")),
         dbc.ModalFooter(
             dbc.Button(
-                "Close", 
-                id="howto-close", 
+                "Close",
+                id="howto-close",
                 className="howto-bn")),
     ],
     id="modal",
     size="lg",
 )
 
-# Modal pop-up triggered by the "Download" button in the header . 
+# Modal pop-up triggered by the "Download" button in the header .
 download_overlay = dbc.Modal(
     [
         dbc.ModalBody(
             html.Div([
-                dcc.Markdown(download_md)], 
+                dcc.Markdown(download_md)],
                 id="download-md")),
         dbc.ModalFooter(
             dbc.Button(
-                "Close", 
-                id="download-close", 
+                "Close",
+                id="download-close",
                 className="howto-bn")),
     ],
     id="download_modal",
     size="lg",
 )
 
-# About button in header. 
+# About button in header.
 button_about = dbc.Button(
     "About",
     id="howto-open",
@@ -314,39 +314,39 @@ button_download = dbc.Button(
 #################################################################################################
 ### Report Modal Components.
 
-# Report index table. 
+# Report index table.
 index_tbl = pd.DataFrame(data = {
-    'Report Type': ['Reach Type Change', 'Node Order Change', 'Reach Neighbor Change', 'Attribute Value Change'], 
+    'Report Type': ['Reach Type Change', 'Node Order Change', 'Reach Neighbor Change', 'Attribute Value Change'],
     'Report Index': [1, 2, 3, 4]
 })
 
 # Attribute index table.
 attr_index_tbl = pd.DataFrame(data = {
     'Attribute': [
-        'Flow Accumulation (sq. km)', 
-        'Water Surface Elevation (m)', 
-        'Width (m)', 
-        'Slope (m/km)', 
-        'River Name'], 
+        'Flow Accumulation (sq. km)',
+        'Water Surface Elevation (m)',
+        'Width (m)',
+        'Slope (m/km)',
+        'River Name'],
     'Attribute Index': [1, 2, 3, 4, 5]
 })
 
 # Reach type change table.
 type_csv = pd.DataFrame(data = {
-    'reach_id': [71212000343, 71452000461, 81322000305, 'etc.'], 
+    'reach_id': [71212000343, 71452000461, 81322000305, 'etc.'],
     'report_index': [1, 1, 1, 'etc.'],
     'new_type': [1, 3, 3, 'etc.']
 })
 
 # Node order change table.
 node_csv = pd.DataFrame(data = {
-    'reach_id': [71212000343, 71452000461, 81322000305, 'etc.'], 
+    'reach_id': [71212000343, 71452000461, 81322000305, 'etc.'],
     'report_index': [2, 2, 2, 'etc.']
 })
 
 # Reach neighbor change table.
 ngh_csv = pd.DataFrame(data = {
-    'reach_id': [71212000343, 71452000461, 81322000305, 'etc.'], 
+    'reach_id': [71212000343, 71452000461, 81322000305, 'etc.'],
     'report_index': [3, 3, 3, 'etc.'],
     'upstream_neighbors': ['71212000351', '71452000101', '81322000405 81322000315', 'etc.'],
     'downstream_neighbors': ['71212000333 71213000321', '71452000451', '81322000295', 'etc.']
@@ -354,135 +354,135 @@ ngh_csv = pd.DataFrame(data = {
 
 # Attribute value change table.
 attr_csv = pd.DataFrame(data = {
-    'reach_id': [71212000343, 71452000461, 81322000305, 'etc.'], 
+    'reach_id': [71212000343, 71452000461, 81322000305, 'etc.'],
     'report_index': [4, 4, 4, 'etc.'],
     'attribute_index': [1, 3, 5, 'etc.'],
     'attribute_value': [25000, 150, 'Yukon River', 'etc.']
 })
 
-# Text for the modal pop-up triggered by the "Report" button above the node plots. 
+# Text for the modal pop-up triggered by the "Report" button above the node plots.
 markdown_body = html.Div([
     dcc.Markdown('''
     ### Reporting Instructions
 
-    The SWORD database is an evolving product that is intended to undergo 
-    continued improvements and updates before and after the launch of SWOT. 
-    Currently, there are limited manual adjustments made to SWORD which result 
-    in the database containing some artifacts primarily due to errors that occur 
-    during the merging process between the various databases. We have done our best 
-    to manually and automatically find major errors in SWORD, however, input from 
-    the SWOT Science Team and other hydrologists is helpful to identify persistent 
-    artifacts. **This page allows users to report common SWORD issues.** More 
-    details on how to report more complex issues (such as reach definition changes or 
+    The SWORD database is an evolving product that is intended to undergo
+    continued improvements and updates before and after the launch of SWOT.
+    Currently, there are limited manual adjustments made to SWORD which result
+    in the database containing some artifacts primarily due to errors that occur
+    during the merging process between the various databases. We have done our best
+    to manually and automatically find major errors in SWORD, however, input from
+    the SWOT Science Team and other hydrologists is helpful to identify persistent
+    artifacts. **This page allows users to report common SWORD issues.** More
+    details on how to report more complex issues (such as reach definition changes or
     centerline adjustments) can be found in the [SWORD Update Request Documentation]
     (https://drive.google.com/file/d/15OSrP0HY5HnwpEWh67ObYEWqwsAPSIEv/view?usp=sharing).
 
     ### Update Timeline
 
-    SWORD updates are classified into two categories: 1) trivial and 2) non-trivial. 
-    Trivial updates are easier to implement and impact less of the database such as 
-    the report issues on this dashboard: node order changes, river name changes, reach 
-    neighbor changes, and river name changes. Non-trivial updates are more difficult to 
-    implement and may take manual intervention. Examples of non-trivial updates are 
-    river centerline adjustments and reach definition changes.  **Trivial updates can 
-    be expected to be implemented approximately every quarter, while non-trivial updates 
-    are not guaranteed to be implemented before SWOT reprocessings (~annually).** 
+    SWORD updates are classified into two categories: 1) trivial and 2) non-trivial.
+    Trivial updates are easier to implement and impact less of the database such as
+    the report issues on this dashboard: node order changes, river name changes, reach
+    neighbor changes, and river name changes. Non-trivial updates are more difficult to
+    implement and may take manual intervention. Examples of non-trivial updates are
+    river centerline adjustments and reach definition changes.  **Trivial updates can
+    be expected to be implemented approximately every quarter, while non-trivial updates
+    are not guaranteed to be implemented before SWOT reprocessings (~annually).**
 
     ### Dashboard Reporting
 
-    Users can report a single reach or a batch CSV file for the report categories below. If 
+    Users can report a single reach or a batch CSV file for the report categories below. If
     a customized or non-trival update is required please refer to the [SWORD Update Request Documentation]
-    (https://drive.google.com/file/d/15OSrP0HY5HnwpEWh67ObYEWqwsAPSIEv/view?usp=sharing). If you 
-    encounter any problems while reporting update requests, or have any questions, please feel free to email 
-    **sword_riverdb@gmail.com**. 
-    
-    Each request type has a unique "report index" which is required when submitting batch files. 
+    (https://drive.google.com/file/d/15OSrP0HY5HnwpEWh67ObYEWqwsAPSIEv/view?usp=sharing). If you
+    encounter any problems while reporting update requests, or have any questions, please feel free to email
+    **sword_riverdb@gmail.com**.
+
+    Each request type has a unique "report index" which is required when submitting batch files.
     Report indexes are as follows:
     '''
     ),
     dash_table.DataTable(
-        index_tbl.to_dict('records'), 
+        index_tbl.to_dict('records'),
         [{"name": i, "id": i} for i in index_tbl.columns],
         style_cell={'textAlign': 'left'},
     ),
     html.Br(),
     dcc.Markdown('''
     **Reach Type Change:**
-    
-    Reach “type” changes do not affect reach boundaries, only the number of the type identifier 
-    in the reach and node ids (the last digit in the id structure). For example, a user may 
-    notice that a current reach identified as a lake (type = 3) is located below a reservoir 
-    and dam and should be reassigned as a river reach (type = 1). Type categories in 
+
+    Reach “type” changes do not affect reach boundaries, only the number of the type identifier
+    in the reach and node ids (the last digit in the id structure). For example, a user may
+    notice that a current reach identified as a lake (type = 3) is located below a reservoir
+    and dam and should be reassigned as a river reach (type = 1). Type categories in
     SWORD are: 1 - river, 3 - lake/reservior, 4 - dam/waterfall, 5 - unreliable topology (such as deltas).
-    To report a reach type change, users should submit a **CSV file** containing three columns: 
-    the current "reach id", the "report index", and the "new type" of the reach. **Please note 
-    that column order matters!** 
+    To report a reach type change, users should submit a **CSV file** containing three columns:
+    the current "reach id", the "report index", and the "new type" of the reach. **Please note
+    that column order matters!**
     '''
     ),
     dash_table.DataTable(
-        type_csv.to_dict('records'), 
+        type_csv.to_dict('records'),
         [{"name": i, "id": i} for i in type_csv.columns],
         style_cell={'textAlign': 'left'},
     ),
     html.Br(),
     dcc.Markdown('''
     **Node Order Change:**
-    
-    Node directions can be reversed in areas where flow accumulation and elevation resolution 
-    are poor (i.e., there is no change), therefore it is difficult to automatically identify 
-    correct topology. Incorrect node directions are often identified when the node order is the 
-    in opposite direction of elevation change or, in areas where elevation and flow accumulation 
-    are spatially static, the upstream or downstream neighbors are incorrect. To report a node order change, 
-    users should submit a **CSV file** containing two columns: the current "reach id" and the "report index". 
+
+    Node directions can be reversed in areas where flow accumulation and elevation resolution
+    are poor (i.e., there is no change), therefore it is difficult to automatically identify
+    correct topology. Incorrect node directions are often identified when the node order is the
+    in opposite direction of elevation change or, in areas where elevation and flow accumulation
+    are spatially static, the upstream or downstream neighbors are incorrect. To report a node order change,
+    users should submit a **CSV file** containing two columns: the current "reach id" and the "report index".
     **Please note that column order matters!**
     '''
     ),
     dash_table.DataTable(
-        node_csv.to_dict('records'), 
+        node_csv.to_dict('records'),
         [{"name": i, "id": i} for i in node_csv.columns],
         style_cell={'textAlign': 'left'},
     ),
     html.Br(),
     dcc.Markdown('''
     **Reach Neighbor Change:**
-    
-    In areas where topology is hard to automatically determine, upstream and downstream neighbors 
-    may be incorrect. To report a reach neighbor change, users should submit a **CSV file** containing 
-    four columns: the current "reach id", the "report index", the new "upstream neighbors", and the new 
+
+    In areas where topology is hard to automatically determine, upstream and downstream neighbors
+    may be incorrect. To report a reach neighbor change, users should submit a **CSV file** containing
+    four columns: the current "reach id", the "report index", the new "upstream neighbors", and the new
     "downstream neighbors". **Please note that column order matters!**
     '''
     ),
     dash_table.DataTable(
-        ngh_csv.to_dict('records'), 
+        ngh_csv.to_dict('records'),
         [{"name": i, "id": i} for i in ngh_csv.columns],
         style_cell={'textAlign': 'left'},
     ),
     html.Br(),
     dcc.Markdown('''
     **Attribute Value Change:**
-    
+
     SWORD attributes are derived by merging many different global datasets and their respective
-    attributes into one congruent product. In cases where the river centerlines do not match well 
-    between databases, river attributes may be missing or incorrect. These errors are more common 
-    around tributary and channel junctions, as well as in large braided and anastomosing rivers. 
-    There are five SWORD attributes users may report new values for. These attributes and their 
-    "attribute indexes" are as follows: 
+    attributes into one congruent product. In cases where the river centerlines do not match well
+    between databases, river attributes may be missing or incorrect. These errors are more common
+    around tributary and channel junctions, as well as in large braided and anastomosing rivers.
+    There are five SWORD attributes users may report new values for. These attributes and their
+    "attribute indexes" are as follows:
     '''
     ),
     dash_table.DataTable(
-        attr_index_tbl.to_dict('records'), 
+        attr_index_tbl.to_dict('records'),
         [{"name": i, "id": i} for i in attr_index_tbl.columns],
         style_cell={'textAlign': 'left'},
     ),
     html.Br(),
     dcc.Markdown('''
-    To report an attribute value change, users should submit a **CSV file** containing four columns: 
+    To report an attribute value change, users should submit a **CSV file** containing four columns:
     the current "reach id", the "report index", the "attribute index" and the new "attribute value".
     **Please note that column order matters!**
     '''
     ),
     dash_table.DataTable(
-        attr_csv.to_dict('records'), 
+        attr_csv.to_dict('records'),
         [{"name": i, "id": i} for i in attr_csv.columns],
         style_cell={'textAlign': 'left'},
     ),
@@ -490,12 +490,12 @@ markdown_body = html.Div([
 ])
 
 #################################################################################################
-### Formats for the different reporting options triggered by the report list in the 
-### report modal pop-up. 
+### Formats for the different reporting options triggered by the report list in the
+### report modal pop-up.
 
-# Report drop down list. 
+# Report drop down list.
 report_list = [
-    {"label": "Reach Type Change", "value": 1}, 
+    {"label": "Reach Type Change", "value": 1},
     {"label": "Node Order Change", "value": 2},
     {"label": "Reach Neighbor Change", 'value': 3},
     {"label": "Attribute Value Change", 'value': 4},
@@ -524,7 +524,7 @@ type_body = html.Div([
         {'label':' 1 - River','value':1},
         {'label':' 3 - Lake/Reservior', 'value':3},
         {'label':' 4 - Dam/Waterfall','value':4},
-        {'label':' 5 - Unreliable Topology','value':5},], 
+        {'label':' 5 - Unreliable Topology','value':5},],
         className='btn-group-vertical p-2'),
     html.Div([html.Br()]),
     html.Div([
@@ -558,7 +558,7 @@ node_body = html.Div([
         required=True,
         maxLength=11,
     ),
-    html.Div(html.Br(),),    
+    html.Div(html.Br(),),
     html.Div([
         dbc.Button(
             "Submit",
@@ -665,7 +665,7 @@ attr_body = html.Div([
         {'label':' Water Surface Elevation (m)', 'value':2},
         {'label':' Width (m)','value':3},
         {'label':' Slope (m/km)','value':4},
-        {'label':' River Name','value':5},], 
+        {'label':' River Name','value':5},],
         className='btn-group-vertical p-2'),
     html.Div([html.Br()]),
     html.H6(
@@ -713,9 +713,9 @@ report_overlay = dbc.Modal(
                     children=html.Div([
                         'Drag and Drop or ',
                         html.A(
-                            'Select Files', 
+                            'Select Files',
                             style={
-                                'color':'#2fa4e7', 
+                                'color':'#2fa4e7',
                                 'text-decoration':'underline'
                             }
                         )
@@ -741,21 +741,21 @@ report_overlay = dbc.Modal(
                         id='Report_DropBox',
                         options=report_list,
                         style={
-                            # "textAlign":"center", 
+                            # "textAlign":"center",
                             "width":"60%",
                         }
                     ),
                 ]),
                 html.Div([html.Br()]),
-                html.Div(id='report-options'), #different options for reporting a reach. 
+                html.Div(id='report-options'), #different options for reporting a reach.
             ],#style={"textAlign":"center"}
             ),
-        ),    
-        html.Div([html.Br()]), 
+        ),
+        html.Div([html.Br()]),
         dbc.ModalFooter(
             dbc.Button(
-                "Close", 
-                id="report-close", 
+                "Close",
+                id="report-close",
                 className="howto-bn"
                 )),
     ],
@@ -768,7 +768,7 @@ button_report = dbc.Button(
     "Report Reach",
     id="report-open",
     outline=False,
-    color="primary", 
+    color="primary",
     style={
         "textTransform": "none",
         "margin-left": "5px",
@@ -778,12 +778,12 @@ button_report = dbc.Button(
     },
 )
 
-# Button to plot node-level attributes. 
+# Button to plot node-level attributes.
 button_plot = dbc.Button(
     "Plot Reach",
     id="plot_reach",
     outline=False,
-    color="primary", 
+    color="primary",
     style={
         "textTransform": "none",
         "margin-left": "5px",
@@ -812,7 +812,7 @@ header = dbc.Navbar(
                     dbc.Col(
                         html.Img(
                             id="logo2",
-                            src=app.get_asset_url("SWORD_logo.png"),
+                            src=app.get_asset_url("SWORD_Logo.png"),
                             height="60px",
                         ),
                         md="auto",
@@ -879,7 +879,7 @@ tabs_styles = {
 tab_style = {
     'borderTop': '5px' , #2fa4e7 cerulean
     'borderBottom': '5px',
-    'padding': '10px', 
+    'padding': '10px',
     'fontWeight': 'bold',
     'color': 'white',
     'background': '#2b3b90'
@@ -896,7 +896,7 @@ tab_selected_style = {
 }
 # Africa maps.
 dropdown_list_af = [
-    {"label": "Choose a Basin to Visualize Reaches", "value": "data/af_basin_map.html"}, 
+    {"label": "Choose a Basin to Visualize Reaches", "value": "data/af_basin_map.html"},
     {"label": "Basin 11", "value": "data/hb11_sword_map.html"},
     {"label": "Basin 12", "value": "data/hb12_sword_map.html"},
     {"label": "Basin 13", "value": "data/hb13_sword_map.html"},
@@ -908,7 +908,7 @@ dropdown_list_af = [
     ]
 # Asia maps
 dropdown_list_as = [
-    {"label": "Choose a Basin to Visualize Reaches", "value": "data/as_basin_map.html"}, 
+    {"label": "Choose a Basin to Visualize Reaches", "value": "data/as_basin_map.html"},
     {"label": "Basin 31", "value": "data/hb31_sword_map.html"},
     {"label": "Basin 32", "value": "data/hb32_sword_map.html"},
     {"label": "Basin 33", "value": "data/hb33_sword_map.html"},
@@ -927,7 +927,7 @@ dropdown_list_as = [
     ]
 # Europe/Middle East maps
 dropdown_list_eu = [
-    {"label": "Choose a Basin to Visualize Reaches", "value": "data/eu_basin_map.html"}, 
+    {"label": "Choose a Basin to Visualize Reaches", "value": "data/eu_basin_map.html"},
     {"label": "Basin 21", "value": "data/hb21_sword_map.html"},
     {"label": "Basin 22", "value": "data/hb22_sword_map.html"},
     {"label": "Basin 23", "value": "data/hb23_sword_map.html"},
@@ -940,7 +940,7 @@ dropdown_list_eu = [
     ]
 # Oceania maps
 dropdown_list_oc = [
-    {"label": "Choose a Basin to Visualize Reaches", "value": "data/oc_basin_map.html"}, 
+    {"label": "Choose a Basin to Visualize Reaches", "value": "data/oc_basin_map.html"},
     {"label": "Basin 51", "value": "data/hb51_sword_map.html"},
     {"label": "Basin 52", "value": "data/hb52_sword_map.html"},
     {"label": "Basin 53", "value": "data/hb53_sword_map.html"},
@@ -950,7 +950,7 @@ dropdown_list_oc = [
     ]
 # South America maps
 dropdown_list_sa = [
-    {"label": "Choose a Basin to Visualize Reaches", "value": "data/sa_basin_map.html"}, 
+    {"label": "Choose a Basin to Visualize Reaches", "value": "data/sa_basin_map.html"},
     {"label": "Basin 61", "value": "data/hb61_sword_map.html"},
     {"label": "Basin 62", "value": "data/hb62_sword_map.html"},
     {"label": "Basin 63", "value": "data/hb63_sword_map.html"},
@@ -961,7 +961,7 @@ dropdown_list_sa = [
     ]
 # North America maps
 dropdown_list_na = [
-    {"label": "Choose a Basin to Visualize Reaches", "value": "data/na_basin_map.html"}, 
+    {"label": "Choose a Basin to Visualize Reaches", "value": "data/na_basin_map.html"},
     {"label": "Basin 71", "value": "data/hb71_sword_map.html"},
     {"label": "Basin 72", "value": "data/hb72_sword_map.html"},
     {"label": "Basin 73", "value": "data/hb73_sword_map.html"},
@@ -980,44 +980,44 @@ dropdown_list_na = [
     ]
 
 #################################################################################################
-### PRIMARY APP LAYOUT. 
+### PRIMARY APP LAYOUT.
 
 app.layout = html.Div([
         header,
         #insert tabs
         html.Div([
             dcc.Tabs(
-                id="all-tabs-inline", 
-                value='tab-4', 
+                id="all-tabs-inline",
+                value='tab-4',
                 children=[
                     dcc.Tab(
-                        label='Africa', 
+                        label='Africa',
                         value='tab-1',
-                        style=tab_style, 
+                        style=tab_style,
                         selected_style=tab_selected_style),
                     dcc.Tab(
-                        label='Asia', 
-                        value='tab-2', 
-                        style=tab_style, 
+                        label='Asia',
+                        value='tab-2',
+                        style=tab_style,
                         selected_style=tab_selected_style),
                     dcc.Tab(
-                        label='Europe & Middle East', 
-                        value='tab-3', 
-                        style=tab_style, 
+                        label='Europe & Middle East',
+                        value='tab-3',
+                        style=tab_style,
                         selected_style=tab_selected_style),
                     dcc.Tab(
-                        label='North America', 
-                        value='tab-4', 
-                        style=tab_style, 
+                        label='North America',
+                        value='tab-4',
+                        style=tab_style,
                         selected_style=tab_selected_style),
                     dcc.Tab(
-                        label='Oceania', 
-                        value='tab-5', 
-                        style=tab_style, 
+                        label='Oceania',
+                        value='tab-5',
+                        style=tab_style,
                         selected_style=tab_selected_style),
                     dcc.Tab(
-                        label='South America', 
-                        value='tab-6', 
+                        label='South America',
+                        value='tab-6',
                         style=tab_style,
                         selected_style=tab_selected_style),
                 ],
@@ -1025,11 +1025,11 @@ app.layout = html.Div([
             )
         ]),
         html.Br(),
-        html.Div(id='tabs-content-example-graph'), #callback for tab content. 
+        html.Div(id='tabs-content-example-graph'), #callback for tab content.
         html.Div([
             html.H5(
                 'Type a Reach ID and click ENTER or "Plot Reach" \
-                    to see node level attributes:', 
+                    to see node level attributes:',
                 style={
                     'marginTop' : '5px',
                     'marginBottom' : '5px',
@@ -1040,7 +1040,7 @@ app.layout = html.Div([
             dcc.Input(
                 id = 'ReachID',
                 type = 'number',
-                value = 81247100041, 
+                value = 81247100041,
                 placeholder = "Reach ID",
                 debounce=True,
                 min=int(np.min(node_df['reach_id'])),
@@ -1054,12 +1054,12 @@ app.layout = html.Div([
             report_overlay,
             dcc.Graph(
                 figure=plot_nodes(node_df_cp),
-                id='ReachGraph')     
+                id='ReachGraph')
         ]), #end subdiv3
         html.Br(),
         html.Div(children=[
             html.Div(
-                'Copyright (c) 2022 University of North Carolina at Chapel Hill', 
+                'Copyright (c) 2022 University of North Carolina at Chapel Hill',
                 style={
                     'textAlign':'left',
                     'font-size': '0.7em',
@@ -1067,7 +1067,7 @@ app.layout = html.Div([
                 },
             ),
             html.Div(
-                'Dashboard written in Python using the Dash web framework.', 
+                'Dashboard written in Python using the Dash web framework.',
                 style={
                     'textAlign':'left',
                     'font-size': '0.7em',
@@ -1075,16 +1075,16 @@ app.layout = html.Div([
                 }
             ),
             html.Div(
-                'Base map layer is the "cartodbpositron" map style provided by CARTO.', 
+                'Base map layer is the "cartodbpositron" map style provided by CARTO.',
                 style={
                     'textAlign':'left',
                     'font-size': '0.7em',
                     'marginLeft':'5px',
                 }
             )
-        ], style={'textAlign':'left', 'color':'slateGrey'}), 
-    ], 
-    style={ 
+        ], style={'textAlign':'left', 'color':'slateGrey'}),
+    ],
+    style={
         'marginTop' : '5px',
         'marginRight' : '50px',
         'marginBottom' : '5px',
@@ -1097,7 +1097,7 @@ app.layout = html.Div([
 #################################################################################################
 
 #Callback that triggers the main map dispaly to change based on which tab is clicked.
-#output is the tab layout. 
+#output is the tab layout.
 @app.callback(Output('tabs-content-example-graph', 'children'),
               Input('all-tabs-inline', 'value'),)
 def render_content(tab):
@@ -1111,7 +1111,7 @@ def render_content(tab):
                             width=8,
                             className='mt-2',
                             style={"textAlign":"left"}),
-                        dbc.Col(dcc.Dropdown( 
+                        dbc.Col(dcc.Dropdown(
                             id='DropBox',
                             options=dropdown_list_af,
                             value=dropdown_list_af[0]['value'],
@@ -1125,17 +1125,17 @@ def render_content(tab):
                     '**PLEASE NOTE: Reach geometries have been simplified \
                         for map efficiency, however, some large basins \
                             (i.e. Amazon, Ganges-Barmaputra) may still take \
-                                a few moments to load.**', 
+                                a few moments to load.**',
                     style={
                         'marginTop' : '5px',
                         'marginBottom' : '5px',
-                        'size':'25', 
+                        'size':'25',
                         'color':'#C42828'},
                     ),
             ]),
             html.Iframe(
                 id='BasinMap',
-                srcDoc=open('data/af_basin_map.html', 'r').read(), 
+                srcDoc=open('data/af_basin_map.html', 'r').read(),
                 style={"height": "500px", "width": "100%"}
                 )
         ]) #end subdiv2
@@ -1149,7 +1149,7 @@ def render_content(tab):
                             width=8,
                             className='mt-2',
                             style={"textAlign":"left"}),
-                        dbc.Col(dcc.Dropdown( 
+                        dbc.Col(dcc.Dropdown(
                             id='DropBox',
                             options=dropdown_list_as,
                             value=dropdown_list_as[0]['value'],
@@ -1163,17 +1163,17 @@ def render_content(tab):
                     '**PLEASE NOTE: Reach geometries have been simplified \
                         for map efficiency, however, some large basins \
                             (i.e. Amazon, Ganges-Barmaputra) may still take \
-                                a few moments to load.**', 
+                                a few moments to load.**',
                     style={
                         'marginTop' : '5px',
                         'marginBottom' : '5px',
-                        'size':'25', 
+                        'size':'25',
                         'color':'#C42828'},
                     ),
             ]),
             html.Iframe(
                 id='BasinMap',
-                srcDoc=open('data/as_basin_map.html', 'r').read(), 
+                srcDoc=open('data/as_basin_map.html', 'r').read(),
                 style={"height": "500px", "width": "100%"}
                 )
         ]) #end subdiv2
@@ -1187,7 +1187,7 @@ def render_content(tab):
                             width=8,
                             className='mt-2',
                             style={"textAlign":"left"}),
-                        dbc.Col(dcc.Dropdown( 
+                        dbc.Col(dcc.Dropdown(
                             id='DropBox',
                             options=dropdown_list_eu,
                             value=dropdown_list_eu[0]['value'],
@@ -1201,17 +1201,17 @@ def render_content(tab):
                     '**PLEASE NOTE: Reach geometries have been simplified \
                         for map efficiency, however, some large basins \
                             (i.e. Amazon, Ganges-Barmaputra) may still take \
-                                a few moments to load.**', 
+                                a few moments to load.**',
                     style={
                         'marginTop' : '5px',
                         'marginBottom' : '5px',
-                        'size':'25', 
+                        'size':'25',
                         'color':'#C42828'},
                     ),
             ]),
             html.Iframe(
                 id='BasinMap',
-                srcDoc=open('data/eu_basin_map.html', 'r').read(), 
+                srcDoc=open('data/eu_basin_map.html', 'r').read(),
                 style={"height": "500px", "width": "100%"}
                 )
         ]) #end subdiv2
@@ -1225,7 +1225,7 @@ def render_content(tab):
                             width=8,
                             className='mt-2',
                             style={"textAlign":"left"}),
-                        dbc.Col(dcc.Dropdown( 
+                        dbc.Col(dcc.Dropdown(
                             id='DropBox',
                             options=dropdown_list_na,
                             value=dropdown_list_na[0]['value'],
@@ -1239,17 +1239,17 @@ def render_content(tab):
                     '**PLEASE NOTE: Reach geometries have been simplified \
                         for map efficiency, however, some large basins \
                             (i.e. Amazon, Ganges-Barmaputra) may still take \
-                                a few moments to load.**', 
+                                a few moments to load.**',
                     style={
                         'marginTop' : '5px',
                         'marginBottom' : '5px',
-                        'size':'25', 
+                        'size':'25',
                         'color':'#C42828'},
                     ),
             ]),
             html.Iframe(
                 id='BasinMap',
-                srcDoc=open('data/na_basin_map.html', 'r').read(), 
+                srcDoc=open('data/na_basin_map.html', 'r').read(),
                 style={"height": "500px", "width": "100%"}
                 )
         ]) #end subdiv2
@@ -1263,7 +1263,7 @@ def render_content(tab):
                             width=8,
                             className='mt-2',
                             style={"textAlign":"left"}),
-                        dbc.Col(dcc.Dropdown( 
+                        dbc.Col(dcc.Dropdown(
                             id='DropBox',
                             options=dropdown_list_oc,
                             value=dropdown_list_oc[0]['value'],
@@ -1277,17 +1277,17 @@ def render_content(tab):
                     '**PLEASE NOTE: Reach geometries have been simplified \
                         for map efficiency, however, some large basins \
                             (i.e. Amazon, Ganges-Barmaputra) may still take \
-                                a few moments to load.**', 
+                                a few moments to load.**',
                     style={
                         'marginTop' : '5px',
                         'marginBottom' : '5px',
-                        'size':'25', 
+                        'size':'25',
                         'color':'#C42828'},
                     ),
             ]),
             html.Iframe(
                 id='BasinMap',
-                srcDoc=open('data/oc_basin_map.html', 'r').read(), 
+                srcDoc=open('data/oc_basin_map.html', 'r').read(),
                 style={"height": "500px", "width": "100%"}
                 )
         ]) #end subdiv2
@@ -1315,25 +1315,25 @@ def render_content(tab):
                     '**PLEASE NOTE: Reach geometries have been simplified \
                         for map efficiency, however, some large basins \
                             (i.e. Amazon, Ganges-Barmaputra) may still take \
-                                a few moments to load.**', 
+                                a few moments to load.**',
                     style={
                         'marginTop' : '5px',
                         'marginBottom' : '5px',
-                        'size':'25', 
+                        'size':'25',
                         'color':'#C42828'},
                     ),
             ]),
             html.Iframe(
                 id='BasinMap',
-                srcDoc=open('data/sa_basin_map.html', 'r').read(), 
+                srcDoc=open('data/sa_basin_map.html', 'r').read(),
                 style={"height": "500px", "width": "100%"}
                 )
         ]) #end subdiv2
 
 #Callback that triggers the regional maps to change based on the "Dropbox" option.
 @app.callback(
-    Output("BasinMap", "srcDoc"), 
-    Input("DropBox", "value")) 
+    Output("BasinMap", "srcDoc"),
+    Input("DropBox", "value"))
 def update_output_div(input_value):
     return open(input_value,'r').read()
 
@@ -1385,7 +1385,7 @@ def toggle_modal(n5, n6, is_open):
         return not is_open
     return is_open
 
-# Callback update the reporting options based on the report dropdown. 
+# Callback update the reporting options based on the report dropdown.
 @app.callback(Output('report-options', 'children'),
               Input('Report_DropBox', 'value'))
 def render_content(report):
@@ -1401,7 +1401,7 @@ def render_content(report):
         if report == 4:
             return attr_body
 
-# Callback to wirte report information and display report status for a Reach Type Change. 
+# Callback to wirte report information and display report status for a Reach Type Change.
 @app.callback(
     [
         Output("submit_status1", "children"),
@@ -1427,10 +1427,10 @@ def write_report1(rch1, newtype, n_clicks):
                 if (List[0] == row[0] and List[1] == row[1]):
                     repeat = True
                     break
-            r_object.close()   
+            r_object.close()
         if 'repeat' in locals():
             statement = html.Div(['Reach Issue Already Reported'], style={'color':'#C42828'})
-            del(repeat)    
+            del(repeat)
         else:
             with open('user_reports.csv', 'a') as w_object:
                 writer_object = writer(w_object)
@@ -1452,7 +1452,7 @@ def write_report1(rch1, newtype, n_clicks):
     ],
 )
 
-# Callback to wirte report information and display report status for a Node Order Change. 
+# Callback to wirte report information and display report status for a Node Order Change.
 def write_report2(rch2, n_clicks):
     if n_clicks is None:
         raise PreventUpdate
@@ -1467,10 +1467,10 @@ def write_report2(rch2, n_clicks):
                 if (List[0] == row[0] and List[1] == row[1]):
                     repeat = True
                     break
-            r_object.close()   
+            r_object.close()
         if 'repeat' in locals():
             statement = html.Div(['Reach Issue Already Reported'], style={'color':'#C42828'})
-            del(repeat)   
+            del(repeat)
         else:
             with open('user_reports.csv', 'a') as w_object:
                 writer_object = writer(w_object)
@@ -1481,7 +1481,7 @@ def write_report2(rch2, n_clicks):
     n_clicks = None
     return statement, n_clicks
 
-# Callback to wirte report information and display report status for a Reach Neighbor Change. 
+# Callback to wirte report information and display report status for a Reach Neighbor Change.
 @app.callback(
     [
         Output("submit_status3", "children"),
@@ -1508,7 +1508,7 @@ def write_report3(rch3, up, dn, n_clicks):
             data2 = '0'
         else:
             data2 = dn
-            
+
         date_stamp = time.strftime("%d-%b-%Y %H:%M:%S", time.gmtime())
         List = [rch,'3',data1,data2,date_stamp,'0']
         with open('user_reports.csv', 'r') as r_object:
@@ -1517,7 +1517,7 @@ def write_report3(rch3, up, dn, n_clicks):
                 if (List[0] == row[0] and List[1] == row[1]):
                     repeat = True
                     break
-            r_object.close()   
+            r_object.close()
         if 'repeat' in locals():
             # print('cond.1')
             statement = html.Div(['Reach Issue Already Reported'], style={'color':'#C42828'})
@@ -1533,7 +1533,7 @@ def write_report3(rch3, up, dn, n_clicks):
     n_clicks = None
     return statement, n_clicks
 
-# Callback to wirte report information and display report status for an Attribute Value Change. 
+# Callback to wirte report information and display report status for an Attribute Value Change.
 @app.callback(
     [
         Output("submit_status4", "children"),
@@ -1561,21 +1561,21 @@ def write_report4(rch4, radio, name, n_clicks):
                 if (List[0] == row[0] and List[2] == row[2]):
                     repeat = True
                     break
-            r_object.close()   
+            r_object.close()
         if 'repeat' in locals():
             statement = html.Div(['Reach Issue Already Reported'], style={'color':'#C42828'})
-            del(repeat)   
+            del(repeat)
         else:
             with open('user_reports.csv', 'a') as w_object:
                 writer_object = writer(w_object)
                 writer_object.writerow(List)
                 w_object.close()
             statement = html.Div(['Report Submitted Successfully'], style={'color':'green'})
-    
+
     n_clicks = None
     return statement, n_clicks
 
-# Callback to wdisplay report status for a bulk report upload. 
+# Callback to wdisplay report status for a bulk report upload.
 @app.callback(Output('upload-status', 'children'),
               Input('upload-data', 'contents'),
               State('upload-data', 'filename'),
@@ -1589,7 +1589,7 @@ def update_output(list_of_contents, list_of_names, list_of_dates):
             zip(list_of_contents, list_of_names, list_of_dates)]
     list_of_contents = None; list_of_names = None; list_of_dates = None
     return children
- 
+
 if __name__ == '__main__':
     app.run_server()
-    # app.run_server(debug=True) #use this line instead of the line before to run the app in debug mode. 
+    # app.run_server(debug=True) #use this line instead of the line before to run the app in debug mode.
