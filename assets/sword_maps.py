@@ -110,6 +110,7 @@ def get_data(fn):
     sword_simple['river_name'] = sword['river_name']
     sword_simple['rch_id_up'] = sword['rch_id_up']
     sword_simple['rch_id_dn'] = sword['rch_id_dn']
+    sword_simple['swot_obs'] = sword['swot_obs']
     sword_simple.rename(columns = {0:'geometry'}, inplace = True)
     sword_json = sword_simple.to_json()
     del(sword)
@@ -133,7 +134,7 @@ for ind in list(range(len(shp_paths))):
     sword_simple, sword_json = get_data(shp_paths[ind])
 
     # Format map layer properties
-    rch_id = folium.GeoJsonTooltip(fields=["reach_id", "river_name", "rch_id_up", "rch_id_dn"])
+    rch_id = folium.GeoJsonTooltip(fields=["reach_id", "river_name", "rch_id_up", "rch_id_dn", "swot_obs"])
     facc = folium.GeoJsonTooltip(fields=["reach_id", "river_name", "facc"])
     wse = folium.GeoJsonTooltip(fields=["reach_id", "river_name", "wse"])
     dist_out = folium.GeoJsonTooltip(fields=["reach_id", "river_name", "dist_out"])
@@ -349,7 +350,7 @@ for ind in list(range(len(shp_paths))):
     folium.LayerControl('bottomright', collapsed=False).add_to(parent_map) 
     
     if os.path.exists(outdir): 
-        outpath =  outdir+b+'_sword_map.html'
+        outpath =  outdir+b+'_sword_map_test.html'
     else:
         os.makedirs(outdir)
         outpath =  outdir+b+'_sword_map.html'
