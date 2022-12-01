@@ -238,7 +238,7 @@ node_df = get_data("data/")
 node_df_cp = node_df.copy()
 
 # Trigger app.
-app = dash.Dash(external_stylesheets=[dbc.themes.CERULEAN],suppress_callback_exceptions=True)
+app = dash.Dash(external_stylesheets=[dbc.themes.CERULEAN],suppress_callback_exceptions=True, title="SWOT River Database (SWORD)")
 
 #################################################################################################
 ### Opens 'About SWORD' markdown document used in the modal overlay.
