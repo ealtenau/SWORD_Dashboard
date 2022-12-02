@@ -301,7 +301,7 @@ for ind in list(range(len(shp_paths))):
         overlay = True,
         control = True,
         show = True,
-        popup=folium.GeoJsonPopup(fields=['reach_id', 'river_name', 'rch_id_up', 'rch_id_dn']))
+        popup=folium.GeoJsonPopup(fields=['reach_id', 'river_name', 'rch_id_up', 'rch_id_dn', 'swot_obs']))
     slope_layer = folium.GeoJson(
         sword_json,
         style_function=slope_sf,
