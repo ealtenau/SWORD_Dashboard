@@ -350,7 +350,7 @@ for ind in list(range(len(shp_paths))):
     folium.LayerControl('bottomright', collapsed=False).add_to(parent_map) 
     
     if os.path.exists(outdir): 
-        outpath =  outdir+b+'_sword_map_test.html'
+        outpath =  outdir+b+'_sword_map.html'
     else:
         os.makedirs(outdir)
         outpath =  outdir+b+'_sword_map.html'
