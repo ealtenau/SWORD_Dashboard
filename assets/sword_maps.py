@@ -11,6 +11,8 @@ from mapclassify import Quantiles, EqualInterval
 from matplotlib.colors import rgb2hex
 import branca_custom as bcm
 import time
+import glob
+import netCDF4 as nc
 
 #################################################################################################
 ######################################  FUNCTIONS  ##############################################
@@ -119,7 +121,6 @@ def get_data(fn):
 #################################################################################################
 ########################################### MAIN CODE ###########################################
 #################################################################################################
-
 # read in and format data
 outdir = '/Users/ealteanau/Documents/SWORD_Dev/src/SWORD_Dashboard/data/'
 shp_dir = '/Users/ealteanau/Documents/SWORD_Dev/outputs/Reaches_Nodes/v14/shp/'
@@ -134,29 +135,35 @@ for ind in list(range(len(shp_paths))):
     sword_simple, sword_json = get_data(shp_paths[ind])
 
     # Format map layer properties
-    rch_id = folium.GeoJsonTooltip(fields=["reach_id", "river_name", "rch_id_up", "rch_id_dn", "swot_obs"])
+    rch_id = folium.GeoJsonTooltip(fields=["reach_id", "river_name", "rch_id_up", "rch_id_dn"])
     facc = folium.GeoJsonTooltip(fields=["reach_id", "river_name", "facc"])
     wse = folium.GeoJsonTooltip(fields=["reach_id", "river_name", "wse"])
     dist_out = folium.GeoJsonTooltip(fields=["reach_id", "river_name", "dist_out"])
     wth = folium.GeoJsonTooltip(fields=["reach_id", "river_name", "width"])
     slope = folium.GeoJsonTooltip(fields=["reach_id", "river_name", "slope"])
+    obs = folium.GeoJsonTooltip(fields=["reach_id", "river_name", "swot_obs"])
 
     wse_bins = Quantiles(sword_simple['wse'], k=25).bins
     facc_bins = Quantiles(sword_simple['facc'], k=25).bins
     dist_bins = Quantiles(sword_simple['dist_out'], k=25).bins
     wth_bins = Quantiles(sword_simple['width'], k=25).bins
     slope_bins = Quantiles(sword_simple['slope'], k=25).bins
+    obs_bins = np.array([0,1,2,4,6,8,10])
+    # obs_bins = np.round(EqualInterval(swot_obs, k=10).bins)
 
     wse_ei = EqualInterval(sword_simple['wse'], k=5).bins
     facc_ei = EqualInterval(sword_simple['facc'], k=5).bins
     dist_ei = EqualInterval(sword_simple['dist_out'], k=5).bins
     wth_ei = EqualInterval(sword_simple['width'], k=5).bins
     slope_ei = EqualInterval(sword_simple['slope'], k=5).bins
+    obs_ei = np.array([0,1,2,4,6,8,10])
+    # obs_ei = np.round(EqualInterval(swot_obs, k=5).bins)
 
     wse_colors = colors_at_breaks(cm.get_cmap('terrain'), np.linspace(0, 1, len(wse_bins)))
     dist_colors = colors_at_breaks(cm.get_cmap('plasma'), np.linspace(0, 1, len(dist_bins)))
     wth_colors = colors_at_breaks(cm.get_cmap('viridis'), np.linspace(0, 1, len(wth_bins)))
     slope_colors = colors_at_breaks(cm.get_cmap('hot'), np.linspace(0, 1, len(slope_bins)))
+    obs_colors = colors_at_breaks(cm.get_cmap('gnuplot2'), np.linspace(0, 1, len(obs_bins)))
     facc_colors = colors_at_breaks(cm.get_cmap('Spectral'), np.linspace(0, 1, len(facc_bins)))
     facc_colors = facc_colors[::-1]
 
@@ -164,6 +171,7 @@ for ind in list(range(len(shp_paths))):
     dist_colors5 = colors_at_breaks(cm.get_cmap('plasma'), np.linspace(0, 1, len(dist_ei)))
     wth_colors5 = colors_at_breaks(cm.get_cmap('viridis'), np.linspace(0, 1, len(wth_ei)))
     slope_colors5 = colors_at_breaks(cm.get_cmap('hot'), np.linspace(0, 1, len(slope_ei)))
+    obs_colors5 = colors_at_breaks(cm.get_cmap('gnuplot2'), np.linspace(0, 1, len(obs_ei)))
     facc_colors5 = colors_at_breaks(cm.get_cmap('Spectral'), np.linspace(0, 1, len(facc_ei)))
     facc_colors5 = facc_colors5[::-1]
 
@@ -208,6 +216,14 @@ for ind in list(range(len(shp_paths))):
             caption='slope (m/km)',
             labels=slope_bins
         )
+    obs_cmap = bcm.LinearColormap(
+            colors=obs_colors,
+            index=obs_bins, 
+            vmin=obs_bins[0], 
+            vmax=obs_bins[-1],
+            caption='SWOT observations',
+            labels=obs_bins
+        )
 
     wse_cmap_display = bcm.LinearColormap(
             colors=wse_colors5,
@@ -249,6 +265,14 @@ for ind in list(range(len(shp_paths))):
             caption='slope (m/km)',
             labels=[0, 0, 0, 0, slope_ei[-1]]
         )
+    obs_cmap_display = bcm.LinearColormap(
+            colors=obs_colors5,
+            index=obs_ei, 
+            vmin=0, 
+            vmax=obs_ei[-1],
+            caption='SWOT observations',
+            labels=obs_ei
+        )
 
     rch_id_sf = ColormapStyleFunction(rch_cmap,'reach_id',randomcolors=True)
     wse_sf = ColormapStyleFunction(wse_cmap,'wse')
@@ -256,6 +280,7 @@ for ind in list(range(len(shp_paths))):
     dist_sf = ColormapStyleFunction(dist_cmap,'dist_out')
     wth_sf = ColormapStyleFunction(wth_cmap,'width')
     slope_sf = ColormapStyleFunction(slope_cmap,'slope')
+    obs_sf = ColormapStyleFunction(obs_cmap,'swot_obs')
 
     wse_layer = folium.GeoJson(
         sword_json,
@@ -311,10 +336,22 @@ for ind in list(range(len(shp_paths))):
         control = True,
         show = False,
         popup=folium.GeoJsonPopup(fields=['reach_id', 'river_name', 'slope']))
+    obs_layer = folium.GeoJson(
+        sword_json,
+        style_function=obs_sf,
+        tooltip=obs,
+        name="SWOT Observations",
+        overlay = True,
+        control = True,
+        show = False,
+        popup=folium.GeoJsonPopup(fields=['reach_id', 'river_name', 'swot_obs']))
 
     # Retrieve bounding box and center
     bounds = sword_simple.geometry.total_bounds.tolist()
-    center = (0.5 * (bounds[1] + bounds[3]), 0.5 * (bounds[0] + bounds[2]))
+    if b == 'hb35':
+        center = (65.5,155)
+    else:
+        center = (0.5 * (bounds[1] + bounds[3]), 0.5 * (bounds[0] + bounds[2]))
 
     # Create map
     parent_map = folium.Map(location=center, 
@@ -337,16 +374,19 @@ for ind in list(range(len(shp_paths))):
     parent_map.add_child(facc_layer)
     parent_map.add_child(dist_layer)
     parent_map.add_child(slope_layer)
+    parent_map.add_child(obs_layer)
     parent_map.add_child(wse_cmap_display)
     parent_map.add_child(wth_cmap_display)
     parent_map.add_child(facc_cmap_display)
     parent_map.add_child(dist_cmap_display)
     parent_map.add_child(slope_cmap_display)
+    parent_map.add_child(obs_cmap_display)
     parent_map.add_child(BindColormap(wse_layer,wse_cmap_display))
     parent_map.add_child(BindColormap(wth_layer,wth_cmap_display))
     parent_map.add_child(BindColormap(facc_layer,facc_cmap_display))
     parent_map.add_child(BindColormap(dist_layer,dist_cmap_display))
     parent_map.add_child(BindColormap(slope_layer,slope_cmap_display))
+    parent_map.add_child(BindColormap(obs_layer,obs_cmap_display))
     folium.LayerControl('bottomright', collapsed=False).add_to(parent_map) 
     
     if os.path.exists(outdir): 
