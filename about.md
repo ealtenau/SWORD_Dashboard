@@ -11,7 +11,7 @@ The SWORD database is an evolving product that is intended to undergo continued 
 ### Notes for Users
 
 - The first map displayed for each region is the basin map key. Users can use this key to identify a river basin they wish to explore, then choose the basin from the drop down at the top-right corner of the map. 
-- Maps that display rivers include 5 attribute layers: reach boundaries, water surface elevation (WSE), flow accumulation, distance from outlet, and slope. Layers can be toggled on and off using the layers icon in the bottom-right corner of the map. 
+- Maps that display rivers include 7 attribute layers: reach boundaries, water surface elevation (WSE), width, flow accumulation, distance from outlet, slope, and number of SWOT observations. Layers can be toggled on and off using the layers panel in the bottom-right corner of the map. 
 - Users can hover or click on a reach to view attribute information.
 - Users can enter a Reach ID into the input box below the map to plot node-level properties of node order, width, elevation, flow accumulation, sinuosity, and number of channels along a specified reach. 
 - Native SWORD reach geometries are built at 30 m resolution, however, for map efficiency gemetries have been simplified to ~500 m resolution. To examine full reach geometries, please download the full SWORD Database.
