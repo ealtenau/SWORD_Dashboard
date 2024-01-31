@@ -107,12 +107,14 @@ def get_data(fn):
     sword_simple['wse'] = sword['wse'] 
     sword_simple['facc'] = sword['facc']
     sword_simple['width'] = sword['width']
-    sword_simple['dist_out'] = sword['dist_out']
+    sword_simple['dist_out'] = np.round(sword['dist_out'], 3)
     sword_simple['slope'] = sword['slope']
     sword_simple['river_name'] = sword['river_name']
     sword_simple['rch_id_up'] = sword['rch_id_up']
     sword_simple['rch_id_dn'] = sword['rch_id_dn']
     sword_simple['swot_obs'] = sword['swot_obs']
+    sword_simple['lat'] = np.round(sword['y'], 2)
+    sword_simple['lon'] = np.round(sword['x'], 2)
     sword_simple.rename(columns = {0:'geometry'}, inplace = True)
     sword_json = sword_simple.to_json()
     del(sword)
@@ -123,7 +125,7 @@ def get_data(fn):
 #################################################################################################
 # read in and format data
 outdir = '/Users/ealteanau/Documents/SWORD_Dev/src/SWORD_Dashboard/data/'
-shp_dir = '/Users/ealteanau/Documents/SWORD_Dev/outputs/Reaches_Nodes/v14/shp/'
+shp_dir = '/Users/ealteanau/Documents/SWORD_Dev/outputs/Reaches_Nodes/v15/shp/'
 shp_paths = [file for file in getListOfFiles(shp_dir) if '.shp' in file and 'reaches' in file]
 shp_paths = np.unique(shp_paths) 
 basins = [path[-12:-8] for path in shp_paths]
@@ -135,7 +137,7 @@ for ind in list(range(len(shp_paths))):
     sword_simple, sword_json = get_data(shp_paths[ind])
 
     # Format map layer properties
-    rch_id = folium.GeoJsonTooltip(fields=["reach_id", "river_name", "rch_id_up", "rch_id_dn"])
+    rch_id = folium.GeoJsonTooltip(fields=["reach_id", "river_name", "rch_id_up", "rch_id_dn", "lat", "lon"])
     facc = folium.GeoJsonTooltip(fields=["reach_id", "river_name", "facc"])
     wse = folium.GeoJsonTooltip(fields=["reach_id", "river_name", "wse"])
     dist_out = folium.GeoJsonTooltip(fields=["reach_id", "river_name", "dist_out"])
@@ -326,7 +328,7 @@ for ind in list(range(len(shp_paths))):
         overlay = True,
         control = True,
         show = True,
-        popup=folium.GeoJsonPopup(fields=['reach_id', 'river_name', 'rch_id_up', 'rch_id_dn', 'swot_obs']))
+        popup=folium.GeoJsonPopup(fields=['reach_id', 'river_name', 'rch_id_up', 'rch_id_dn', 'lat', 'lon']))
     slope_layer = folium.GeoJson(
         sword_json,
         style_function=slope_sf,

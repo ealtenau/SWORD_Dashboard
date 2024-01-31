@@ -1107,7 +1107,7 @@ def render_content(tab):
                 dbc.Row(
                     [
                         dbc.Col(html.H3( #was H5
-                            'SWORD Version 14'),
+                            'SWORD Version 16'),
                             width=8,
                             className='mt-2',
                             style={"textAlign":"left"}),
@@ -1145,7 +1145,7 @@ def render_content(tab):
                 dbc.Row(
                     [
                         dbc.Col(html.H3(
-                            'SWORD Version 14'),
+                            'SWORD Version 16'),
                             width=8,
                             className='mt-2',
                             style={"textAlign":"left"}),
@@ -1183,7 +1183,7 @@ def render_content(tab):
                 dbc.Row(
                     [
                         dbc.Col(html.H3(
-                            'SWORD Version 14'),
+                            'SWORD Version 16'),
                             width=8,
                             className='mt-2',
                             style={"textAlign":"left"}),
@@ -1221,7 +1221,7 @@ def render_content(tab):
                 dbc.Row(
                     [
                         dbc.Col(html.H3(
-                            'SWORD Version 14'),
+                            'SWORD Version 16'),
                             width=8,
                             className='mt-2',
                             style={"textAlign":"left"}),
@@ -1259,7 +1259,7 @@ def render_content(tab):
                 dbc.Row(
                     [
                         dbc.Col(html.H3(
-                            'SWORD Version 14'),
+                            'SWORD Version 16'),
                             width=8,
                             className='mt-2',
                             style={"textAlign":"left"}),
@@ -1297,7 +1297,7 @@ def render_content(tab):
                 dbc.Row(
                     [
                         dbc.Col(html.H3(
-                            'SWORD Version 14'),
+                            'SWORD Version 16'),
                             width=8,
                             className='mt-2',
                             style={"textAlign":"left"}),

@@ -89,7 +89,7 @@ def save_nc(nodes, outdir):
 
 ######################################################################################
 # Primary lines and paths.
-nc_dir = '/Users/ealteanau/Documents/SWORD_Dev/outputs/Reaches_Nodes/v14/netcdf/'
+nc_dir = '/Users/ealteanau/Documents/SWORD_Dev/outputs/Reaches_Nodes/v15/netcdf/'
 outdir = '/Users/ealteanau/Documents/SWORD_Dev/src/SWORD_Dashboard/data/'
 
 nodes = get_data(nc_dir)
