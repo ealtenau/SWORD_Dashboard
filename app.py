@@ -33,7 +33,9 @@ def get_data(fn):
         nodes_nc = nc.Dataset(fn+nc_files[ind])
         node_df = pd.DataFrame(
             np.array(
-                [nodes_nc['nodes']['reach_id'][:],
+                [nodes_nc['nodes']['x'][:],
+                nodes_nc['nodes']['y'][:],
+                nodes_nc['nodes']['reach_id'][:],
                 nodes_nc['nodes']['node_id'][:],
                 nodes_nc['nodes']['wse'][:],
                 nodes_nc['nodes']['width'][:],
@@ -42,9 +44,9 @@ def get_data(fn):
                 nodes_nc['nodes']['n_chan_mod'][:],
                 nodes_nc['nodes']['sinuosity'][:],
                 nodes_nc['nodes']['node_order'][:]]).T)
-        node_df.rename(columns = {0:'reach_id', 1:'node_id',
-            2:'wse', 3:'width', 4:'facc', 5:'dist_out',
-            6:'n_chan_mod',7:'sinuosity',8:'node_order'}, inplace = True)
+        node_df.rename(columns = {0:'x', 1:'y', 2:'reach_id', 3:'node_id',
+            4:'wse', 5:'width', 6:'facc', 7:'dist_out',
+            8:'n_chan_mod',9:'sinuosity',10:'node_order'}, inplace = True)
         try:
             nodes_all = pd.concat([nodes_all, node_df])
         except NameError:
@@ -149,7 +151,7 @@ def plot_nodes(df, reach=None):
     #overall figure properties
     fig.update_layout(
         height=1000, #width=1400,
-        title_text="Reach "+str(rch)+": Node Level Attributes",
+        title_text="Reach "+str(rch)+" (lon: "+str(np.round(np.median(node_reaches['x']),2))+", lat: "+str(np.round(np.median(node_reaches['y']),2))+") - Node Level Attributes",
         title_x=0.5,
         showlegend=False,
         plot_bgcolor='#dce0e2' #'whitesmoke'

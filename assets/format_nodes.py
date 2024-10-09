@@ -5,7 +5,7 @@ import pandas as pd
 import time
 
 #################################################################################################
-#Function to read and contatenate all nodes and relevant attributes into a global netcdf file. 
+#Function to read and contatenate all nodes and relevant attributes into a global netcdf file.
 def get_data(fn):
     nc_files = [file for file in os.listdir(fn) if '.nc' in file ]
     for ind in list(range(len(nc_files))):
@@ -21,16 +21,18 @@ def get_data(fn):
                 nodes_nc['nodes']['dist_out'][:],
                 nodes_nc['nodes']['n_chan_mod'][:],
                 nodes_nc['nodes']['sinuosity'][:],
+                nodes_nc['nodes']['x'][:],
+                nodes_nc['nodes']['y'][:],
                 node_order]).T)
         node_df.rename(columns = {0:'reach_id', 1:'node_id',
             2:'wse', 3:'width', 4:'facc', 5:'dist_out',
-            6:'n_chan_mod',7:'sinuosity',8:'node_order'}, inplace = True)
+            6:'n_chan_mod',7:'sinuosity',8:'x',9:'y',10:'node_order'}, inplace = True)
         try:
             nodes_all = pd.concat([nodes_all, node_df])
         except NameError:
             nodes_all = node_df.copy()
         del(nodes_nc)
-    
+
     return nodes_all
 
 ######################################################################################
@@ -40,7 +42,7 @@ def save_nc(nodes, outdir):
     # global attributes
     root_grp = nc.Dataset(outdir, 'w', format='NETCDF4')
     root_grp.production_date = time.strftime(
-        "%d-%b-%Y %H:%M:%S", 
+        "%d-%b-%Y %H:%M:%S",
         time.gmtime()) #utc time
 
     # subgroups
@@ -51,6 +53,10 @@ def save_nc(nodes, outdir):
     Node_ID = node_grp.createVariable(
         'node_id', 'i8', ('num_nodes',), fill_value=-9999.)
     Node_ID.format = 'CBBBBBRRRRNNNT'
+    node_x = node_grp.createVariable(
+        'x', 'f8', ('num_nodes',), fill_value=-9999.)
+    node_y = node_grp.createVariable(
+        'y', 'f8', ('num_nodes',), fill_value=-9999.)
     node_rch_id = node_grp.createVariable(
         'reach_id', 'i8', ('num_nodes',), fill_value=-9999.)
     node_rch_id.format = 'CBBBBBRRRRT'
@@ -84,13 +90,15 @@ def save_nc(nodes, outdir):
     node_sinuosity[:] = nodes['sinuosity']
     node_chan_mod[:] = nodes['n_chan_mod']
     node_order[:] = nodes['node_order']
-    
+    node_x[:] = nodes['x']
+    node_y[:] = nodes['y']
+
     root_grp.close()
 
 ######################################################################################
 # Primary lines and paths.
-nc_dir = '/Users/ealteanau/Documents/SWORD_Dev/outputs/Reaches_Nodes/v15/netcdf/'
-outdir = '/Users/ealteanau/Documents/SWORD_Dev/src/SWORD_Dashboard/data/'
+nc_dir = '/Users/ealtenau/Documents/SWORD_Dev/outputs/Reaches_Nodes/v16/netcdf/'
+outdir = '/Users/ealtenau/Documents/SWORD_Dev/src/SWORD_Dashboard/data/'
 
 nodes = get_data(nc_dir)
 
@@ -99,7 +107,7 @@ unq_lvl = np.unique(level)
 for ind in list(range(len(unq_lvl))):
     vals = np.where(level == unq_lvl[ind])
     nodes_clip = nodes.iloc[vals]
-    if os.path.exists(outdir): 
+    if os.path.exists(outdir):
         outpath =  outdir + 'nodes_hb'+str(unq_lvl[ind])+'.nc'
     else:
         os.makedirs(outdir)
