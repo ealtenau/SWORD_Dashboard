@@ -408,7 +408,7 @@ for ind in list(range(len(shp_paths))):
 	parent_map.add_child(BindColormap(dist_layer,dist_cmap_display))
 	parent_map.add_child(BindColormap(slope_layer,slope_cmap_display))
 	parent_map.add_child(BindColormap(obs_layer,obs_cmap_display))
-	folium.LayerControl('bottomright', collapsed=False).add_to(parent_map) 
+	folium.LayerControl('topright', collapsed=False).add_to(parent_map) 
 	MousePosition(
 		position="bottomleft",
 		separator=" | ",
