@@ -1061,7 +1061,7 @@ app.layout = html.Div([
         html.Br(),
         html.Div(children=[
             html.Div(
-                'Copyright (c) 2022 University of North Carolina at Chapel Hill',
+                'Copyright (c) 2024 University of North Carolina at Chapel Hill',
                 style={
                     'textAlign':'left',
                     'font-size': '0.7em',
@@ -1138,7 +1138,7 @@ def render_content(tab):
             html.Iframe(
                 id='BasinMap',
                 srcDoc=open('data/af_basin_map.html', 'r').read(),
-                style={"height": "500px", "width": "100%"}
+                style={"height": "800px", "width": "100%"}
                 )
         ]) #end subdiv2
     elif tab == 'tab-2':
@@ -1176,7 +1176,7 @@ def render_content(tab):
             html.Iframe(
                 id='BasinMap',
                 srcDoc=open('data/as_basin_map.html', 'r').read(),
-                style={"height": "500px", "width": "100%"}
+                style={"height": "800px", "width": "100%"}
                 )
         ]) #end subdiv2
     elif tab == 'tab-3':
@@ -1214,7 +1214,7 @@ def render_content(tab):
             html.Iframe(
                 id='BasinMap',
                 srcDoc=open('data/eu_basin_map.html', 'r').read(),
-                style={"height": "500px", "width": "100%"}
+                style={"height": "800px", "width": "100%"}
                 )
         ]) #end subdiv2
     elif tab == 'tab-4':
@@ -1252,7 +1252,7 @@ def render_content(tab):
             html.Iframe(
                 id='BasinMap',
                 srcDoc=open('data/na_basin_map.html', 'r').read(),
-                style={"height": "500px", "width": "100%"}
+                style={"height": "800px", "width": "100%"}
                 )
         ]) #end subdiv2
     elif tab == 'tab-5':
@@ -1290,7 +1290,7 @@ def render_content(tab):
             html.Iframe(
                 id='BasinMap',
                 srcDoc=open('data/oc_basin_map.html', 'r').read(),
-                style={"height": "500px", "width": "100%"}
+                style={"height": "800px", "width": "100%"}
                 )
         ]) #end subdiv2
     elif tab == 'tab-6':
@@ -1328,7 +1328,7 @@ def render_content(tab):
             html.Iframe(
                 id='BasinMap',
                 srcDoc=open('data/sa_basin_map.html', 'r').read(),
-                style={"height": "500px", "width": "100%"}
+                style={"height": "800px", "width": "100%"}
                 )
         ]) #end subdiv2
 

@@ -15,14 +15,8 @@ SWORD is available in three formats: NetCDF, Geopackage, and Shapefile. Please c
 
 ### Previous Versions:
 
-Previous version downloads contain all available file formats. Geopackage format is only available in version 14 or later.
+Previous version downloads contain all available file formats.
 - [SWORD v15](http://gaia.geosci.unc.edu/SWORD/SWORD_v15.zip)
 - [SWORD v14](http://gaia.geosci.unc.edu/SWORD/SWORD_v14.zip)
-- [SWORD v13](http://gaia.geosci.unc.edu/SWORD/SWORD_v13.zip)
-- [SWORD v12](http://gaia.geosci.unc.edu/SWORD/SWORD_v12.zip)
-- [SWORD v11](http://gaia.geosci.unc.edu/SWORD/SWORD_v11.zip)
-- [SWORD v10](http://gaia.geosci.unc.edu/SWORD/SWORD_v10.zip)
-- [SWORD v09](http://gaia.geosci.unc.edu/SWORD/SWORD_v09.zip)
-- [SWORD v08](http://gaia.geosci.unc.edu/SWORD/SWORD_v08.zip)
 
-_For versions older than Version 8, please email **sword.riverdb@gmail.com**._
+_For versions older than Version 14, please email **sword.riverdb@gmail.com**._
