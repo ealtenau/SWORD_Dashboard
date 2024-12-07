@@ -780,6 +780,21 @@ button_report = dbc.Button(
     },
 )
 
+# Button to plot node-level attributes.
+button_plot = dbc.Button(
+    "Plot Reach",
+    id="plot_reach",
+    outline=False,
+    color="primary",
+    style={
+        "textTransform": "none",
+        "margin-left": "5px",
+        "color":"white",
+        # "background-color":"green",
+        "textAlign":"center"
+    },
+)
+
 #################################################################################################
 
 # Dashboard header
@@ -791,8 +806,8 @@ header = dbc.Navbar(
                     dbc.Col(
                         html.Img(
                             id="logo1",
-                            src=app.get_asset_url("swot_mainlogo_dark2.png"),
-                            height="70px",
+                            src=app.get_asset_url("swot_mainlogo_dark.png"),
+                            height="60px",
                         ),
                         md="auto",
                     ),
@@ -809,7 +824,7 @@ header = dbc.Navbar(
                             html.Div(
                                 [
                                     html.H2(
-                                        "SWOT River Database (SWORD) - Version 17",
+                                        "SWOT River Database (SWORD)",
                                         style={
                                             "textAlign":"left",
                                             "margin-top":"15px"}),
@@ -881,6 +896,90 @@ tab_selected_style = {
     'color': 'white',
     'background': '#2b3b90'
 }
+# Africa maps.
+dropdown_list_af = [
+    {"label": "Choose a Basin to Visualize Reaches", "value": "data/af_basin_map.html"},
+    {"label": "Basin 11", "value": "data/hb11_sword_map.html"},
+    {"label": "Basin 12", "value": "data/hb12_sword_map.html"},
+    {"label": "Basin 13", "value": "data/hb13_sword_map.html"},
+    {"label": "Basin 14", "value": "data/hb14_sword_map.html"},
+    {"label": "Basin 15", "value": "data/hb15_sword_map.html"},
+    {"label": "Basin 16", "value": "data/hb16_sword_map.html"},
+    {"label": "Basin 17", "value": "data/hb17_sword_map.html"},
+    {"label": "Basin 18", "value": "data/hb18_sword_map.html"},
+    ]
+# Asia maps
+dropdown_list_as = [
+    {"label": "Choose a Basin to Visualize Reaches", "value": "data/as_basin_map.html"},
+    {"label": "Basin 31", "value": "data/hb31_sword_map.html"},
+    {"label": "Basin 32", "value": "data/hb32_sword_map.html"},
+    {"label": "Basin 33", "value": "data/hb33_sword_map.html"},
+    {"label": "Basin 34", "value": "data/hb34_sword_map.html"},
+    {"label": "Basin 35", "value": "data/hb35_sword_map.html"},
+    {"label": "Basin 36", "value": "data/hb36_sword_map.html"},
+    {"label": "Basin 41", "value": "data/hb41_sword_map.html"},
+    {"label": "Basin 42", "value": "data/hb42_sword_map.html"},
+    {"label": "Basin 43", "value": "data/hb43_sword_map.html"},
+    {"label": "Basin 44", "value": "data/hb44_sword_map.html"},
+    {"label": "Basin 45", "value": "data/hb45_sword_map.html"},
+    {"label": "Basin 46", "value": "data/hb46_sword_map.html"},
+    {"label": "Basin 47", "value": "data/hb47_sword_map.html"},
+    {"label": "Basin 48", "value": "data/hb48_sword_map.html"},
+    {"label": "Basin 49", "value": "data/hb49_sword_map.html"},
+    ]
+# Europe/Middle East maps
+dropdown_list_eu = [
+    {"label": "Choose a Basin to Visualize Reaches", "value": "data/eu_basin_map.html"},
+    {"label": "Basin 21", "value": "data/hb21_sword_map.html"},
+    {"label": "Basin 22", "value": "data/hb22_sword_map.html"},
+    {"label": "Basin 23", "value": "data/hb23_sword_map.html"},
+    {"label": "Basin 24", "value": "data/hb24_sword_map.html"},
+    {"label": "Basin 25", "value": "data/hb25_sword_map.html"},
+    {"label": "Basin 26", "value": "data/hb26_sword_map.html"},
+    {"label": "Basin 27", "value": "data/hb27_sword_map.html"},
+    {"label": "Basin 28", "value": "data/hb28_sword_map.html"},
+    {"label": "Basin 29", "value": "data/hb29_sword_map.html"},
+    ]
+# Oceania maps
+dropdown_list_oc = [
+    {"label": "Choose a Basin to Visualize Reaches", "value": "data/oc_basin_map.html"},
+    {"label": "Basin 51", "value": "data/hb51_sword_map.html"},
+    {"label": "Basin 52", "value": "data/hb52_sword_map.html"},
+    {"label": "Basin 53", "value": "data/hb53_sword_map.html"},
+    {"label": "Basin 55", "value": "data/hb55_sword_map.html"},
+    {"label": "Basin 56", "value": "data/hb56_sword_map.html"},
+    {"label": "Basin 57", "value": "data/hb57_sword_map.html"},
+    ]
+# South America maps
+dropdown_list_sa = [
+    {"label": "Choose a Basin to Visualize Reaches", "value": "data/sa_basin_map.html"},
+    {"label": "Basin 61", "value": "data/hb61_sword_map.html"},
+    {"label": "Basin 62", "value": "data/hb62_sword_map.html"},
+    {"label": "Basin 63", "value": "data/hb63_sword_map.html"},
+    {"label": "Basin 64", "value": "data/hb64_sword_map.html"},
+    {"label": "Basin 65", "value": "data/hb65_sword_map.html"},
+    {"label": "Basin 66", "value": "data/hb66_sword_map.html"},
+    {"label": "Basin 67", "value": "data/hb67_sword_map.html"},
+    ]
+# North America maps
+dropdown_list_na = [
+    {"label": "Choose a Basin to Visualize Reaches", "value": "data/na_basin_map.html"},
+    {"label": "Basin 71", "value": "data/hb71_sword_map.html"},
+    {"label": "Basin 72", "value": "data/hb72_sword_map.html"},
+    {"label": "Basin 73", "value": "data/hb73_sword_map.html"},
+    {"label": "Basin 74", "value": "data/hb74_sword_map.html"},
+    {"label": "Basin 75", "value": "data/hb75_sword_map.html"},
+    {"label": "Basin 76", "value": "data/hb76_sword_map.html"},
+    {"label": "Basin 77", "value": "data/hb77_sword_map.html"},
+    {"label": "Basin 78", "value": "data/hb78_sword_map.html"},
+    {"label": "Basin 81", "value": "data/hb81_sword_map.html"},
+    {"label": "Basin 82", "value": "data/hb82_sword_map.html"},
+    {"label": "Basin 83", "value": "data/hb83_sword_map.html"},
+    {"label": "Basin 84", "value": "data/hb84_sword_map.html"},
+    {"label": "Basin 85", "value": "data/hb85_sword_map.html"},
+    {"label": "Basin 86", "value": "data/hb86_sword_map.html"},
+    {"label": "Basin 91", "value": "data/hb91_sword_map.html"},
+    ]
 
 #################################################################################################
 ### PRIMARY APP LAYOUT.
@@ -931,14 +1030,28 @@ app.layout = html.Div([
         html.Div(id='tabs-content-example-graph'), #callback for tab content.
         html.Div([
             html.H5(
-                'Click a Reach to plot Node level attributes:',
+                'Type a Reach ID and click ENTER or "Plot Reach" \
+                    to see node level attributes:',
                 style={
                     'marginTop' : '5px',
                     'marginBottom' : '5px',
                     'size':'25'}
             ),
-            html.Div('(Click the "Report Reach" button \
-                to file a problem with a Reach)'),
+            html.Div('(click "Report Reach" to file a problem \
+                with a reach)'),
+            dcc.Input(
+                id = 'ReachID',
+                type = 'number',
+                value = 81247100041,
+                placeholder = "Reach ID",
+                debounce=True,
+                min=int(np.min(node_df['reach_id'])),
+                max=int(np.max(node_df['reach_id'])),
+                step=1,
+                required=False,
+                size='100'
+                ),
+            button_plot,
             button_report,
             report_overlay,
             dcc.Graph(
@@ -992,13 +1105,23 @@ app.layout = html.Div([
 def render_content(tab):
     if tab == 'tab-1':
         return html.Div([
-            html.Div(
-                html.H5('Click on a Basin to Visualize Reaches'),
-                    style={
-                        'marginBottom' : '5px',
-                        'size':'30',
-                        'color':'#C42828'},
-                    ),
+            html.H6(
+                dbc.Row(
+                    [
+                        dbc.Col(html.H3( #was H5
+                            'SWORD Version 16'),
+                            width=8,
+                            className='mt-2',
+                            style={"textAlign":"left"}),
+                        dbc.Col(dcc.Dropdown(
+                            id='DropBox',
+                            options=dropdown_list_af,
+                            value=dropdown_list_af[0]['value'],
+                            style={"textAlign":"left"}),
+                        style={"textAlign":"right"})
+                    ]
+                ),
+            ),
             html.Div([
                 html.Div(
                     '**PLEASE NOTE: Reach geometries have been simplified \
@@ -1015,19 +1138,28 @@ def render_content(tab):
             html.Iframe(
                 id='BasinMap',
                 srcDoc=open('data/af_basin_map.html', 'r').read(),
-                style={"height": "800px", "width": "100%"} #a good height is "800px"
-                ), 
-            dcc.Store(id="clicked-feature"),
-        ]) #end subdiv1
+                style={"height": "800px", "width": "100%"}
+                )
+        ]) #end subdiv2
     elif tab == 'tab-2':
         return html.Div([
-            html.Div(
-                html.H5('Click on a Basin to Visualize Reaches'),
-                    style={
-                        'marginBottom' : '5px',
-                        'size':'30',
-                        'color':'#C42828'},
-                    ),
+            html.H6(
+                dbc.Row(
+                    [
+                        dbc.Col(html.H3(
+                            'SWORD Version 16'),
+                            width=8,
+                            className='mt-2',
+                            style={"textAlign":"left"}),
+                        dbc.Col(dcc.Dropdown(
+                            id='DropBox',
+                            options=dropdown_list_as,
+                            value=dropdown_list_as[0]['value'],
+                            style={"textAlign":"left"}),
+                        style={"textAlign":"right"})
+                    ]
+                ),
+            ),
             html.Div([
                 html.Div(
                     '**PLEASE NOTE: Reach geometries have been simplified \
@@ -1045,18 +1177,27 @@ def render_content(tab):
                 id='BasinMap',
                 srcDoc=open('data/as_basin_map.html', 'r').read(),
                 style={"height": "800px", "width": "100%"}
-                ),
-            dcc.Store(id="clicked-feature"),
+                )
         ]) #end subdiv2
     elif tab == 'tab-3':
         return html.Div([
-            html.Div(
-                html.H5('Click on a Basin to Visualize Reaches'),
-                    style={
-                        'marginBottom' : '5px',
-                        'size':'30',
-                        'color':'#C42828'},
-                    ),
+            html.H6(
+                dbc.Row(
+                    [
+                        dbc.Col(html.H3(
+                            'SWORD Version 16'),
+                            width=8,
+                            className='mt-2',
+                            style={"textAlign":"left"}),
+                        dbc.Col(dcc.Dropdown(
+                            id='DropBox',
+                            options=dropdown_list_eu,
+                            value=dropdown_list_eu[0]['value'],
+                            style={"textAlign":"left"}),
+                        style={"textAlign":"right"})
+                    ]
+                ),
+            ),
             html.Div([
                 html.Div(
                     '**PLEASE NOTE: Reach geometries have been simplified \
@@ -1074,18 +1215,27 @@ def render_content(tab):
                 id='BasinMap',
                 srcDoc=open('data/eu_basin_map.html', 'r').read(),
                 style={"height": "800px", "width": "100%"}
-                ),
-            dcc.Store(id="clicked-feature"),
-        ]) #end subdiv3
+                )
+        ]) #end subdiv2
     elif tab == 'tab-4':
         return html.Div([
-            html.Div(
-                html.H5('Click on a Basin to Visualize Reaches'),
-                    style={
-                        'marginBottom' : '5px',
-                        'size':'30',
-                        'color':'#C42828'},
-                    ),
+            html.H6(
+                dbc.Row(
+                    [
+                        dbc.Col(html.H3(
+                            'SWORD Version 16'),
+                            width=8,
+                            className='mt-2',
+                            style={"textAlign":"left"}),
+                        dbc.Col(dcc.Dropdown(
+                            id='DropBox',
+                            options=dropdown_list_na,
+                            value=dropdown_list_na[0]['value'],
+                            style={"textAlign":"left"}),
+                        style={"textAlign":"right"})
+                    ]
+                ),
+            ),
             html.Div([
                 html.Div(
                     '**PLEASE NOTE: Reach geometries have been simplified \
@@ -1099,23 +1249,31 @@ def render_content(tab):
                         'color':'#C42828'},
                     ),
             ]),
-            html.Div(id="feature-output"), #delete! This is for click testing 
             html.Iframe(
                 id='BasinMap',
                 srcDoc=open('data/na_basin_map.html', 'r').read(),
                 style={"height": "800px", "width": "100%"}
-                ),
-            dcc.Store(id="clicked-feature"),
-        ]) #end subdiv4
+                )
+        ]) #end subdiv2
     elif tab == 'tab-5':
         return html.Div([
-            html.Div(
-                html.H5('Click on a Basin to Visualize Reaches'),
-                    style={
-                        'marginBottom' : '5px',
-                        'size':'30',
-                        'color':'#C42828'},
-                    ),
+            html.H6(
+                dbc.Row(
+                    [
+                        dbc.Col(html.H3(
+                            'SWORD Version 16'),
+                            width=8,
+                            className='mt-2',
+                            style={"textAlign":"left"}),
+                        dbc.Col(dcc.Dropdown(
+                            id='DropBox',
+                            options=dropdown_list_oc,
+                            value=dropdown_list_oc[0]['value'],
+                            style={"textAlign":"left"}),
+                        style={"textAlign":"right"})
+                    ]
+                ),
+            ),
             html.Div([
                 html.Div(
                     '**PLEASE NOTE: Reach geometries have been simplified \
@@ -1133,18 +1291,27 @@ def render_content(tab):
                 id='BasinMap',
                 srcDoc=open('data/oc_basin_map.html', 'r').read(),
                 style={"height": "800px", "width": "100%"}
-                ),
-            dcc.Store(id="clicked-feature"),
-        ]) #end subdiv5
+                )
+        ]) #end subdiv2
     elif tab == 'tab-6':
         return html.Div([
-            html.Div(
-                html.H5('Click on a Basin to Visualize Reaches'),
-                    style={
-                        'marginBottom' : '5px',
-                        'size':'30',
-                        'color':'#C42828'},
-                    ),
+            html.H6(
+                dbc.Row(
+                    [
+                        dbc.Col(html.H3(
+                            'SWORD Version 16'),
+                            width=8,
+                            className='mt-2',
+                            style={"textAlign":"left"}),
+                        dbc.Col(dcc.Dropdown(
+                            id='DropBox',
+                            options=dropdown_list_sa,
+                            value=dropdown_list_sa[0]['value'],
+                            style={"textAlign":"left"}),
+                        style={"textAlign":"right"})
+                    ]
+                ),
+            ),
             html.Div([
                 html.Div(
                     '**PLEASE NOTE: Reach geometries have been simplified \
@@ -1162,42 +1329,32 @@ def render_content(tab):
                 id='BasinMap',
                 srcDoc=open('data/sa_basin_map.html', 'r').read(),
                 style={"height": "800px", "width": "100%"}
-                ),
-            dcc.Store(id="clicked-feature"),
-        ]) #end subdiv6
+                )
+        ]) #end subdiv2
 
 #Callback that triggers the regional maps to change based on the "Dropbox" option.
 @app.callback(
     Output("BasinMap", "srcDoc"),
-    Output("clicked-feature", "data", allow_duplicate=True),
-    Input("clicked-feature", "data"),
-    prevent_initial_call=True)
-def update_output_div(feature):
-    if feature is None:
-        raise PreventUpdate
-    else:
-        try:
-            figure = "data/hb"+str(feature['feature']['properties']['Basin'])+"_sword_map.html"
-            return open(figure,'r').read(), None
-        except:
-            raise PreventUpdate
+    Input("DropBox", "value"))
+def update_output_div(input_value):
+    return open(input_value,'r').read()
 
 #Callback that plots the node level attributes when a Reach ID is put into the input box.
 @app.callback(
-    Output("ReachGraph", "figure"),
-    Output("clicked-feature", "data"),
-    Input("clicked-feature", "data"),
+    [
+        Output(component_id='ReachGraph', component_property='figure'),
+        Output(component_id='plot_reach', component_property='n_clicks'),
+    ],
+    [
+        Input(component_id='ReachID', component_property='value'),
+        Input(component_id='plot_reach', component_property='n_clicks'),
+    ]
 )
-def update_graph(feature):
-    if feature is None:
-        raise PreventUpdate
-    else:
-        try:
-            reach = int(feature['feature']['properties']['reach_id'])
-            fig = plot_nodes(node_df_cp, reach)
-            return fig, None
-        except:
-            raise PreventUpdate   
+def update_graph(term, n_clicks):
+    if term or n_clicks:
+        fig = plot_nodes(node_df_cp, term)
+        n_clicks = None
+        return fig, n_clicks
 
 # Callback for "About" modal popup
 @app.callback(
