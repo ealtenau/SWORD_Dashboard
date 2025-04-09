@@ -809,7 +809,7 @@ header = dbc.Navbar(
                             html.Div(
                                 [
                                     html.H2(
-                                        "SWOT River Database (SWORD) - Version 17",
+                                        "SWOT River Database (SWORD) - Version 17b",
                                         style={
                                             "textAlign":"left",
                                             "margin-top":"15px"}),

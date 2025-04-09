@@ -161,7 +161,7 @@ def get_data(fn):
 outdir = '/Users/ealtenau/Desktop/folium_click_map_ck/data/'
 if os.path.exists(outdir) == False:
 	os.makedirs(outdir)
-shp_dir = '/Users/ealtenau/Documents/SWORD_Dev/outputs/Reaches_Nodes/v17/shp/'
+shp_dir = '/Users/ealtenau/Documents/SWORD_Dev/outputs/Reaches_Nodes/v17b/shp/'
 shp_paths = [file for file in getListOfFiles(shp_dir) if '.shp' in file and 'reaches' in file]
 shp_paths = np.unique(shp_paths) 
 basins = [path[-12:-8] for path in shp_paths]
