@@ -157,14 +157,14 @@ def get_data(fn):
 ########################################### MAIN CODE ###########################################
 #################################################################################################
 # read in and format data
-# outdir = '/Users/ealtenau/Documents/SWORD_Dev/src/SWORD_Dashboard/data/'
-outdir = '/Users/ealtenau/Desktop/folium_click_map_ck/data/'
+outdir = '/Users/ealtenau/Documents/SWORD_Dev/src/SWORD_Dashboard/data/'
+# outdir = '/Users/ealtenau/Desktop/folium_click_map_ck/data/'
 if os.path.exists(outdir) == False:
 	os.makedirs(outdir)
 shp_dir = '/Users/ealtenau/Documents/SWORD_Dev/outputs/Reaches_Nodes/v17b/shp/'
 shp_paths = [file for file in getListOfFiles(shp_dir) if '.shp' in file and 'reaches' in file]
 shp_paths = np.unique(shp_paths) 
-basins = [path[-12:-8] for path in shp_paths]
+basins = [path[-13:-9] for path in shp_paths]
 
 ## loop through each level 2 basin and produce SWORD maps. Save to "data" directory.  
 for ind in list(range(len(shp_paths))): #len(shp_paths); 35 is mississippi basin
