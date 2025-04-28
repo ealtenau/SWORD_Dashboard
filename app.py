@@ -948,7 +948,7 @@ app.layout = html.Div([
         html.Br(),
         html.Div(children=[
             html.Div(
-                'Copyright (c) 2024 University of North Carolina at Chapel Hill',
+                'Copyright (c) 2025 University of North Carolina at Chapel Hill',
                 style={
                     'textAlign':'left',
                     'font-size': '0.7em',
