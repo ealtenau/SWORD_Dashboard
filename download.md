@@ -6,6 +6,11 @@ SWORD was developed by the SWOT Science Team to serve as the foundation for SWOT
 
 Before using SWORD, please first read through the [SWORD Product Description Document](https://drive.google.com/file/d/1_1qmuJhL_Yd6ThW2QE4gW0G1eHH_XAer/view?usp=sharing). If you have additional questions, feel free to email **_sword.riverdb@gmail.com_**.
 
+**Version Notes:**
+- "Type" change for 1662 reaches and associated nodes globally. This change updates the Reach and Node IDs for impacted reaches and nodes. 
+- Updates to reach and node lengths and distance-from-outlet variable to correct a bug in the node length calculation for select reaches (impacted <2% of reaches globally).
+- SWORD v17b is the official version for SWOT **Version D** [**RiverSP Vector Products**](https://podaac.jpl.nasa.gov/SWOT?tab=datasets-information&sections=about). 
+
 ### Latest Version Download:
 
 SWORD is available in three formats: NetCDF, Geopackage, and Shapefile. Please choose which one you would like to download. Reach-to-reach and node-to-node translation files between SWORD v16 and v17 are also availble for download:
