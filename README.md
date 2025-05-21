@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="" width="300">
+    <img src="https://github.com/ealtenau/SWORD_Dashboard/blob/main/docs/figures/SWORD_explorer_logo.png" width="300">
 </p>
 
 # SWORD Explorer Dashboard
@@ -19,12 +19,12 @@ The "data" directory contains the SWORD maps, basin maps, and node files used to
 - Native SWORD reach geometries are built at 30 m resolution, however, for map efficiency gemetries have been simplified. To examine full reach geometries, please download the full SWORD Database.
 - Users can click on the "Report Reach" button below the main map to report issues or suggest changes to SWORD. 
 
-![Fig1]()
-##_Figure 1:_## Home screen of SWORD Explorer. Users can click on a basin to visualize reaches. 
+![Fig1](https://github.com/ealtenau/SWORD_Dashboard/blob/main/docs/figures/sword_explorer_home.png)
+**_Figure 1:_** Home screen of SWORD Explorer. Users can click on a basin to visualize reaches. 
 
-![Fig2]()
-##_Figure 2:_## The layers panel in the top-right hand corner of the map allows users to view different attributes for the displayed reaches. 
+![Fig2](https://github.com/ealtenau/SWORD_Dashboard/blob/main/docs/figures/sword_explorer_options.png)
+**_Figure 2:_** The layers panel in the top-right hand corner of the map allows users to view different attributes for the displayed reaches. 
 
-![Fig3]()
-##_Figure 3:_## Users can also choose to view the data over an accessible basemap or satellite imagery. 
+![Fig3](https://github.com/ealtenau/SWORD_Dashboard/blob/main/docs/figures/sword_explorer_basemap.png)
+**_Figure 3:_** Users can also choose to view the data over an accessible basemap or satellite imagery. 
 
