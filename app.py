@@ -316,469 +316,469 @@ button_download = dbc.Button(
 #################################################################################################
 ### Report Modal Components.
 
-# Report index table.
-index_tbl = pd.DataFrame(data = {
-    'Report Type': ['Reach Type Change', 'Node Order Change', 'Reach Neighbor Change', 'Attribute Value Change'],
-    'Report Index': [1, 2, 3, 4]
-})
+# # Report index table.
+# index_tbl = pd.DataFrame(data = {
+#     'Report Type': ['Reach Type Change', 'Node Order Change', 'Reach Neighbor Change', 'Attribute Value Change'],
+#     'Report Index': [1, 2, 3, 4]
+# })
 
-# Attribute index table.
-attr_index_tbl = pd.DataFrame(data = {
-    'Attribute': [
-        'Flow Accumulation (sq. km)',
-        'Water Surface Elevation (m)',
-        'Width (m)',
-        'Slope (m/km)',
-        'River Name'],
-    'Attribute Index': [1, 2, 3, 4, 5]
-})
+# # Attribute index table.
+# attr_index_tbl = pd.DataFrame(data = {
+#     'Attribute': [
+#         'Flow Accumulation (sq. km)',
+#         'Water Surface Elevation (m)',
+#         'Width (m)',
+#         'Slope (m/km)',
+#         'River Name'],
+#     'Attribute Index': [1, 2, 3, 4, 5]
+# })
 
-# Reach type change table.
-type_csv = pd.DataFrame(data = {
-    'reach_id': [71212000343, 71452000461, 81322000305, 'etc.'],
-    'report_index': [1, 1, 1, 'etc.'],
-    'new_type': [1, 3, 3, 'etc.']
-})
+# # Reach type change table.
+# type_csv = pd.DataFrame(data = {
+#     'reach_id': [71212000343, 71452000461, 81322000305, 'etc.'],
+#     'report_index': [1, 1, 1, 'etc.'],
+#     'new_type': [1, 3, 3, 'etc.']
+# })
 
-# Node order change table.
-node_csv = pd.DataFrame(data = {
-    'reach_id': [71212000343, 71452000461, 81322000305, 'etc.'],
-    'report_index': [2, 2, 2, 'etc.']
-})
+# # Node order change table.
+# node_csv = pd.DataFrame(data = {
+#     'reach_id': [71212000343, 71452000461, 81322000305, 'etc.'],
+#     'report_index': [2, 2, 2, 'etc.']
+# })
 
-# Reach neighbor change table.
-ngh_csv = pd.DataFrame(data = {
-    'reach_id': [71212000343, 71452000461, 81322000305, 'etc.'],
-    'report_index': [3, 3, 3, 'etc.'],
-    'upstream_neighbors': ['71212000351', '71452000101', '81322000405 81322000315', 'etc.'],
-    'downstream_neighbors': ['71212000333 71213000321', '71452000451', '81322000295', 'etc.']
-})
+# # Reach neighbor change table.
+# ngh_csv = pd.DataFrame(data = {
+#     'reach_id': [71212000343, 71452000461, 81322000305, 'etc.'],
+#     'report_index': [3, 3, 3, 'etc.'],
+#     'upstream_neighbors': ['71212000351', '71452000101', '81322000405 81322000315', 'etc.'],
+#     'downstream_neighbors': ['71212000333 71213000321', '71452000451', '81322000295', 'etc.']
+# })
 
-# Attribute value change table.
-attr_csv = pd.DataFrame(data = {
-    'reach_id': [71212000343, 71452000461, 81322000305, 'etc.'],
-    'report_index': [4, 4, 4, 'etc.'],
-    'attribute_index': [1, 3, 5, 'etc.'],
-    'attribute_value': [25000, 150, 'Yukon River', 'etc.']
-})
+# # Attribute value change table.
+# attr_csv = pd.DataFrame(data = {
+#     'reach_id': [71212000343, 71452000461, 81322000305, 'etc.'],
+#     'report_index': [4, 4, 4, 'etc.'],
+#     'attribute_index': [1, 3, 5, 'etc.'],
+#     'attribute_value': [25000, 150, 'Yukon River', 'etc.']
+# })
 
-# Text for the modal pop-up triggered by the "Report" button above the node plots.
-markdown_body = html.Div([
-    dcc.Markdown('''
-    ### Reporting Instructions
+# # Text for the modal pop-up triggered by the "Report" button above the node plots.
+# markdown_body = html.Div([
+#     dcc.Markdown('''
+#     ### Reporting Instructions
 
-    The SWORD database is an evolving product that is intended to undergo
-    continued improvements and updates before and after the launch of SWOT.
-    Currently, there are limited manual adjustments made to SWORD which result
-    in the database containing some artifacts primarily due to errors that occur
-    during the merging process between the various databases. We have done our best
-    to manually and automatically find major errors in SWORD, however, input from
-    the SWOT Science Team and other hydrologists is helpful to identify persistent
-    artifacts. **This page allows users to report common SWORD issues.** More
-    details on how to report more complex issues (such as reach definition changes or
-    centerline adjustments) can be found in the [SWORD Update Request Documentation]
-    (https://drive.google.com/file/d/15OSrP0HY5HnwpEWh67ObYEWqwsAPSIEv/view?usp=sharing).
+#     The SWORD database is an evolving product that is intended to undergo
+#     continued improvements and updates before and after the launch of SWOT.
+#     Currently, there are limited manual adjustments made to SWORD which result
+#     in the database containing some artifacts primarily due to errors that occur
+#     during the merging process between the various databases. We have done our best
+#     to manually and automatically find major errors in SWORD, however, input from
+#     the SWOT Science Team and other hydrologists is helpful to identify persistent
+#     artifacts. **This page allows users to report common SWORD issues.** More
+#     details on how to report more complex issues (such as reach definition changes or
+#     centerline adjustments) can be found in the [SWORD Update Request Documentation]
+#     (https://drive.google.com/file/d/15OSrP0HY5HnwpEWh67ObYEWqwsAPSIEv/view?usp=sharing).
 
-    ### Update Timeline
+#     ### Update Timeline
 
-    SWORD updates are classified into two categories: 1) trivial and 2) non-trivial.
-    Trivial updates are easier to implement and impact less of the database such as
-    the report issues on this dashboard: node order changes, river name changes, reach
-    neighbor changes, and river name changes. Non-trivial updates are more difficult to
-    implement and may take manual intervention. Examples of non-trivial updates are
-    river centerline adjustments and reach definition changes.  **Trivial updates can
-    be expected to be implemented approximately every quarter, while non-trivial updates
-    are not guaranteed to be implemented before SWOT reprocessings (~annually).**
+#     SWORD updates are classified into two categories: 1) trivial and 2) non-trivial.
+#     Trivial updates are easier to implement and impact less of the database such as
+#     the report issues on this dashboard: node order changes, river name changes, reach
+#     neighbor changes, and river name changes. Non-trivial updates are more difficult to
+#     implement and may take manual intervention. Examples of non-trivial updates are
+#     river centerline adjustments and reach definition changes.  **Trivial updates can
+#     be expected to be implemented approximately every quarter, while non-trivial updates
+#     are not guaranteed to be implemented before SWOT reprocessings (~annually).**
 
-    ### Dashboard Reporting
+#     ### Dashboard Reporting
 
-    Users can report a single reach or a batch CSV file for the report categories below. If
-    a customized or non-trival update is required please refer to the [SWORD Update Request Documentation]
-    (https://drive.google.com/file/d/15OSrP0HY5HnwpEWh67ObYEWqwsAPSIEv/view?usp=sharing). If you
-    encounter any problems while reporting update requests, or have any questions, please feel free to email
-    **sword_riverdb@gmail.com**.
+#     Users can report a single reach or a batch CSV file for the report categories below. If
+#     a customized or non-trival update is required please refer to the [SWORD Update Request Documentation]
+#     (https://drive.google.com/file/d/15OSrP0HY5HnwpEWh67ObYEWqwsAPSIEv/view?usp=sharing). If you
+#     encounter any problems while reporting update requests, or have any questions, please feel free to email
+#     **sword_riverdb@gmail.com**.
 
-    Each request type has a unique "report index" which is required when submitting batch files.
-    Report indexes are as follows:
-    '''
-    ),
-    dash_table.DataTable(
-        index_tbl.to_dict('records'),
-        [{"name": i, "id": i} for i in index_tbl.columns],
-        style_cell={'textAlign': 'left'},
-    ),
-    html.Br(),
-    dcc.Markdown('''
-    **Reach Type Change:**
+#     Each request type has a unique "report index" which is required when submitting batch files.
+#     Report indexes are as follows:
+#     '''
+#     ),
+#     dash_table.DataTable(
+#         index_tbl.to_dict('records'),
+#         [{"name": i, "id": i} for i in index_tbl.columns],
+#         style_cell={'textAlign': 'left'},
+#     ),
+#     html.Br(),
+#     dcc.Markdown('''
+#     **Reach Type Change:**
 
-    Reach “type” changes do not affect reach boundaries, only the number of the type identifier
-    in the reach and node ids (the last digit in the id structure). For example, a user may
-    notice that a current reach identified as a lake (type = 3) is located below a reservoir
-    and dam and should be reassigned as a river reach (type = 1). Type categories in
-    SWORD are: 1 - river, 3 - lake/reservior, 4 - dam/waterfall, 5 - unreliable topology (such as deltas).
-    To report a reach type change, users should submit a **CSV file** containing three columns:
-    the current "reach id", the "report index", and the "new type" of the reach. **Please note
-    that column order matters!**
-    '''
-    ),
-    dash_table.DataTable(
-        type_csv.to_dict('records'),
-        [{"name": i, "id": i} for i in type_csv.columns],
-        style_cell={'textAlign': 'left'},
-    ),
-    html.Br(),
-    dcc.Markdown('''
-    **Node Order Change:**
+#     Reach “type” changes do not affect reach boundaries, only the number of the type identifier
+#     in the reach and node ids (the last digit in the id structure). For example, a user may
+#     notice that a current reach identified as a lake (type = 3) is located below a reservoir
+#     and dam and should be reassigned as a river reach (type = 1). Type categories in
+#     SWORD are: 1 - river, 3 - lake/reservior, 4 - dam/waterfall, 5 - unreliable topology (such as deltas).
+#     To report a reach type change, users should submit a **CSV file** containing three columns:
+#     the current "reach id", the "report index", and the "new type" of the reach. **Please note
+#     that column order matters!**
+#     '''
+#     ),
+#     dash_table.DataTable(
+#         type_csv.to_dict('records'),
+#         [{"name": i, "id": i} for i in type_csv.columns],
+#         style_cell={'textAlign': 'left'},
+#     ),
+#     html.Br(),
+#     dcc.Markdown('''
+#     **Node Order Change:**
 
-    Node directions can be reversed in areas where flow accumulation and elevation resolution
-    are poor (i.e., there is no change), therefore it is difficult to automatically identify
-    correct topology. Incorrect node directions are often identified when the node order is the
-    in opposite direction of elevation change or, in areas where elevation and flow accumulation
-    are spatially static, the upstream or downstream neighbors are incorrect. To report a node order change,
-    users should submit a **CSV file** containing two columns: the current "reach id" and the "report index".
-    **Please note that column order matters!**
-    '''
-    ),
-    dash_table.DataTable(
-        node_csv.to_dict('records'),
-        [{"name": i, "id": i} for i in node_csv.columns],
-        style_cell={'textAlign': 'left'},
-    ),
-    html.Br(),
-    dcc.Markdown('''
-    **Reach Neighbor Change:**
+#     Node directions can be reversed in areas where flow accumulation and elevation resolution
+#     are poor (i.e., there is no change), therefore it is difficult to automatically identify
+#     correct topology. Incorrect node directions are often identified when the node order is the
+#     in opposite direction of elevation change or, in areas where elevation and flow accumulation
+#     are spatially static, the upstream or downstream neighbors are incorrect. To report a node order change,
+#     users should submit a **CSV file** containing two columns: the current "reach id" and the "report index".
+#     **Please note that column order matters!**
+#     '''
+#     ),
+#     dash_table.DataTable(
+#         node_csv.to_dict('records'),
+#         [{"name": i, "id": i} for i in node_csv.columns],
+#         style_cell={'textAlign': 'left'},
+#     ),
+#     html.Br(),
+#     dcc.Markdown('''
+#     **Reach Neighbor Change:**
 
-    In areas where topology is hard to automatically determine, upstream and downstream neighbors
-    may be incorrect. To report a reach neighbor change, users should submit a **CSV file** containing
-    four columns: the current "reach id", the "report index", the new "upstream neighbors", and the new
-    "downstream neighbors". **Please note that column order matters!**
-    '''
-    ),
-    dash_table.DataTable(
-        ngh_csv.to_dict('records'),
-        [{"name": i, "id": i} for i in ngh_csv.columns],
-        style_cell={'textAlign': 'left'},
-    ),
-    html.Br(),
-    dcc.Markdown('''
-    **Attribute Value Change:**
+#     In areas where topology is hard to automatically determine, upstream and downstream neighbors
+#     may be incorrect. To report a reach neighbor change, users should submit a **CSV file** containing
+#     four columns: the current "reach id", the "report index", the new "upstream neighbors", and the new
+#     "downstream neighbors". **Please note that column order matters!**
+#     '''
+#     ),
+#     dash_table.DataTable(
+#         ngh_csv.to_dict('records'),
+#         [{"name": i, "id": i} for i in ngh_csv.columns],
+#         style_cell={'textAlign': 'left'},
+#     ),
+#     html.Br(),
+#     dcc.Markdown('''
+#     **Attribute Value Change:**
 
-    SWORD attributes are derived by merging many different global datasets and their respective
-    attributes into one congruent product. In cases where the river centerlines do not match well
-    between databases, river attributes may be missing or incorrect. These errors are more common
-    around tributary and channel junctions, as well as in large braided and anastomosing rivers.
-    There are five SWORD attributes users may report new values for. These attributes and their
-    "attribute indexes" are as follows:
-    '''
-    ),
-    dash_table.DataTable(
-        attr_index_tbl.to_dict('records'),
-        [{"name": i, "id": i} for i in attr_index_tbl.columns],
-        style_cell={'textAlign': 'left'},
-    ),
-    html.Br(),
-    dcc.Markdown('''
-    To report an attribute value change, users should submit a **CSV file** containing four columns:
-    the current "reach id", the "report index", the "attribute index" and the new "attribute value".
-    **Please note that column order matters!**
-    '''
-    ),
-    dash_table.DataTable(
-        attr_csv.to_dict('records'),
-        [{"name": i, "id": i} for i in attr_csv.columns],
-        style_cell={'textAlign': 'left'},
-    ),
-    html.Br()
-])
+#     SWORD attributes are derived by merging many different global datasets and their respective
+#     attributes into one congruent product. In cases where the river centerlines do not match well
+#     between databases, river attributes may be missing or incorrect. These errors are more common
+#     around tributary and channel junctions, as well as in large braided and anastomosing rivers.
+#     There are five SWORD attributes users may report new values for. These attributes and their
+#     "attribute indexes" are as follows:
+#     '''
+#     ),
+#     dash_table.DataTable(
+#         attr_index_tbl.to_dict('records'),
+#         [{"name": i, "id": i} for i in attr_index_tbl.columns],
+#         style_cell={'textAlign': 'left'},
+#     ),
+#     html.Br(),
+#     dcc.Markdown('''
+#     To report an attribute value change, users should submit a **CSV file** containing four columns:
+#     the current "reach id", the "report index", the "attribute index" and the new "attribute value".
+#     **Please note that column order matters!**
+#     '''
+#     ),
+#     dash_table.DataTable(
+#         attr_csv.to_dict('records'),
+#         [{"name": i, "id": i} for i in attr_csv.columns],
+#         style_cell={'textAlign': 'left'},
+#     ),
+#     html.Br()
+# ])
 
 #################################################################################################
 ### Formats for the different reporting options triggered by the report list in the
 ### report modal pop-up.
 
 # Report drop down list.
-report_list = [
-    {"label": "Reach Type Change", "value": 1},
-    {"label": "Node Order Change", "value": 2},
-    {"label": "Reach Neighbor Change", 'value': 3},
-    {"label": "Attribute Value Change", 'value': 4},
-    ]
+# report_list = [
+#     {"label": "Reach Type Change", "value": 1},
+#     {"label": "Node Order Change", "value": 2},
+#     {"label": "Reach Neighbor Change", 'value': 3},
+#     {"label": "Attribute Value Change", 'value': 4},
+#     ]
 
 # Type change options.
-type_body = html.Div([
-    html.H6(
-        "Enter a Reach ID (required)"
-    ),
-    dcc.Input(
-        id = 'report-1',
-        type = 'text',
-        placeholder = "Reach ID",
-        debounce=True,
-        required=True,
-        maxLength=11,
-        ),
-    html.Div(html.Br(),),
-    html.H6(
-        "Choose a new reach type (required)"
-    ),
-    dcc.RadioItems(
-        id = 'type_radio',
-        options=[
-        {'label':' 1 - River','value':1},
-        {'label':' 3 - Lake/Reservior', 'value':3},
-        {'label':' 4 - Dam/Waterfall','value':4},
-        {'label':' 5 - Unreliable Topology','value':5},],
-        className='btn-group-vertical p-2'),
-    html.Div([html.Br()]),
-    html.Div([
-        dbc.Button(
-            "Submit",
-            id="report-submit1",
-            outline=False,
-            color="secondary",
-            size="sm",
-            style={
-                "textTransform": "none",
-                # "textAlign":"center",
-                "width":"30%"
-            },
-        ),
-    ]),
-    html.Div([html.Br()]),
-    html.Div(id='submit_status1', style={"width":"50%"}),
-])
+# type_body = html.Div([
+#     html.H6(
+#         "Enter a Reach ID (required)"
+#     ),
+#     dcc.Input(
+#         id = 'report-1',
+#         type = 'text',
+#         placeholder = "Reach ID",
+#         debounce=True,
+#         required=True,
+#         maxLength=11,
+#         ),
+#     html.Div(html.Br(),),
+#     html.H6(
+#         "Choose a new reach type (required)"
+#     ),
+#     dcc.RadioItems(
+#         id = 'type_radio',
+#         options=[
+#         {'label':' 1 - River','value':1},
+#         {'label':' 3 - Lake/Reservior', 'value':3},
+#         {'label':' 4 - Dam/Waterfall','value':4},
+#         {'label':' 5 - Unreliable Topology','value':5},],
+#         className='btn-group-vertical p-2'),
+#     html.Div([html.Br()]),
+#     html.Div([
+#         dbc.Button(
+#             "Submit",
+#             id="report-submit1",
+#             outline=False,
+#             color="secondary",
+#             size="sm",
+#             style={
+#                 "textTransform": "none",
+#                 # "textAlign":"center",
+#                 "width":"30%"
+#             },
+#         ),
+#     ]),
+#     html.Div([html.Br()]),
+#     html.Div(id='submit_status1', style={"width":"50%"}),
+# ])
 
-# Node change options.
-node_body = html.Div([
-    html.H6(
-        "Enter a Reach ID (required)"
-    ),
-    dcc.Input(
-        id = 'report-2',
-        type = 'text',
-        placeholder = "Reach ID",
-        debounce=True,
-        required=True,
-        maxLength=11,
-    ),
-    html.Div(html.Br(),),
-    html.Div([
-        dbc.Button(
-            "Submit",
-            id="report-submit2",
-            outline=False,
-            color="secondary",
-            size="sm",
-            style={
-                "textTransform": "none",
-                "width":"30%"
-            },
-        ),
-    ]),
-    html.Div([html.Br()]),
-    html.Div(id='submit_status2', style={"width":"50%"}),
-])
+# # Node change options.
+# node_body = html.Div([
+#     html.H6(
+#         "Enter a Reach ID (required)"
+#     ),
+#     dcc.Input(
+#         id = 'report-2',
+#         type = 'text',
+#         placeholder = "Reach ID",
+#         debounce=True,
+#         required=True,
+#         maxLength=11,
+#     ),
+#     html.Div(html.Br(),),
+#     html.Div([
+#         dbc.Button(
+#             "Submit",
+#             id="report-submit2",
+#             outline=False,
+#             color="secondary",
+#             size="sm",
+#             style={
+#                 "textTransform": "none",
+#                 "width":"30%"
+#             },
+#         ),
+#     ]),
+#     html.Div([html.Br()]),
+#     html.Div(id='submit_status2', style={"width":"50%"}),
+# ])
 
-# Neighbor change options.
-neighbor_body = html.Div([
-    html.H6(
-        "Enter a Reach ID (required)",
-    ),
-    dcc.Input(
-        id = 'report-3',
-        type = 'text',
-        placeholder = "Reach ID",
-        debounce=True,
-        required=True,
-        maxLength=11,
-        ),
-    html.Div(html.Br(),),
-    html.H6(
-        "Correct Upstream Reaches (required)",
-    ),
-    html.P(
-        "Format: 74248300231 74248300341 etc. (a space is needed between Reach IDs)"
-    ),
-    html.P(
+# # Neighbor change options.
+# neighbor_body = html.Div([
+#     html.H6(
+#         "Enter a Reach ID (required)",
+#     ),
+#     dcc.Input(
+#         id = 'report-3',
+#         type = 'text',
+#         placeholder = "Reach ID",
+#         debounce=True,
+#         required=True,
+#         maxLength=11,
+#         ),
+#     html.Div(html.Br(),),
+#     html.H6(
+#         "Correct Upstream Reaches (required)",
+#     ),
+#     html.P(
+#         "Format: 74248300231 74248300341 etc. (a space is needed between Reach IDs)"
+#     ),
+#     html.P(
 
-    ),
-    dcc.Input(
-        id = 'upstream',
-        type = 'text',
-        placeholder = "Enter upstream reaches",
-        debounce=True,
-        # required=True,
-        maxLength=47,
-        ),
-    html.Div(html.Br(),),
-    html.H6(
-        "Correct Downstream Reaches (required)",
-    ),
-    html.P(
-        "Format: 74248300231 74248300341 etc. (a space is needed between Reach IDs)"
-    ),
-    dcc.Input(
-        id = 'downstream',
-        type = 'text',
-        placeholder = "Enter downstream reaches",
-        debounce=True,
-        # required=True,
-        maxLength=47,
-        ),
-    html.Div([html.Br()]),
-    html.Div([
-        dbc.Button(
-            "Submit",
-            id="report-submit3",
-            outline=False,
-            color="secondary",
-            size="sm",
-            style={
-                "textTransform": "none",
-                # "textAlign":"center",
-                "width":"30%"
-            },
-        ),
-    ]),
-    html.Div([html.Br()]),
-    html.Div(id='submit_status3', style={"width":"50%"}),
-])
+#     ),
+#     dcc.Input(
+#         id = 'upstream',
+#         type = 'text',
+#         placeholder = "Enter upstream reaches",
+#         debounce=True,
+#         # required=True,
+#         maxLength=47,
+#         ),
+#     html.Div(html.Br(),),
+#     html.H6(
+#         "Correct Downstream Reaches (required)",
+#     ),
+#     html.P(
+#         "Format: 74248300231 74248300341 etc. (a space is needed between Reach IDs)"
+#     ),
+#     dcc.Input(
+#         id = 'downstream',
+#         type = 'text',
+#         placeholder = "Enter downstream reaches",
+#         debounce=True,
+#         # required=True,
+#         maxLength=47,
+#         ),
+#     html.Div([html.Br()]),
+#     html.Div([
+#         dbc.Button(
+#             "Submit",
+#             id="report-submit3",
+#             outline=False,
+#             color="secondary",
+#             size="sm",
+#             style={
+#                 "textTransform": "none",
+#                 # "textAlign":"center",
+#                 "width":"30%"
+#             },
+#         ),
+#     ]),
+#     html.Div([html.Br()]),
+#     html.Div(id='submit_status3', style={"width":"50%"}),
+# ])
 
-# Attribute value change options.
-attr_body = html.Div([
-    html.H6(
-        "Enter a Reach ID (required)",
-    ),
-    dcc.Input(
-        id = 'report-4',
-        type = 'text',
-        placeholder = "Reach ID",
-        debounce=True,
-        required=True,
-        maxLength=11,
-        ),
-    html.Div(html.Br(),),
-    html.H6(
-        "Choose an Attribute to Update (required)"
-    ),
-    dcc.RadioItems(
-        id = 'attr_radio',
-        options=[
-        {'label':' Flow Accumulation (sq. km)','value':1},
-        {'label':' Water Surface Elevation (m)', 'value':2},
-        {'label':' Width (m)','value':3},
-        {'label':' Slope (m/km)','value':4},
-        {'label':' River Name','value':5},],
-        className='btn-group-vertical p-2'),
-    html.Div([html.Br()]),
-    html.H6(
-        "Enter Attribute Value (required)"
-    ),
-    dcc.Input(
-        id = 'attr_val',
-        type = 'text',
-        placeholder = "Enter New Value",
-        debounce=True,
-        required=True,
-        ),
-    html.Div([html.Br()]),
-    html.Div([
-         dbc.Button(
-            "Submit",
-            id="report-submit4",
-            outline=False,
-            color="secondary",
-            size="sm",
-            style={
-                "textTransform": "none",
-                # "textAlign":"center",
-                "width":"30%"
-            },
-        ),
-    ]),
-    html.Div([html.Br()]),
-    html.Div(id='submit_status4', style={"width":"50%"}),
-])
+# # Attribute value change options.
+# attr_body = html.Div([
+#     html.H6(
+#         "Enter a Reach ID (required)",
+#     ),
+#     dcc.Input(
+#         id = 'report-4',
+#         type = 'text',
+#         placeholder = "Reach ID",
+#         debounce=True,
+#         required=True,
+#         maxLength=11,
+#         ),
+#     html.Div(html.Br(),),
+#     html.H6(
+#         "Choose an Attribute to Update (required)"
+#     ),
+#     dcc.RadioItems(
+#         id = 'attr_radio',
+#         options=[
+#         {'label':' Flow Accumulation (sq. km)','value':1},
+#         {'label':' Water Surface Elevation (m)', 'value':2},
+#         {'label':' Width (m)','value':3},
+#         {'label':' Slope (m/km)','value':4},
+#         {'label':' River Name','value':5},],
+#         className='btn-group-vertical p-2'),
+#     html.Div([html.Br()]),
+#     html.H6(
+#         "Enter Attribute Value (required)"
+#     ),
+#     dcc.Input(
+#         id = 'attr_val',
+#         type = 'text',
+#         placeholder = "Enter New Value",
+#         debounce=True,
+#         required=True,
+#         ),
+#     html.Div([html.Br()]),
+#     html.Div([
+#          dbc.Button(
+#             "Submit",
+#             id="report-submit4",
+#             outline=False,
+#             color="secondary",
+#             size="sm",
+#             style={
+#                 "textTransform": "none",
+#                 # "textAlign":"center",
+#                 "width":"30%"
+#             },
+#         ),
+#     ]),
+#     html.Div([html.Br()]),
+#     html.Div(id='submit_status4', style={"width":"50%"}),
+# ])
 
 # Report reach modal overlay layout.
-report_overlay = dbc.Modal(
-    [
-        dbc.ModalBody(
-            html.Div(children=[
-                markdown_body,
-                html.Div([
-                    html.H5([
-                        'Upload a Batch CSV File:'
-                    ]),
-                ]),
-                html.Div([
-                    dcc.Upload(id='upload-data',
-                    children=html.Div([
-                        'Drag and Drop or ',
-                        html.A(
-                            'Select Files',
-                            style={
-                                'color':'#2fa4e7',
-                                'text-decoration':'underline'
-                            }
-                        )
-                    ]), style={
-                        'width': '36%',
-                        'lineHeight': '60px',
-                        'borderWidth': '1px',
-                        'borderStyle': 'dashed',
-                        'borderRadius': '5px',
-                        'textAlign': 'center',
-                    }, multiple=True),
-                ]),
-                html.Div([html.Br()]),
-                html.Div(id='upload-status'),
-                html.Div([html.Br()]),
-                html.Div([
-                    html.H5([
-                    'Report a Single Reach:'
-                    ]),
-                ]),
-                html.Div([
-                    dcc.Dropdown(
-                        id='Report_DropBox',
-                        options=report_list,
-                        style={
-                            # "textAlign":"center",
-                            "width":"60%",
-                        }
-                    ),
-                ]),
-                html.Div([html.Br()]),
-                html.Div(id='report-options'), #different options for reporting a reach.
-            ],#style={"textAlign":"center"}
-            ),
-        ),
-        html.Div([html.Br()]),
-        dbc.ModalFooter(
-            dbc.Button(
-                "Close",
-                id="report-close",
-                className="howto-bn"
-                )),
-    ],
-    id="report-modal",
-    size="lg",
-)
+# report_overlay = dbc.Modal(
+#     [
+#         dbc.ModalBody(
+#             html.Div(children=[
+#                 markdown_body,
+#                 html.Div([
+#                     html.H5([
+#                         'Upload a Batch CSV File:'
+#                     ]),
+#                 ]),
+#                 html.Div([
+#                     dcc.Upload(id='upload-data',
+#                     children=html.Div([
+#                         'Drag and Drop or ',
+#                         html.A(
+#                             'Select Files',
+#                             style={
+#                                 'color':'#2fa4e7',
+#                                 'text-decoration':'underline'
+#                             }
+#                         )
+#                     ]), style={
+#                         'width': '36%',
+#                         'lineHeight': '60px',
+#                         'borderWidth': '1px',
+#                         'borderStyle': 'dashed',
+#                         'borderRadius': '5px',
+#                         'textAlign': 'center',
+#                     }, multiple=True),
+#                 ]),
+#                 html.Div([html.Br()]),
+#                 html.Div(id='upload-status'),
+#                 html.Div([html.Br()]),
+#                 html.Div([
+#                     html.H5([
+#                     'Report a Single Reach:'
+#                     ]),
+#                 ]),
+#                 html.Div([
+#                     dcc.Dropdown(
+#                         id='Report_DropBox',
+#                         options=report_list,
+#                         style={
+#                             # "textAlign":"center",
+#                             "width":"60%",
+#                         }
+#                     ),
+#                 ]),
+#                 html.Div([html.Br()]),
+#                 html.Div(id='report-options'), #different options for reporting a reach.
+#             ],#style={"textAlign":"center"}
+#             ),
+#         ),
+#         html.Div([html.Br()]),
+#         dbc.ModalFooter(
+#             dbc.Button(
+#                 "Close",
+#                 id="report-close",
+#                 className="howto-bn"
+#                 )),
+#     ],
+#     id="report-modal",
+#     size="lg",
+# )
 
 # Button to report a reach and trigger the report modal pop-up.
-button_report = dbc.Button(
-    "Report Reach",
-    id="report-open",
-    outline=False,
-    color="primary",
-    style={
-        "textTransform": "none",
-        "margin-left": "5px",
-        "color":"white",
-        # "background-color":"#C42828",
-        "textAlign":"center"
-    },
-)
+# button_report = dbc.Button(
+#     "Report Reach",
+#     id="report-open",
+#     outline=False,
+#     color="primary",
+#     style={
+#         "textTransform": "none",
+#         "margin-left": "5px",
+#         "color":"white",
+#         # "background-color":"#C42828",
+#         "textAlign":"center"
+#     },
+# )
 
 #################################################################################################
 
@@ -930,17 +930,17 @@ app.layout = html.Div([
         html.Br(),
         html.Div(id='tabs-content-example-graph'), #callback for tab content.
         html.Div([
-            html.H5(
+            html.H4(
                 'Click a Reach to plot Node level attributes:',
                 style={
-                    'marginTop' : '5px',
+                    'marginTop' : '30px',
                     'marginBottom' : '5px',
-                    'size':'25'}
+                    'size':'35'}
             ),
-            html.Div('(Click the "Report Reach" button \
-                to file a problem with a Reach)'),
-            button_report,
-            report_overlay,
+            # html.Div('(Click the "Report Reach" button \
+            #     to file a problem with a Reach)'),
+            # button_report,
+            # report_overlay,
             dcc.Graph(
                 figure=plot_nodes(node_df_cp),
                 id='ReachGraph')
@@ -948,7 +948,7 @@ app.layout = html.Div([
         html.Br(),
         html.Div(children=[
             html.Div(
-                'Copyright (c) 2025 University of North Carolina at Chapel Hill',
+                'Copyright (c) 2026 University of North Carolina at Chapel Hill',
                 style={
                     'textAlign':'left',
                     'font-size': '0.7em',
@@ -993,7 +993,7 @@ def render_content(tab):
     if tab == 'tab-1':
         return html.Div([
             html.Div(
-                html.H5('Click on a Basin to Visualize Reaches'),
+                html.H4('Click on a Basin to Visualize Reaches'),
                     style={
                         'marginBottom' : '5px',
                         'size':'30',
@@ -1022,7 +1022,7 @@ def render_content(tab):
     elif tab == 'tab-2':
         return html.Div([
             html.Div(
-                html.H5('Click on a Basin to Visualize Reaches'),
+                html.H4('Click on a Basin to Visualize Reaches'),
                     style={
                         'marginBottom' : '5px',
                         'size':'30',
@@ -1051,7 +1051,7 @@ def render_content(tab):
     elif tab == 'tab-3':
         return html.Div([
             html.Div(
-                html.H5('Click on a Basin to Visualize Reaches'),
+                html.H4('Click on a Basin to Visualize Reaches'),
                     style={
                         'marginBottom' : '5px',
                         'size':'30',
@@ -1080,7 +1080,7 @@ def render_content(tab):
     elif tab == 'tab-4':
         return html.Div([
             html.Div(
-                html.H5('Click on a Basin to Visualize Reaches'),
+                html.H4('Click on a Basin to Visualize Reaches'),
                     style={
                         'marginBottom' : '5px',
                         'size':'30',
@@ -1110,7 +1110,7 @@ def render_content(tab):
     elif tab == 'tab-5':
         return html.Div([
             html.Div(
-                html.H5('Click on a Basin to Visualize Reaches'),
+                html.H4('Click on a Basin to Visualize Reaches'),
                     style={
                         'marginBottom' : '5px',
                         'size':'30',
@@ -1139,7 +1139,7 @@ def render_content(tab):
     elif tab == 'tab-6':
         return html.Div([
             html.Div(
-                html.H5('Click on a Basin to Visualize Reaches'),
+                html.H4('Click on a Basin to Visualize Reaches'),
                     style={
                         'marginBottom' : '5px',
                         'size':'30',

@@ -6,7 +6,7 @@ The [Surface Water and Ocean Topography (SWOT) satellite mission](https://swot.j
 
 ### Intended Useage
 
-The SWORD database is an evolving product that is intended to undergo continued improvements and updates after the launch of SWOT. Given that SWORD is a global product resulting from the combination of many different products, there are some areas that likely need improvement to be hydrologically correct. We have done our best to manually and automatically find major errors in SWORD, however, input from the SWOT Science Team and other hydrologists is helpful to identify persistent artifacts. **This dashboard is intended to help explore the most up-to-date SWORD version, and help users identify and report areas for improving SWORD.** The "Report Reach" button in this app allows the ability to report common SWORD errors on a reach-by-reach basis. More detail on how to report a list of reach errors or more complex issues can be found in the [SWORD Update Request Documentation](https://drive.google.com/file/d/15OSrP0HY5HnwpEWh67ObYEWqwsAPSIEv/view?usp=sharing).
+The SWORD database is an evolving product that is intended to undergo continued improvements and updates after the launch of SWOT. **This dashboard is intended to help explore the most up-to-date SWORD version**.
 
 ### Notes for Users
 
@@ -15,3 +15,7 @@ The SWORD database is an evolving product that is intended to undergo continued 
 - Users can hover or click on a reach to view attribute information.
 - Users can enter a Reach ID into the input box below the map to plot node-level properties of node order, width, elevation, flow accumulation, sinuosity, and number of channels along a specified reach.
 - Native SWORD reach geometries are built at 30 m resolution, however, for map efficiency gemetries have been simplified. To examine full reach geometries, please download the full SWORD Database.
+
+### Contact Information:
+
+SWORD is managed by the [Global Hydrology Lab] (https://uncglobalhydrology.org/) at the University of North Carolina at Chapel Hill. If you have questions, feel free to email Tamlin Pavelsky _(pavelsky@unc.edu)_.
