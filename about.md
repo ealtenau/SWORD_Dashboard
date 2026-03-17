@@ -6,7 +6,7 @@ The [Surface Water and Ocean Topography (SWOT) satellite mission](https://swot.j
 
 ### Intended Useage
 
-The SWORD database is an evolving product that is intended to undergo continued improvements and updates after the launch of SWOT. **This dashboard is intended to help explore the most up-to-date SWORD version**.
+The SWORD database is an evolving product that is intended to undergo continued improvements and updates after the launch of SWOT. **This dashboard is intended to help users explore the most up-to-date SWORD version**.
 
 ### Notes for Users
 
