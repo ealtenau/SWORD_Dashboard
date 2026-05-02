@@ -140,6 +140,37 @@ Use three classes of generated assets:
      ready.
    - Move to Parquet or DuckDB-WASM once the frontend prototype works.
 
+### Split Reach PMTiles Workflow
+
+Large continent reach files can be split into spatial subsets before PMTiles
+generation. This keeps each archive near the target feature count while the
+frontend still treats the pieces as one logical continent.
+
+```bash
+python scripts/split_continent_reaches.py \
+  /path/to/af_sword_reaches_v17b.gpkg \
+  /path/to/as_sword_reaches_v17b.gpkg \
+  /path/to/eu_sword_reaches_v17b.gpkg \
+  /path/to/na_sword_reaches_v17b.gpkg \
+  /path/to/oc_sword_reaches_v17b.gpkg \
+  /path/to/sa_sword_reaches_v17b.gpkg \
+  --max-reaches 20000
+```
+
+The script writes split GeoPackages to `external_data/sword_split_reaches/`,
+a tile manifest to `frontend/public/tiles/sword_tile_manifest.json`, and a helper
+build script at `scripts/build_split_pmtiles.sh`. After running the generated
+build script, enable the manifest in `frontend/.env`:
+
+```text
+VITE_SWORD_TILE_MANIFEST_JSON=/tiles/sword_tile_manifest.json
+VITE_SWORD_CONTINENTS=all
+```
+
+Node profile JSON does not need to be split the same way as the PMTiles. The app
+loads node charts by `reach_id`, so the existing basin/reach-prefix node
+partitioning can continue to serve reaches selected from any PMTiles subset.
+
 ## Backend Options
 
 ### Option A: Fully Static
@@ -274,6 +305,41 @@ The smallest useful build is:
 
 This proves the core replacement for the current iframe/postMessage pattern
 without forcing an immediate rewrite of the whole dashboard.
+
+## Implementation Status
+
+Started:
+
+- Added `frontend/` React/Vite scaffold.
+- Added a persistent MapLibre map shell.
+- Added layer mode controls for SWORD reach attributes.
+- Added PMTiles wiring via `VITE_SWORD_REACHES_PMTILES`.
+- Added hover/click plumbing for reach vector tile features.
+- Added selected-reach inspector and node chart placeholders.
+- Added React layer symbology based on the old Folium map colormaps in
+  `assets/sword_maps_click.py`.
+- Added per-source color-bin metadata generation and frontend loading for
+  basin/continent-specific symbology.
+- Added Option B multi-continent PMTiles configuration. The React map can load
+  one source/layer pair per enabled continent.
+- Added static node-profile JSON export and React node charts for selected
+  reaches.
+- Added optional low-zoom global overview PMTiles layer for world-scale patterns.
+- Refactored the interaction model so the global overview is a neutral
+  orientation layer and all enabled detailed continent layers become visible at
+  detail zooms.
+
+Next:
+
+- Install Node.js and frontend dependencies.
+- Run the React dev server.
+- Generate one basin PMTiles archive using `scripts/build_reach_pmtiles.py`.
+- Connect the prototype PMTiles archive through `.env`.
+- Generate the remaining continent PMTiles archives and set
+  `VITE_SWORD_CONTINENTS=af,as,eu,na,oc,sa` or `VITE_SWORD_CONTINENTS=all`.
+- Generate node-profile JSON for all deployed continents.
+- Build `global_reaches_overview.pmtiles` after all continent reach sources are
+  ready, then tune the overview/detail zoom crossover.
 
 ## Technical Risks
 

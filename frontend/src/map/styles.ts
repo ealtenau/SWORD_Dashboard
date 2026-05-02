@@ -5,6 +5,7 @@ export const REACH_LAYER_ID = "sword-reaches-line";
 
 export const BASE_STYLE: StyleSpecification = {
   version: 8,
+  glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
   sources: {
     carto: {
       type: "raster",

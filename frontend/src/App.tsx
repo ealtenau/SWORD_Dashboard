@@ -4,22 +4,49 @@ import { LayerPanel } from "./components/LayerPanel";
 import { MapLegend } from "./components/MapLegend";
 import { MapView } from "./components/MapView";
 import { ReachCharts } from "./components/ReachCharts";
-import { loadColorMetadata } from "./data/colorMetadata";
-import type { ColorMetadata, LayerMode, ReachProperties } from "./types";
+import { loadColorMetadataByContinent } from "./data/colorMetadata";
+import { loadContinentTileManifest, type ContinentTileConfig } from "./data/continents";
+import type { ColorMetadataByContinent, LayerMode, ReachProperties } from "./types";
 
 export function App() {
   const [activeLayerMode, setActiveLayerMode] = useState<LayerMode>("reach_id");
-  const [colorMetadata, setColorMetadata] = useState<ColorMetadata | null>(null);
+  const [colorMetadataByContinent, setColorMetadataByContinent] = useState<ColorMetadataByContinent>({});
+  const [continentTiles, setContinentTiles] = useState<ContinentTileConfig[] | null>(null);
   const [selectedReach, setSelectedReach] = useState<ReachProperties | null>(null);
   const [hoveredReach, setHoveredReach] = useState<ReachProperties | null>(null);
 
   useEffect(() => {
     let isMounted = true;
 
-    loadColorMetadata()
+    loadContinentTileManifest()
+      .then((tiles) => {
+        if (isMounted) {
+          setContinentTiles(tiles);
+        }
+      })
+      .catch((error) => {
+        console.warn(error);
+        if (isMounted) {
+          setContinentTiles([]);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!continentTiles) {
+      return;
+    }
+
+    let isMounted = true;
+
+    loadColorMetadataByContinent(continentTiles)
       .then((metadata) => {
         if (isMounted) {
-          setColorMetadata(metadata);
+          setColorMetadataByContinent(metadata);
         }
       })
       .catch((error) => {
@@ -29,7 +56,7 @@ export function App() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [continentTiles]);
 
   const selectedReachId = useMemo(() => {
     if (!selectedReach?.reach_id) {
@@ -38,6 +65,16 @@ export function App() {
 
     return String(selectedReach.reach_id);
   }, [selectedReach]);
+
+  const legendContinentId =
+    selectedReach?._continent_id ??
+    hoveredReach?._continent_id ??
+    (continentTiles?.length === 1 ? continentTiles[0].id : undefined);
+  const legendColorMetadata = legendContinentId ? colorMetadataByContinent[legendContinentId] ?? null : null;
+  const legendScope =
+    selectedReach?._continent_name ??
+    hoveredReach?._continent_name ??
+    (continentTiles?.length === 1 ? continentTiles[0].name : "Local continent scales");
 
   return (
     <div className="app-shell">
@@ -53,23 +90,35 @@ export function App() {
 
       <main className="workspace">
         <section className="map-region" aria-label="Interactive SWORD map">
-          <MapView
-            activeLayerMode={activeLayerMode}
-            colorMetadata={colorMetadata}
-            selectedReachId={selectedReachId}
-            onReachHover={setHoveredReach}
-            onReachSelect={setSelectedReach}
-          />
-          <div className="map-control-stack">
-            <LayerPanel
+          {continentTiles ? (
+            <MapView
               activeLayerMode={activeLayerMode}
-              onLayerModeChange={setActiveLayerMode}
+              colorMetadataByContinent={colorMetadataByContinent}
+              continentTiles={continentTiles}
+              selectedReachId={selectedReachId}
+              onReachHover={setHoveredReach}
+              onReachSelect={setSelectedReach}
             />
-            <MapLegend activeLayerMode={activeLayerMode} colorMetadata={colorMetadata} />
-          </div>
+          ) : (
+            <div className="map-wrap">
+              <div className="map-empty-state">
+                <strong>Loading map assets.</strong>
+                <span>Preparing the SWORD tile manifest.</span>
+              </div>
+            </div>
+          )}
         </section>
 
         <aside className="side-panel" aria-label="Reach details">
+          <LayerPanel
+            activeLayerMode={activeLayerMode}
+            onLayerModeChange={setActiveLayerMode}
+          />
+          <MapLegend
+            activeLayerMode={activeLayerMode}
+            colorMetadata={legendColorMetadata}
+            scopeLabel={legendScope}
+          />
           <FeatureInspector hoveredReach={hoveredReach} selectedReach={selectedReach} />
           <ReachCharts selectedReachId={selectedReachId} />
         </aside>

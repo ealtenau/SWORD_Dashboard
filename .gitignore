@@ -129,8 +129,22 @@ dmypy.json
 .pyre/
 
 #Put you custom files that you want ignore from tracking
-# Ignore the data folder because the file can be more a GB in size
-data/
+# Ignore the repo-root data folder because the file can be more a GB in size
+/data/
+/external_data/
+
+# Frontend dependencies and build output
+frontend/node_modules/
+frontend/dist/
+scripts/frontend/
+frontend/public/tiles/*
+!frontend/public/tiles/.gitkeep
+frontend/public/nodes/*
+!frontend/public/nodes/.gitkeep
+scripts/build_split_pmtiles.sh
+frontend/*.tsbuildinfo
+frontend/vite.config.js
+frontend/vite.config.d.ts
 
 # Folder view configuration files
 .DS_Store

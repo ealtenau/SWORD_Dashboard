@@ -3,6 +3,8 @@ export type LayerMode = "reach_id" | "wse" | "width" | "facc" | "dist_out" | "sl
 export type ReachProperties = {
   reach_id?: string | number;
   river_name?: string;
+  _continent_id?: string;
+  _continent_name?: string;
   wse?: number;
   width?: number;
   facc?: number;
@@ -28,4 +30,26 @@ export type ColorMetadata = {
   feature_count?: number;
   bin_count?: number;
   layers: Partial<Record<LayerMode, ColorLayerMetadata>>;
+};
+
+export type ColorMetadataByContinent = Record<string, ColorMetadata | null>;
+
+export type NodeRecord = {
+  x: number | null;
+  y: number | null;
+  node_id: string;
+  wse: number | null;
+  width: number | null;
+  facc: number | null;
+  dist_out: number | null;
+  n_chan_mod: number | null;
+  sinuosity: number | null;
+  node_order: number | null;
+};
+
+export type NodeProfile = {
+  reach_id: string;
+  basin_id: string;
+  node_count: number;
+  nodes: NodeRecord[];
 };
