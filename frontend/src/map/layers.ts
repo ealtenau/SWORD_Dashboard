@@ -14,7 +14,7 @@ export function getReachLinePaint(layerMode: LayerMode, metadata?: ColorMetadata
 
 export function getOverviewLinePaint(layerMode: LayerMode, metadata?: ColorMetadata | null): LinePaint {
   return {
-    "line-color": "#1f7a8c",
+    "line-color": "#2b3b90",
     "line-opacity": ["interpolate", ["linear"], ["zoom"], 0, 0.32, 3, 0.48, 5, 0.18],
     "line-width": ["interpolate", ["linear"], ["zoom"], 0, 0.35, 2, 0.7, 4, 1.25, 5, 1.7],
   };

@@ -7,15 +7,8 @@ import argparse
 import json
 from pathlib import Path
 
-import numpy as np
-
-try:
-    import netCDF4 as nc
-except ImportError as exc:  # pragma: no cover - depends on local SWORD env
-    raise SystemExit(
-        "netCDF4 is required to export node profiles. Install/use the SWORD "
-        "Python environment before running this script."
-    ) from exc
+np = None
+nc = None
 
 
 NODE_VARIABLES = (
@@ -39,9 +32,23 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "inputs",
-        nargs="+",
+        nargs="*",
         type=Path,
-        help="Input nodes_hb*.nc file(s).",
+        help=(
+            "Input nodes_hb*.nc file(s). If omitted, all nodes_hb*.nc files "
+            "in --input-dir are exported."
+        ),
+    )
+    parser.add_argument(
+        "--all",
+        action="store_true",
+        help="Export every nodes_hb*.nc file found in --input-dir.",
+    )
+    parser.add_argument(
+        "--input-dir",
+        type=Path,
+        default=Path("data"),
+        help="Directory searched by --all or when no input files are provided.",
     )
     parser.add_argument(
         "--output-dir",
@@ -56,6 +63,29 @@ def parse_args() -> argparse.Namespace:
         help="Decimal precision for floating point values. Default: 6.",
     )
     return parser.parse_args()
+
+
+def discover_inputs(input_dir: Path) -> list[Path]:
+    return sorted(input_dir.glob("nodes_hb*.nc"))
+
+
+def load_dependencies() -> None:
+    global nc, np
+
+    if np is not None and nc is not None:
+        return
+
+    try:
+        import numpy as numpy
+        import netCDF4 as netcdf
+    except ImportError as exc:  # pragma: no cover - depends on local SWORD env
+        raise SystemExit(
+            "numpy and netCDF4 are required to export node profiles. "
+            "Install/use the SWORD Python environment before running this script."
+        ) from exc
+
+    np = numpy
+    nc = netcdf
 
 
 def as_array(dataset, variable: str) -> np.ndarray:
@@ -141,8 +171,18 @@ def export_file(path: Path, output_dir: Path, precision: int) -> int:
 def main() -> None:
     args = parse_args()
     total_reaches = 0
+    input_paths = args.inputs
 
-    for input_path in args.inputs:
+    if args.all or not input_paths:
+        input_paths = discover_inputs(args.input_dir)
+
+    if not input_paths:
+        raise SystemExit(f"No nodes_hb*.nc files found in {args.input_dir}")
+
+    print(f"Exporting {len(input_paths):,} node file(s)")
+    load_dependencies()
+
+    for input_path in input_paths:
         if not input_path.exists():
             raise SystemExit(f"Input file does not exist: {input_path}")
 

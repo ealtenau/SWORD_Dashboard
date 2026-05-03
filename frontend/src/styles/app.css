@@ -30,13 +30,40 @@ button {
 
 .app-header {
   align-items: center;
-  background: #16324f;
+  background: #2fa4e7;
   color: #fff;
   display: flex;
   gap: 24px;
   justify-content: space-between;
   min-height: 76px;
   padding: 14px 20px;
+}
+
+.header-brand {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  min-width: 0;
+}
+
+.header-logos {
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  gap: 10px;
+}
+
+.header-logos img {
+  display: block;
+  height: 52px;
+  max-width: 64px;
+  object-fit: contain;
+  width: auto;
+}
+
+.header-logos img:first-child {
+  height: 62px;
+  max-width: 76px;
 }
 
 .app-header h1 {
@@ -57,15 +84,135 @@ button {
   text-transform: uppercase;
 }
 
-.header-status {
+.header-actions {
   align-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  border-radius: 999px;
   display: flex;
-  font-size: 13px;
-  min-height: 34px;
-  padding: 0 14px;
+  flex: 0 0 auto;
+  gap: 8px;
   white-space: nowrap;
+}
+
+.header-actions button {
+  background: #2b3b90;
+  border: 1px solid #2b3b90;
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  min-height: 36px;
+  padding: 8px 14px;
+}
+
+.header-actions button:hover {
+  background: #24337d;
+  border-color: #24337d;
+}
+
+.header-actions button:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.modal-backdrop {
+  align-items: center;
+  background: rgba(13, 24, 38, 0.58);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: 20px;
+  position: fixed;
+  z-index: 20;
+}
+
+.info-modal {
+  background: #fff;
+  border: 1px solid #cbd6e2;
+  border-radius: 8px;
+  box-shadow: 0 18px 60px rgba(12, 25, 42, 0.32);
+  color: #18212f;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  max-height: min(760px, calc(100vh - 40px));
+  max-width: 820px;
+  overflow: hidden;
+  width: min(100%, 820px);
+}
+
+.info-modal-header {
+  align-items: center;
+  background: #2fa4e7;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 18px;
+}
+
+.info-modal-header h2 {
+  font-size: 18px;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.modal-close-button {
+  align-items: center;
+  background: #2b3b90;
+  border: 1px solid #2b3b90;
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 18px;
+  font-weight: 700;
+  height: 32px;
+  justify-content: center;
+  line-height: 1;
+  width: 32px;
+}
+
+.modal-close-button:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.info-modal-body {
+  overflow: auto;
+  padding: 18px 22px 22px;
+}
+
+.info-modal-body h2 {
+  color: #24324a;
+  font-size: 22px;
+  line-height: 1.2;
+  margin: 0 0 16px;
+}
+
+.info-modal-body h3 {
+  color: #24324a;
+  font-size: 17px;
+  line-height: 1.25;
+  margin: 22px 0 8px;
+}
+
+.info-modal-body p,
+.info-modal-body li {
+  color: #334155;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.info-modal-body p {
+  margin: 0 0 12px;
+}
+
+.info-modal-body ul {
+  margin: 0 0 14px;
+  padding-left: 22px;
+}
+
+.info-modal-body a {
+  color: #2fa4e7;
+  font-weight: 700;
 }
 
 .workspace {
@@ -84,6 +231,142 @@ button {
   height: 100%;
   min-height: 560px;
   width: 100%;
+}
+
+.map-wrap {
+  position: relative;
+}
+
+.basemap-toggle {
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(203, 214, 226, 0.95);
+  border-radius: 14px;
+  bottom: 18px;
+  box-shadow: 0 8px 22px rgba(24, 33, 47, 0.22);
+  display: flex;
+  gap: 10px;
+  left: 14px;
+  padding: 8px 10px 7px;
+  position: absolute;
+  z-index: 2;
+}
+
+.basemap-toggle button {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: #69707a;
+  cursor: pointer;
+  display: grid;
+  font-size: 12px;
+  font-weight: 700;
+  gap: 5px;
+  justify-items: center;
+  line-height: 1.1;
+  padding: 0;
+  width: 58px;
+}
+
+.basemap-toggle button.active .basemap-icon {
+  border-color: #2b3b90;
+  box-shadow: 0 0 0 2px rgba(43, 59, 144, 0.18);
+}
+
+.basemap-toggle button.active {
+  color: #2b3b90;
+}
+
+.basemap-toggle button:focus-visible {
+  border-radius: 8px;
+  outline: 2px solid #2fa4e7;
+  outline-offset: 4px;
+}
+
+.basemap-icon {
+  border: 2px solid #c4c8cf;
+  border-radius: 10px;
+  display: block;
+  height: 46px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.basemap-icon.light {
+  background:
+    linear-gradient(135deg, transparent 42%, #c8d8e4 42%, #c8d8e4 47%, transparent 47%),
+    linear-gradient(45deg, transparent 58%, #d7dce2 58%, #d7dce2 64%, transparent 64%),
+    #f5f7fa;
+}
+
+.basemap-icon.satellite {
+  background:
+    radial-gradient(circle at 22% 24%, rgba(124, 149, 78, 0.95) 0 12%, transparent 13%),
+    radial-gradient(circle at 76% 30%, rgba(60, 98, 46, 0.9) 0 16%, transparent 17%),
+    radial-gradient(circle at 46% 74%, rgba(101, 132, 67, 0.85) 0 19%, transparent 20%),
+    linear-gradient(135deg, #314b2a 0 24%, #657547 25% 42%, #284b37 43% 68%, #6c7d4b 69% 100%);
+}
+
+.coordinate-readout {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(203, 214, 226, 0.95);
+  border-radius: 7px;
+  bottom: 28px;
+  box-shadow: 0 6px 18px rgba(24, 33, 47, 0.16);
+  color: #25364a;
+  display: flex;
+  font-size: 12px;
+  font-weight: 700;
+  gap: 8px;
+  line-height: 1.2;
+  min-height: 28px;
+  padding: 6px 9px;
+  position: absolute;
+  right: 42px;
+  z-index: 2;
+}
+
+.reach-tooltip-popup .maplibregl-popup-content {
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid #cbd6e2;
+  border-radius: 8px;
+  box-shadow: 0 10px 24px rgba(15, 31, 51, 0.2);
+  color: #25364a;
+  padding: 8px 10px;
+}
+
+.reach-tooltip-popup .maplibregl-popup-tip {
+  border-top-color: rgba(255, 255, 255, 0.96);
+}
+
+.reach-tooltip-list {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  min-width: 180px;
+}
+
+.reach-tooltip-list div {
+  align-items: baseline;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 78px minmax(0, 1fr);
+}
+
+.reach-tooltip-list dt {
+  color: #5b6a7f;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.reach-tooltip-list dd {
+  color: #1f2d3d;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0;
+  overflow-wrap: anywhere;
 }
 
 .map-empty-state {
@@ -142,8 +425,8 @@ button {
 }
 
 .segmented-control button.active {
-  background: #1f7a8c;
-  border-color: #1f7a8c;
+  background: #2b3b90;
+  border-color: #2b3b90;
   color: #fff;
 }
 
@@ -198,6 +481,116 @@ button {
   min-height: 0;
   overflow: auto;
   padding: 14px;
+}
+
+.reach-search {
+  background: #fff;
+  border: 1px solid #d7dee8;
+  border-radius: 8px;
+  padding: 12px;
+  position: relative;
+  z-index: 4;
+}
+
+.reach-search label {
+  color: #344256;
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 10px;
+}
+
+.reach-search-input-row {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.reach-search input {
+  border: 1px solid #ccd6e2;
+  border-radius: 6px;
+  color: #25364a;
+  font: inherit;
+  font-size: 13px;
+  min-height: 36px;
+  min-width: 0;
+  padding: 8px 10px;
+}
+
+.reach-search input:focus {
+  border-color: #2fa4e7;
+  outline: 2px solid rgba(47, 164, 231, 0.2);
+}
+
+.reach-search-input-row button {
+  background: #2b3b90;
+  border: 1px solid #2b3b90;
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  min-height: 36px;
+  padding: 8px 12px;
+}
+
+.reach-search-input-row button:disabled {
+  background: #aeb8c7;
+  border-color: #aeb8c7;
+  cursor: not-allowed;
+}
+
+.reach-search-results {
+  background: #fff;
+  border: 1px solid #ccd6e2;
+  border-radius: 8px;
+  box-shadow: 0 10px 24px rgba(15, 31, 51, 0.16);
+  display: grid;
+  left: 12px;
+  overflow: hidden;
+  position: absolute;
+  right: 12px;
+  top: calc(100% - 8px);
+}
+
+.reach-search-results p {
+  color: #5b6a7f;
+  font-size: 13px;
+  margin: 0;
+  padding: 10px 12px;
+}
+
+.reach-search-results button {
+  background: #fff;
+  border: 0;
+  border-bottom: 1px solid #edf1f5;
+  color: #25364a;
+  cursor: pointer;
+  display: grid;
+  gap: 2px;
+  padding: 9px 12px;
+  text-align: left;
+}
+
+.reach-search-results button:hover,
+.reach-search-results button:focus-visible {
+  background: #eef8fe;
+  outline: 0;
+}
+
+.reach-search-results button:last-child {
+  border-bottom: 0;
+}
+
+.reach-search-results span {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.reach-search-results small {
+  color: #66768a;
+  font-size: 11px;
 }
 
 .panel-section {
@@ -344,14 +737,14 @@ button {
 
 .chart-line {
   fill: none;
-  stroke: #1f7a8c;
+  stroke: #2fa4e7;
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 2.2;
 }
 
 .chart-point {
-  fill: #16324f;
+  fill: #2b3b90;
 }
 
 .chart-hover-line {
@@ -362,7 +755,7 @@ button {
 
 .chart-hover-point {
   fill: #fff;
-  stroke: #16324f;
+  stroke: #2b3b90;
   stroke-width: 2;
 }
 
@@ -434,7 +827,22 @@ button {
     gap: 10px;
   }
 
-  .header-status {
+  .header-brand {
+    align-items: flex-start;
+  }
+
+  .header-logos img {
+    height: 44px;
+    max-width: 54px;
+  }
+
+  .header-logos img:first-child {
+    height: 52px;
+    max-width: 64px;
+  }
+
+  .header-actions {
+    flex-wrap: wrap;
     white-space: normal;
   }
 

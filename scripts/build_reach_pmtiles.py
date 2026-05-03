@@ -32,6 +32,8 @@ DEFAULT_PROPERTIES = (
     "slope",
     "swot_obs",
     "swot_orbit",
+    "n_chan_max",
+    "strm_order",
     "rch_id_up",
     "rch_id_dn",
     "x",
@@ -68,6 +70,20 @@ COLOR_LAYER_CONFIG = {
 }
 
 SWOT_OBS_STOPS = [0, 1, 2, 4, 6, 8, 10]
+N_CHAN_MAX_STOPS = [1, 2, 4, 6, 8, 36]
+N_CHAN_MAX_COLORS = ["#ffffcc", "#a1dab4", "#00bfc4", "#0570b0", "#253494"]
+STRM_ORDER_STOPS = [-9999, 1, 2, 3, 4, 5, 6, 7, 8]
+STRM_ORDER_COLORS = [
+    "#3b0f70",
+    "#3f60d5",
+    "#13a7e8",
+    "#12d9a3",
+    "#00e51a",
+    "#a8f000",
+    "#ffb000",
+    "#ff5a00",
+    "#d90000",
+]
 
 
 def parse_args() -> argparse.Namespace:
@@ -219,7 +235,7 @@ def load_reaches(path: Path, properties: Iterable[str]) -> gpd.GeoDataFrame:
     reaches = reaches[keep_columns + ["geometry"]].copy()
     reaches["reach_id"] = reaches["reach_id"].astype(str)
 
-    for column in ("wse", "width", "facc", "dist_out", "slope"):
+    for column in ("wse", "width", "facc", "dist_out", "slope", "n_chan_max", "strm_order"):
         if column in reaches.columns:
             reaches[column] = reaches[column].round(6)
 
@@ -284,6 +300,20 @@ def write_color_metadata(reaches: gpd.GeoDataFrame, output: Path, bin_count: int
         "stops": SWOT_OBS_STOPS,
         "colors": colors_at_breaks("gnuplot2", len(SWOT_OBS_STOPS)),
     }
+    if "n_chan_max" in reaches.columns:
+        layers["n_chan_max"] = {
+            "caption": "Number of channels",
+            "classification": "fixed",
+            "stops": N_CHAN_MAX_STOPS,
+            "colors": N_CHAN_MAX_COLORS,
+        }
+    if "strm_order" in reaches.columns:
+        layers["strm_order"] = {
+            "caption": "Stream order",
+            "classification": "categorical",
+            "stops": STRM_ORDER_STOPS,
+            "colors": STRM_ORDER_COLORS,
+        }
 
     metadata = {
         "schema_version": 1,

@@ -7,6 +7,7 @@ interface ImportMetaEnv {
   readonly VITE_SWORD_CONTINENTS?: string;
   readonly VITE_SWORD_TILE_MANIFEST_JSON?: string;
   readonly VITE_SWORD_NODE_BASE_URL?: string;
+  readonly VITE_SWORD_REACH_SEARCH_INDEX_JSON?: string;
   readonly VITE_SWORD_OVERVIEW_PMTILES?: string;
   readonly VITE_SWORD_OVERVIEW_COLOR_BINS_JSON?: string;
   readonly VITE_SWORD_OVERVIEW_SOURCE_LAYER?: string;

@@ -22,6 +22,10 @@ import dash_bootstrap_components as dbc
 from dash_bootstrap_templates import load_figure_template
 load_figure_template("cerulean")
 
+HEADER_COLOR = "#2fa4e7"
+PLOT_LINE_COLOR = "#2fa4e7"
+PLOT_POINT_COLOR = "#2b3b90"
+
 #################################################################################################
 ######################################  FUNCTIONS  ##############################################
 #################################################################################################
@@ -155,6 +159,10 @@ def plot_nodes(df, reach=None):
         title_x=0.5,
         showlegend=False,
         plot_bgcolor='#dce0e2' #'whitesmoke'
+    )
+    fig.update_traces(
+        line={"color": PLOT_LINE_COLOR},
+        marker={"color": PLOT_POINT_COLOR},
     )
     return fig
 
@@ -806,7 +814,7 @@ header = dbc.Navbar(
                     dbc.Col(
                         html.Img(
                             id="logo1",
-                            src=app.get_asset_url("swot_mainlogo_dark.png"),
+                            src=app.get_asset_url("swot_mainlogo_dark2.png"),
                             height="60px",
                         ),
                         md="auto",
@@ -867,8 +875,10 @@ header = dbc.Navbar(
             ),
         ],
         fluid=True,
-        className='bg-primary text-white p-2',
+        className='text-white p-2',
+        style={"backgroundColor": HEADER_COLOR},
     ),
+    style={"backgroundColor": HEADER_COLOR},
     # sticky="top", #uncomment to stick to top.
 )
 

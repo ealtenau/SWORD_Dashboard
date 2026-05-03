@@ -13,6 +13,8 @@ const LAYER_MODES: LayerMode[] = [
   "facc",
   "dist_out",
   "slope",
+  "n_chan_max",
+  "strm_order",
   "swot_obs",
 ];
 

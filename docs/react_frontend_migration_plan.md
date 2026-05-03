@@ -140,6 +140,13 @@ Use three classes of generated assets:
      ready.
    - Move to Parquet or DuckDB-WASM once the frontend prototype works.
 
+4. **Reach search index**
+   - Static JSON used by the React search box.
+   - Includes `reach_id`, `river_name`, centroid coordinates, optional continent
+     ID, and reach bounding boxes.
+   - Lets the app zoom to exact Reach IDs or to the combined extent of reaches
+     matching a river name without requiring a live database.
+
 ### Split Reach PMTiles Workflow
 
 Large continent reach files can be split into spatial subsets before PMTiles
@@ -170,6 +177,22 @@ VITE_SWORD_CONTINENTS=all
 Node profile JSON does not need to be split the same way as the PMTiles. The app
 loads node charts by `reach_id`, so the existing basin/reach-prefix node
 partitioning can continue to serve reaches selected from any PMTiles subset.
+
+Build the static reach search index from the same reach GeoPackages used for
+tile generation:
+
+```bash
+python scripts/build_reach_search_index.py \
+  external_data/sword_split_reaches/*.gpkg \
+  --output frontend/public/tiles/reach_search_index.json
+```
+
+When hosted separately from the app shell, point the frontend at the deployed
+index:
+
+```text
+VITE_SWORD_REACH_SEARCH_INDEX_JSON=https://static.sword.example.org/tiles/reach_search_index.json
+```
 
 ## Backend Options
 
@@ -203,6 +226,64 @@ Best for a low-risk transition.
 
 Recommended path: start with Option C, then decide between Option A and Option B
 after the first basin prototype proves the data workflow.
+
+## Deployment and Hosting Plan
+
+Preferred low-cost hosting target: **Cloudflare Pages + Cloudflare R2**.
+
+The React app can be built as static files, but the generated data assets are
+too large and numerous for most free static-site hosts. The current prototype
+has multi-GB PMTiles/node assets and hundreds of thousands of node JSON files, so
+the app shell and data assets should be hosted separately.
+
+Recommended deployment shape:
+
+1. **Cloudflare Pages** hosts the Vite React build output from `frontend/dist`.
+2. **Cloudflare R2** hosts generated static data assets:
+   - `frontend/public/tiles/*.pmtiles`
+   - `frontend/public/tiles/*.colors.json`
+   - `frontend/public/tiles/sword_tile_manifest.json`
+   - `frontend/public/nodes/**` if node JSON remains the deployed format
+3. Expose the R2 bucket through a public/custom static asset domain, for example
+   `https://static.sword.example.org`.
+4. Configure CORS and public access so MapLibre/PMTiles and node JSON fetches
+   work from the Pages domain.
+5. Point frontend environment/config URLs at the R2-hosted assets instead of
+   same-origin `/tiles` and `/nodes` paths.
+
+Likely environment/config updates:
+
+```text
+VITE_SWORD_TILE_MANIFEST_JSON=https://static.sword.example.org/tiles/sword_tile_manifest.json
+VITE_SWORD_OVERVIEW_PMTILES=https://static.sword.example.org/tiles/global_rivers_natural_earth.pmtiles
+VITE_SWORD_NODE_BASE_URL=https://static.sword.example.org/nodes
+VITE_SWORD_REACH_SEARCH_INDEX_JSON=https://static.sword.example.org/tiles/reach_search_index.json
+```
+
+Implementation notes:
+
+- Keep code and lightweight config in GitHub.
+- Avoid committing generated multi-GB `frontend/public/tiles` and
+  `frontend/public/nodes` assets long-term once R2 hosting is in place.
+- Use hashed or versioned asset prefixes when publishing new SWORD releases, for
+  example `/v17b/tiles/...` and `/v17b/nodes/...`.
+- Keep the local `frontend/public` layout as the developer/test layout; mirror
+  that layout into R2 for production.
+- If node JSON file count becomes painful to upload/manage, replace per-reach
+  JSON with coarser basin JSON, Parquet, DuckDB-WASM, or a small lookup API.
+
+Why not GitHub Pages as the final host:
+
+- GitHub Pages is simple and free for small static apps, but published sites have
+  a 1 GB size limit and a soft bandwidth limit.
+- The current generated assets exceed that shape even before future full-dataset
+  growth.
+
+Why not put everything directly on Cloudflare Pages:
+
+- Cloudflare Pages is a good fit for the app shell, but it has file-count and
+  per-file size limits that do not fit the full generated tile/node asset set.
+- R2 is the better place for large static geospatial assets and node data.
 
 ## Migration Phases
 
@@ -338,13 +419,19 @@ Next:
 - Generate the remaining continent PMTiles archives and set
   `VITE_SWORD_CONTINENTS=af,as,eu,na,oc,sa` or `VITE_SWORD_CONTINENTS=all`.
 - Generate node-profile JSON for all deployed continents.
+- Generate `frontend/public/tiles/reach_search_index.json` for Reach ID and
+  river-name search.
 - Build `global_reaches_overview.pmtiles` after all continent reach sources are
   ready, then tune the overview/detail zoom crossover.
+- Prepare a Cloudflare Pages + R2 deployment path for the React build and
+  generated static assets.
 
 ## Technical Risks
 
 - PMTiles hosting must support HTTP Range Requests and CORS.
 - Very large global archives may need splitting by continent or basin.
+- Static hosting plans usually have file-count, file-size, or bandwidth limits;
+  keep generated PMTiles/node assets in object storage rather than the app host.
 - High-detail reach geometry may require tuning Tippecanoe simplification and
   max zoom settings.
 - Client-side Parquet lookup may be heavier than JSON chunks for the first

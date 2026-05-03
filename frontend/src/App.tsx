@@ -1,12 +1,21 @@
 import { useEffect, useMemo, useState } from "react";
 import { FeatureInspector } from "./components/FeatureInspector";
+import { InfoModal } from "./components/InfoModal";
 import { LayerPanel } from "./components/LayerPanel";
 import { MapLegend } from "./components/MapLegend";
 import { MapView } from "./components/MapView";
 import { ReachCharts } from "./components/ReachCharts";
+import { ReachSearch } from "./components/ReachSearch";
 import { loadColorMetadataByContinent } from "./data/colorMetadata";
 import { loadContinentTileManifest, type ContinentTileConfig } from "./data/continents";
-import type { ColorMetadataByContinent, LayerMode, ReachProperties } from "./types";
+import { loadReachSearchIndex, selectionRecords, type ReachSearchResult } from "./data/reachSearch";
+import type { ColorMetadataByContinent, LayerMode, ReachProperties, ReachSearchRecord, ReachSearchSelection } from "./types";
+import aboutContent from "../../about.md?raw";
+import downloadContent from "../../download.md?raw";
+import swordLogo from "../../assets/SWORD_Logo.png";
+import swotLogo from "../../assets/swot_mainlogo_dark2.png";
+
+type ActiveModal = "about" | "download" | null;
 
 export function App() {
   const [activeLayerMode, setActiveLayerMode] = useState<LayerMode>("reach_id");
@@ -14,6 +23,10 @@ export function App() {
   const [continentTiles, setContinentTiles] = useState<ContinentTileConfig[] | null>(null);
   const [selectedReach, setSelectedReach] = useState<ReachProperties | null>(null);
   const [hoveredReach, setHoveredReach] = useState<ReachProperties | null>(null);
+  const [activeModal, setActiveModal] = useState<ActiveModal>(null);
+  const [searchRecords, setSearchRecords] = useState<ReachSearchRecord[]>([]);
+  const [isSearchLoading, setIsSearchLoading] = useState(true);
+  const [searchSelection, setSearchSelection] = useState<ReachSearchSelection | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -58,6 +71,29 @@ export function App() {
     };
   }, [continentTiles]);
 
+  useEffect(() => {
+    let isMounted = true;
+
+    loadReachSearchIndex()
+      .then((records) => {
+        if (isMounted) {
+          setSearchRecords(records);
+        }
+      })
+      .catch((error) => {
+        console.warn(error);
+      })
+      .finally(() => {
+        if (isMounted) {
+          setIsSearchLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const selectedReachId = useMemo(() => {
     if (!selectedReach?.reach_id) {
       return null;
@@ -76,17 +112,59 @@ export function App() {
     hoveredReach?._continent_name ??
     (continentTiles?.length === 1 ? continentTiles[0].name : "Local continent scales");
 
+  const handleSearchSelect = (result: ReachSearchResult) => {
+    const records = selectionRecords(result);
+    setSearchSelection({
+      bbox: result.bbox,
+      records,
+      type: result.type,
+    });
+
+    if (result.type === "reach") {
+      setSelectedReach({
+        reach_id: result.record.reach_id,
+        river_name: result.record.river_name,
+        _continent_id: result.record.continent_id,
+      });
+    } else {
+      setSelectedReach(null);
+    }
+  };
+
   return (
     <div className="app-shell">
       <header className="app-header">
-        <div>
-          <p className="eyebrow">SWORD Explorer</p>
-          <h1>SWOT River Database</h1>
+        <div className="header-brand">
+          <div className="header-logos" aria-hidden="true">
+            <img src={swotLogo} alt="" />
+            <img src={swordLogo} alt="" />
+          </div>
+          <div>
+            <p className="eyebrow">SWORD Explorer</p>
+            <h1>SWOT River Database - Version 17b</h1>
+          </div>
         </div>
-        <div className="header-status">
-          <span>React + MapLibre prototype</span>
+        <div className="header-actions" aria-label="SWORD information">
+          <button onClick={() => setActiveModal("about")} type="button">
+            About
+          </button>
+          <button onClick={() => setActiveModal("download")} type="button">
+            Download
+          </button>
         </div>
       </header>
+      <InfoModal
+        content={aboutContent}
+        isOpen={activeModal === "about"}
+        onClose={() => setActiveModal(null)}
+        title="About SWORD"
+      />
+      <InfoModal
+        content={downloadContent}
+        isOpen={activeModal === "download"}
+        onClose={() => setActiveModal(null)}
+        title="Download SWORD"
+      />
 
       <main className="workspace">
         <section className="map-region" aria-label="Interactive SWORD map">
@@ -95,6 +173,7 @@ export function App() {
               activeLayerMode={activeLayerMode}
               colorMetadataByContinent={colorMetadataByContinent}
               continentTiles={continentTiles}
+              searchSelection={searchSelection}
               selectedReachId={selectedReachId}
               onReachHover={setHoveredReach}
               onReachSelect={setSelectedReach}
@@ -110,6 +189,11 @@ export function App() {
         </section>
 
         <aside className="side-panel" aria-label="Reach details">
+          <ReachSearch
+            isLoading={isSearchLoading}
+            onSelect={handleSearchSelect}
+            records={searchRecords}
+          />
           <LayerPanel
             activeLayerMode={activeLayerMode}
             onLayerModeChange={setActiveLayerMode}

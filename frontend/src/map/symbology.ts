@@ -59,6 +59,20 @@ export const LAYER_CONFIGS: Record<LayerMode, LayerConfig> = {
     stops: [0, 0.0005, 0.002],
     units: "m/km",
   },
+  n_chan_max: {
+    id: "n_chan_max",
+    label: "Channels",
+    caption: "Number of channels",
+    colors: ["#ffffcc", "#a1dab4", "#00bfc4", "#0570b0", "#253494"],
+    stops: [1, 2, 4, 6, 8, 36],
+  },
+  strm_order: {
+    id: "strm_order",
+    label: "Stream Order",
+    caption: "Stream order",
+    colors: ["#3b0f70", "#3f60d5", "#13a7e8", "#12d9a3", "#00e51a", "#a8f000", "#ffb000", "#ff5a00", "#d90000"],
+    stops: [-9999, 1, 2, 3, 4, 5, 6, 7, 8],
+  },
   swot_obs: {
     id: "swot_obs",
     label: "SWOT Obs.",
@@ -161,6 +175,48 @@ export function getLayerColorExpression(layerMode: LayerMode, metadata?: ColorMe
         8,
         "#ffffff",
       ] as LinePaint["line-color"];
+    case "n_chan_max": {
+      const config = getLayerConfig("n_chan_max", metadata);
+      return [
+        "step",
+        ["to-number", ["get", "n_chan_max"]],
+        config.colors[0],
+        2,
+        config.colors[1],
+        4,
+        config.colors[2],
+        6,
+        config.colors[3],
+        8,
+        config.colors[4],
+      ] as LinePaint["line-color"];
+    }
+    case "strm_order": {
+      const config = getLayerConfig("strm_order", metadata);
+      return [
+        "match",
+        ["to-number", ["get", "strm_order"]],
+        -9999,
+        config.colors[0],
+        1,
+        config.colors[1],
+        2,
+        config.colors[2],
+        3,
+        config.colors[3],
+        4,
+        config.colors[4],
+        5,
+        config.colors[5],
+        6,
+        config.colors[6],
+        7,
+        config.colors[7],
+        8,
+        config.colors[8],
+        config.colors[8],
+      ] as LinePaint["line-color"];
+    }
     default: {
       const config = getLayerConfig(layerMode, metadata);
       const colors = config.colors;

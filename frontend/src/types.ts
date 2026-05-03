@@ -1,4 +1,13 @@
-export type LayerMode = "reach_id" | "wse" | "width" | "facc" | "dist_out" | "slope" | "swot_obs";
+export type LayerMode =
+  | "reach_id"
+  | "wse"
+  | "width"
+  | "facc"
+  | "dist_out"
+  | "slope"
+  | "swot_obs"
+  | "n_chan_max"
+  | "strm_order";
 
 export type ReachProperties = {
   reach_id?: string | number;
@@ -11,6 +20,8 @@ export type ReachProperties = {
   dist_out?: number;
   slope?: number;
   swot_obs?: number;
+  n_chan_max?: number;
+  strm_order?: number;
   rch_id_up?: string;
   rch_id_dn?: string;
   [key: string]: unknown;
@@ -52,4 +63,19 @@ export type NodeProfile = {
   basin_id: string;
   node_count: number;
   nodes: NodeRecord[];
+};
+
+export type ReachSearchRecord = {
+  reach_id: string;
+  river_name?: string;
+  continent_id?: string;
+  lon: number;
+  lat: number;
+  bbox?: [number, number, number, number];
+};
+
+export type ReachSearchSelection = {
+  bbox?: [number, number, number, number];
+  records: ReachSearchRecord[];
+  type: "reach" | "river";
 };
