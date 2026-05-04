@@ -27,6 +27,7 @@ export function App() {
   const [searchRecords, setSearchRecords] = useState<ReachSearchRecord[]>([]);
   const [isSearchLoading, setIsSearchLoading] = useState(true);
   const [searchSelection, setSearchSelection] = useState<ReachSearchSelection | null>(null);
+  const [isMobileSheetExpanded, setIsMobileSheetExpanded] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -132,7 +133,7 @@ export function App() {
   };
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell ${isMobileSheetExpanded ? "mobile-sheet-expanded" : ""}`}>
       <header className="app-header">
         <div className="header-brand">
           <div className="header-logos" aria-hidden="true">
@@ -188,7 +189,19 @@ export function App() {
           )}
         </section>
 
-        <aside className="side-panel" aria-label="Reach details">
+        <aside
+          className={`side-panel ${isMobileSheetExpanded ? "expanded" : ""}`}
+          aria-label="Reach details"
+        >
+          <button
+            aria-expanded={isMobileSheetExpanded}
+            className="mobile-sheet-toggle"
+            onClick={() => setIsMobileSheetExpanded((isExpanded) => !isExpanded)}
+            type="button"
+          >
+            <span aria-hidden="true" />
+            {isMobileSheetExpanded ? "Collapse Details" : "Explore Details"}
+          </button>
           <ReachSearch
             isLoading={isSearchLoading}
             onSelect={handleSearchSelect}

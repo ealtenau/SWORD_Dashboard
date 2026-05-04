@@ -483,6 +483,10 @@ button {
   padding: 14px;
 }
 
+.mobile-sheet-toggle {
+  display: none;
+}
+
 .reach-search {
   background: #fff;
   border: 1px solid #d7dee8;
@@ -820,11 +824,122 @@ button {
   }
 }
 
+@media (max-width: 760px) {
+  body {
+    overflow: hidden;
+  }
+
+  .app-shell {
+    height: 100dvh;
+    min-height: 100dvh;
+    overflow: hidden;
+  }
+
+  .workspace {
+    display: block;
+    min-height: 0;
+    position: relative;
+  }
+
+  .map-region {
+    height: calc(100dvh - 76px);
+    min-height: 0;
+  }
+
+  .map-wrap,
+  .map-container {
+    min-height: 0;
+  }
+
+  .side-panel {
+    align-content: start;
+    background: #f8fafc;
+    border: 1px solid #d7dee8;
+    border-bottom: 0;
+    border-radius: 18px 18px 0 0;
+    bottom: 0;
+    box-shadow: 0 -12px 32px rgba(15, 31, 51, 0.22);
+    gap: 10px;
+    left: 0;
+    max-height: 38dvh;
+    min-height: 0;
+    overflow: auto;
+    padding: 0 12px 14px;
+    position: fixed;
+    right: 0;
+    transition: max-height 180ms ease;
+    z-index: 10;
+  }
+
+  .side-panel.expanded {
+    max-height: 76dvh;
+  }
+
+  .mobile-sheet-toggle {
+    align-items: center;
+    background: rgba(248, 250, 252, 0.96);
+    border: 0;
+    border-bottom: 1px solid #d7dee8;
+    color: #2b3b90;
+    cursor: pointer;
+    display: grid;
+    font-size: 13px;
+    font-weight: 800;
+    gap: 5px;
+    justify-items: center;
+    margin: 0 -12px 2px;
+    min-height: 42px;
+    padding: 7px 12px 8px;
+    position: sticky;
+    top: 0;
+    z-index: 6;
+  }
+
+  .mobile-sheet-toggle span {
+    background: #9aa8b8;
+    border-radius: 999px;
+    display: block;
+    height: 4px;
+    width: 42px;
+  }
+
+  .reach-search-results {
+    bottom: auto;
+    max-height: 220px;
+    overflow: auto;
+  }
+
+  .segmented-control {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .basemap-toggle {
+    bottom: calc(38dvh + 14px);
+  }
+
+  .app-shell.mobile-sheet-expanded .basemap-toggle {
+    bottom: calc(76dvh + 14px);
+  }
+
+  .coordinate-readout {
+    bottom: calc(38dvh + 18px);
+    right: 12px;
+  }
+
+  .app-shell.mobile-sheet-expanded .coordinate-readout {
+    bottom: calc(76dvh + 18px);
+  }
+}
+
 @media (max-width: 620px) {
   .app-header {
     align-items: flex-start;
     flex-direction: column;
     gap: 10px;
+  }
+
+  .app-header h1 {
+    font-size: 20px;
   }
 
   .header-brand {
@@ -846,8 +961,34 @@ button {
     white-space: normal;
   }
 
-  .segmented-control {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .header-actions button {
+    font-size: 13px;
+    min-height: 32px;
+    padding: 6px 10px;
+  }
+
+  .map-region {
+    height: calc(100dvh - 126px);
+  }
+
+  .basemap-toggle {
+    left: 10px;
+    padding: 7px 8px 6px;
+  }
+
+  .basemap-toggle button {
+    width: 50px;
+  }
+
+  .basemap-icon {
+    height: 40px;
+  }
+
+  .coordinate-readout {
+    align-items: flex-start;
+    flex-direction: column;
+    font-size: 11px;
+    gap: 2px;
   }
 
   .attribute-list div {
