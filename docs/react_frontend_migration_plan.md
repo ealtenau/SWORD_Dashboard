@@ -23,8 +23,8 @@ Use a static-capable React frontend with geospatial data served as static assets
 - **Optional backend:** FastAPI for reporting, server-side node lookup, or
   authenticated/admin workflows.
 
-Dash can remain as the legacy application during migration, but the new map UI
-should not depend on Dash callbacks or Folium iframes.
+Dash/Folium is archived under `legacy/dash_folium/`, but the new map UI should
+not depend on Dash callbacks or Folium iframes.
 
 ## Why React Helps
 
@@ -44,13 +44,12 @@ map needs rich browser-side behavior.
 
 ## Proposed Repository Layout
 
-Keep the current Dash app in place while adding a new frontend:
+Use `frontend/` for the active application, `scripts/` for current asset
+generation, and `legacy/dash_folium/` for the archived pre-React app:
 
 ```text
 SWORD_Dashboard/
-  app.py                         # existing Dash app, kept during migration
-  assets/                        # existing generation scripts and images
-  data/                          # current generated local data
+  assets/                        # shared images used by the React app
   docs/
     geospatial_refactor_plan.md
     react_frontend_migration_plan.md
@@ -80,13 +79,21 @@ SWORD_Dashboard/
       styles/
         app.css
   scripts/
-    build_tiles.py
-    build_node_tables.py
+    split_continent_reaches.py
+    build_reach_pmtiles.py
+    build_global_overview_pmtiles.py
+    build_reach_search_index.py
+    build_node_profiles.py
+  legacy/
+    dash_folium/
+      app.py
+      app_no_click.py
+      assets/
 ```
 
-If the Python generation scripts stay under `assets/`, the `scripts/` directory
-can be skipped. The important boundary is that React consumes generated web
-assets, while Python produces them.
+The important boundary is that React consumes generated web assets, while
+Python produces them. Legacy Dash/Folium files remain available as behavioral
+references but are no longer part of the preferred rebuild path.
 
 ## Frontend State Model
 
@@ -136,8 +143,11 @@ Use three classes of generated assets:
 
 3. **Node attribute tables**
    - Loaded only after reach selection.
-   - Start simple with JSON chunks partitioned by basin if Parquet lookup is not
-     ready.
+   - Start simple with JSON chunks partitioned by level-two basin (`hbXX`) if
+     Parquet lookup is not ready.
+   - Build from the continent node GeoPackages, not from legacy `nodes_hbXX.nc`
+     files. The `hbXX` partition can be inferred from the first two digits of
+     `reach_id`.
    - Move to Parquet or DuckDB-WASM once the frontend prototype works.
 
 4. **Reach search index**
@@ -177,6 +187,23 @@ VITE_SWORD_CONTINENTS=all
 Node profile JSON does not need to be split the same way as the PMTiles. The app
 loads node charts by `reach_id`, so the existing basin/reach-prefix node
 partitioning can continue to serve reaches selected from any PMTiles subset.
+
+Build static node profile JSON directly from continent node GeoPackages:
+
+```bash
+python scripts/build_node_profiles.py \
+  /path/to/af_sword_nodes_v17b.gpkg \
+  /path/to/as_sword_nodes_v17b.gpkg \
+  /path/to/eu_sword_nodes_v17b.gpkg \
+  /path/to/na_sword_nodes_v17b.gpkg \
+  /path/to/oc_sword_nodes_v17b.gpkg \
+  /path/to/sa_sword_nodes_v17b.gpkg \
+  --output-dir frontend/public/nodes
+```
+
+The exporter still supports legacy `nodes_hbXX.nc` files for compatibility, but
+the preferred rebuild path is now the node GeoPackage path so users only need
+the reach and node GeoPackages as SWORD inputs.
 
 Build the static reach search index from the same reach GeoPackages used for
 tile generation:
@@ -398,7 +425,7 @@ Started:
 - Added hover/click plumbing for reach vector tile features.
 - Added selected-reach inspector and node chart placeholders.
 - Added React layer symbology based on the old Folium map colormaps in
-  `assets/sword_maps_click.py`.
+  `legacy/dash_folium/assets/sword_maps_click.py`.
 - Added per-source color-bin metadata generation and frontend loading for
   basin/continent-specific symbology.
 - Added Option B multi-continent PMTiles configuration. The React map can load
@@ -418,7 +445,7 @@ Next:
 - Connect the prototype PMTiles archive through `.env`.
 - Generate the remaining continent PMTiles archives and set
   `VITE_SWORD_CONTINENTS=af,as,eu,na,oc,sa` or `VITE_SWORD_CONTINENTS=all`.
-- Generate node-profile JSON for all deployed continents.
+- Generate node-profile JSON for all deployed continents from node GeoPackages.
 - Generate `frontend/public/tiles/reach_search_index.json` for Reach ID and
   river-name search.
 - Build `global_reaches_overview.pmtiles` after all continent reach sources are

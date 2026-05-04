@@ -1,37 +1,61 @@
 # SWORD Explorer Frontend
 
-React + MapLibre prototype for the next SWORD Explorer interface.
+React + Vite + MapLibre application for the SWORD Explorer.
+
+The frontend is a static app. It reads PMTiles, search indexes, legend metadata,
+and node profile JSON from `public/`, or from remote URLs configured with Vite
+environment variables.
 
 ## Local Development
 
-Install Node.js, then run:
+Install dependencies:
 
 ```bash
 npm install
+```
+
+Copy the local configuration:
+
+```bash
+cp .env.example .env
+```
+
+Start the dev server:
+
+```bash
 npm run dev
 ```
 
-The map shell runs without SWORD tiles. To connect a PMTiles reach archive:
+To test from another device on the same network:
 
 ```bash
-VITE_SWORD_REACHES_PMTILES=https://example.org/hbXX_reaches.pmtiles npm run dev
+npm run dev -- --host 0.0.0.0
 ```
 
-If the vector tile source layer is not named `reaches`, set:
+## Expected Public Assets
+
+The app expects generated assets in this shape:
+
+```text
+public/
+  tiles/
+    sword_tile_manifest.json
+    reach_search_index.json
+    *_reaches_*.pmtiles
+    *_reaches.colors.json
+    global_rivers_natural_earth.pmtiles
+  nodes/
+    hbXX/
+      {reach_id}.json
+```
+
+See the root `README.md` for the full asset-generation workflow from SWORD
+reach and node GeoPackages.
+
+## Build
 
 ```bash
-VITE_SWORD_REACHES_SOURCE_LAYER=your_layer_name
+npm run build
 ```
 
-## Current Scope
-
-- Persistent MapLibre map shell.
-- Layer mode controls for reach attributes.
-- Hover and click wiring for vector tile features.
-- Selected-reach inspector.
-- Placeholder node chart panel.
-
-Next steps are to generate a one-basin PMTiles archive and connect node data for
-the selected reach.
-
-See `../docs/one_basin_tile_prototype.md` for the tile generation workflow.
+The deployable static site is written to `dist/`.

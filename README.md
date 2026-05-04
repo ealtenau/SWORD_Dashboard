@@ -3,28 +3,364 @@
 </p>
 
 # SWORD Explorer Dashboard
-Source code for developing and maintaining the online [SWORD Explorer Dashboard](https://www.swordexplorer.com/).
 
-The "assets" directory contains logos and scripts to produce the SWORD maps, basin maps, and node files that are output to a "data" directory. 
+Source code for developing and maintaining the online SWORD Explorer Dashboard.
+The current application is a React + MapLibre frontend backed by static
+geospatial assets generated from SWORD reach and node GeoPackages.
 
-The "data" directory contains the SWORD maps, basin maps, and node files used to display SWORD information in the main app. This directory will be created when running the scripts for the first time. 
+The legacy Dash/Folium application is archived under `legacy/dash_folium/`.
+New development is centered on `frontend/` and the generation scripts in
+`scripts/`.
 
-## SWORD Explorer is intended to help examine the most up-to-date SWORD version, and help users identify and report areas for improving SWORD. 
+## Application Structure
 
-### Notes for Users
-- The first map displayed for each region is the basin map key. Users can use this key to identify a river basin they wish to explore, then click the basin to display the river reaches contained in the selected basin.
-- Maps that display rivers include 7 attribute layers: reach boundaries, water surface elevation (WSE), width, flow accumulation, distance from outlet, slope, and number of SWOT observations. Layers can be toggled on and off using the layers panel in the bottom-right corner of the map.
-- Users can hover or click on a reach to view attribute information.
-- Users can click on a Reach ID to plot node-level properties of node order, width, elevation, flow accumulation, sinuosity, and number of channels along a specified reach.
-- Native SWORD reach geometries are built at 30 m resolution, however, for map efficiency gemetries have been simplified. To examine full reach geometries, please download the full SWORD Database.
-- Users can click on the "Report Reach" button below the main map to report issues or suggest changes to SWORD. 
+```text
+SWORD_Dashboard/
+  frontend/                    # React + Vite + MapLibre application
+    src/
+      components/              # map, side panel, modals, charts, search
+      data/                    # tile manifest, color metadata, node profile loaders
+      map/                     # MapLibre style/layer/symbology helpers
+      styles/app.css           # application styling and mobile bottom sheet
+    public/
+      tiles/                   # generated PMTiles, manifests, color metadata
+      nodes/                   # generated node profile JSON by hbXX/reach_id
+  scripts/
+    split_continent_reaches.py # split continent reach GeoPackages for PMTiles
+    build_reach_pmtiles.py     # build detailed reach PMTiles and color metadata
+    build_global_overview_pmtiles.py
+    build_reach_search_index.py
+    build_node_profiles.py
+  assets/                      # shared images used by the React app
+  legacy/
+    dash_folium/               # archived pre-React Dash/Folium app and scripts
+  docs/                        # migration notes and design/reference docs
+```
 
-![Fig1](https://github.com/ealtenau/SWORD_Dashboard/blob/main/docs/figures/sword_explorer_home.png)
-**_Figure 1:_** Home screen of SWORD Explorer. Users can click on a basin to visualize reaches. 
+The React app is static. It does not require a Python web server once assets are
+built. Map data, search data, legends, and node charts are loaded from static
+files under `frontend/public`.
 
-![Fig2](https://github.com/ealtenau/SWORD_Dashboard/blob/main/docs/figures/sword_explorer_options.png)
-**_Figure 2:_** The layers panel in the top-right hand corner of the map allows users to view different attributes for the displayed reaches. 
+## Required Inputs
 
-![Fig3](https://github.com/ealtenau/SWORD_Dashboard/blob/main/docs/figures/sword_explorer_basemap.png)
-**_Figure 3:_** Users can also choose to view the data over an accessible basemap or satellite imagery. 
+To rebuild the current React assets, a fork should start from SWORD GeoPackages:
 
+- One **reach GeoPackage per continent**:
+  - `af_sword_reaches_v17b.gpkg`
+  - `as_sword_reaches_v17b.gpkg`
+  - `eu_sword_reaches_v17b.gpkg`
+  - `na_sword_reaches_v17b.gpkg`
+  - `oc_sword_reaches_v17b.gpkg`
+  - `sa_sword_reaches_v17b.gpkg`
+- One **node GeoPackage per continent**:
+  - `af_sword_nodes_v17b.gpkg`
+  - `as_sword_nodes_v17b.gpkg`
+  - `eu_sword_nodes_v17b.gpkg`
+  - `na_sword_nodes_v17b.gpkg`
+  - `oc_sword_nodes_v17b.gpkg`
+  - `sa_sword_nodes_v17b.gpkg`
+
+Reach inputs should include the properties used by the map:
+
+```text
+reach_id, river_name, wse, width, facc, dist_out, slope, swot_obs,
+swot_orbit, n_chan_max, strm_order, rch_id_up, rch_id_dn, x, y
+```
+
+Node inputs should include:
+
+```text
+reach_id, node_id, wse, width, facc, dist_out, n_chan_mod, sinuosity
+```
+
+Node files may include `x`/`y` columns. If they do not, the exporter derives
+coordinates from point geometry. Node profiles are partitioned by level-two
+basin (`hbXX`), inferred from the first two digits of `reach_id`.
+
+The SWORD GeoPackages are not committed to this repository. Keep large source
+data outside git, for example under `external_data/` or another local data
+directory.
+
+## Prerequisites
+
+Python environment:
+
+- Python 3.10+
+- GeoPandas
+- pandas
+- NumPy
+- Shapely
+- netCDF4 only if using legacy `nodes_hbXX.nc` inputs
+
+Map tile tooling:
+
+```bash
+brew install tippecanoe
+```
+
+Frontend tooling:
+
+- Node.js 20+
+- npm
+
+Install frontend dependencies:
+
+```bash
+cd frontend
+npm install
+cd ..
+```
+
+## Rebuild Static Assets
+
+Run these commands from the repository root.
+
+### 1. Split Continent Reach Files
+
+Large continent reach datasets are split into PMTiles-friendly chunks. This also
+writes `frontend/public/tiles/sword_tile_manifest.json` and regenerates
+`scripts/build_split_pmtiles.sh`.
+
+```bash
+python scripts/split_continent_reaches.py \
+  /path/to/af_sword_reaches_v17b.gpkg \
+  /path/to/as_sword_reaches_v17b.gpkg \
+  /path/to/eu_sword_reaches_v17b.gpkg \
+  /path/to/na_sword_reaches_v17b.gpkg \
+  /path/to/oc_sword_reaches_v17b.gpkg \
+  /path/to/sa_sword_reaches_v17b.gpkg \
+  --max-reaches 20000 \
+  --minzoom 2
+```
+
+Outputs:
+
+```text
+external_data/sword_split_reaches/{continent}/*.gpkg
+frontend/public/tiles/sword_tile_manifest.json
+scripts/build_split_pmtiles.sh
+frontend/public/tiles/{continent}_reaches.colors.json
+```
+
+### 2. Build Detailed Reach PMTiles
+
+```bash
+bash scripts/build_split_pmtiles.sh
+```
+
+Outputs:
+
+```text
+frontend/public/tiles/af_reaches_001.pmtiles
+frontend/public/tiles/as_reaches_001.pmtiles
+...
+frontend/public/tiles/*_reaches_*.colors.json
+```
+
+The app uses the manifest to treat split files as one logical continent.
+
+### 3. Build Node Profile JSON
+
+Build node profiles from continent node GeoPackages:
+
+```bash
+python scripts/build_node_profiles.py \
+  /path/to/af_sword_nodes_v17b.gpkg \
+  /path/to/as_sword_nodes_v17b.gpkg \
+  /path/to/eu_sword_nodes_v17b.gpkg \
+  /path/to/na_sword_nodes_v17b.gpkg \
+  /path/to/oc_sword_nodes_v17b.gpkg \
+  /path/to/sa_sword_nodes_v17b.gpkg \
+  --output-dir frontend/public/nodes
+```
+
+Outputs:
+
+```text
+frontend/public/nodes/hb11/{reach_id}.json
+frontend/public/nodes/hb12/{reach_id}.json
+...
+```
+
+The script still supports old `data/nodes_hbXX.nc` files, but GeoPackage input
+is the preferred rebuild path.
+
+### 4. Build Reach Search Index
+
+```bash
+python scripts/build_reach_search_index.py \
+  $(find external_data/sword_split_reaches -name "*.gpkg") \
+  --output frontend/public/tiles/reach_search_index.json
+```
+
+This enables the React search box to find exact Reach IDs and river-name groups.
+
+### 5. Optional Global Overview PMTiles
+
+The app can show a simplified low-zoom global river layer. If you want to build
+one from the SWORD reach GeoPackages:
+
+```bash
+python scripts/build_global_overview_pmtiles.py \
+  /path/to/af_sword_reaches_v17b.gpkg \
+  /path/to/as_sword_reaches_v17b.gpkg \
+  /path/to/eu_sword_reaches_v17b.gpkg \
+  /path/to/na_sword_reaches_v17b.gpkg \
+  /path/to/oc_sword_reaches_v17b.gpkg \
+  /path/to/sa_sword_reaches_v17b.gpkg \
+  --output frontend/public/tiles/global_reaches_overview.pmtiles \
+  --maxzoom 5 \
+  --simplify-tolerance 0.005 \
+  --min-facc 1000 \
+  --merge-connected \
+  --snap-tolerance-meters 100
+```
+
+If you use a Natural Earth river layer instead, place the PMTiles file in
+`frontend/public/tiles/` and point `VITE_SWORD_OVERVIEW_PMTILES` at it.
+
+## Frontend Configuration
+
+The local defaults are in `frontend/.env.example`. Copy it before running:
+
+```bash
+cp frontend/.env.example frontend/.env
+```
+
+Typical local configuration:
+
+```text
+VITE_SWORD_REACHES_SOURCE_LAYER=reaches
+VITE_SWORD_CONTINENTS=all
+VITE_SWORD_TILE_MANIFEST_JSON=/tiles/sword_tile_manifest.json
+VITE_SWORD_NODE_BASE_URL=/nodes
+VITE_SWORD_REACH_SEARCH_INDEX_JSON=/tiles/reach_search_index.json
+VITE_SWORD_OVERVIEW_PMTILES=/tiles/global_rivers_natural_earth.pmtiles
+VITE_SWORD_OVERVIEW_SOURCE_LAYER=rivers
+VITE_SWORD_OVERVIEW_MAX_ZOOM=5
+VITE_SWORD_DETAIL_MIN_ZOOM=4
+VITE_MAP_CENTER_LON=10
+VITE_MAP_CENTER_LAT=15
+VITE_MAP_ZOOM=1.6
+```
+
+If building the overview with `scripts/build_global_overview_pmtiles.py`, use:
+
+```text
+VITE_SWORD_OVERVIEW_PMTILES=/tiles/global_reaches_overview.pmtiles
+VITE_SWORD_OVERVIEW_COLOR_BINS_JSON=/tiles/global_reaches_overview.colors.json
+VITE_SWORD_OVERVIEW_SOURCE_LAYER=reaches
+```
+
+## Run Locally
+
+Start the React dev server:
+
+```bash
+cd frontend
+npm run dev
+```
+
+Open the URL printed by Vite, usually:
+
+```text
+http://localhost:5173
+```
+
+To test on a phone on the same Wi-Fi, find your computer IP:
+
+```bash
+ipconfig getifaddr en0
+```
+
+Start Vite so other devices on the network can reach it:
+
+```bash
+npm run dev -- --host 0.0.0.0
+```
+
+Then open this on the phone:
+
+```text
+http://YOUR_LOCAL_IP:5173
+```
+
+## Build the Site
+
+```bash
+cd frontend
+npm run build
+```
+
+The built app is written to:
+
+```text
+frontend/dist
+```
+
+## Generated Asset Layout
+
+After a full rebuild, the frontend expects:
+
+```text
+frontend/public/
+  tiles/
+    sword_tile_manifest.json
+    reach_search_index.json
+    af_reaches.colors.json
+    af_reaches_001.pmtiles
+    af_reaches_002.pmtiles
+    ...
+    global_reaches_overview.pmtiles        # optional
+  nodes/
+    hb11/
+      11410000016.json
+      ...
+    hb12/
+    ...
+```
+
+Large generated assets should generally not be committed to git.
+
+## Deployment Notes
+
+For low-cost hosting, the preferred shape is:
+
+- **Cloudflare Pages** for the React build in `frontend/dist`
+- **Cloudflare R2** or similar object storage for `tiles/` and `nodes/`
+
+When hosting assets outside the app domain, update `.env`/deployment variables:
+
+```text
+VITE_SWORD_TILE_MANIFEST_JSON=https://static.example.org/tiles/sword_tile_manifest.json
+VITE_SWORD_NODE_BASE_URL=https://static.example.org/nodes
+VITE_SWORD_REACH_SEARCH_INDEX_JSON=https://static.example.org/tiles/reach_search_index.json
+VITE_SWORD_OVERVIEW_PMTILES=https://static.example.org/tiles/global_reaches_overview.pmtiles
+```
+
+The static asset host must support CORS. PMTiles hosting should support HTTP
+range requests.
+
+## Legacy Dash/Folium App
+
+The pre-React Dash/Folium implementation is archived for reference:
+
+```text
+legacy/dash_folium/
+  app.py
+  app_no_click.py
+  assets/
+```
+
+That path depends on the old `data/` HTML/NetCDF assets and root-level
+`about.md`, `download.md`, and `user_reports.csv` files. It is kept as a
+behavioral reference for the React migration, not as the preferred rebuild path.
+See `legacy/dash_folium/README.md` for details.
+
+## Documentation
+
+More detailed migration and prototype notes live in:
+
+- `docs/react_frontend_migration_plan.md`
+- `docs/one_basin_tile_prototype.md`
+- `docs/geospatial_refactor_plan.md`
