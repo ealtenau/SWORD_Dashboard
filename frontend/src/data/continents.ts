@@ -81,6 +81,28 @@ type TileManifest = {
   continents: ContinentTileConfig[];
 };
 
+function resolveManifestUrl(url: string, manifestUrl: string) {
+  if (/^(?:[a-z][a-z\d+\-.]*:)?\/\//i.test(url) || url.startsWith("pmtiles://")) {
+    return url;
+  }
+
+  return new URL(url, manifestUrl).toString();
+}
+
+function resolveManifestContinentUrls(
+  continents: ContinentTileConfig[],
+  manifestUrl: string,
+): ContinentTileConfig[] {
+  return continents.map((continent) => ({
+    ...continent,
+    colorsUrl: resolveManifestUrl(continent.colorsUrl, manifestUrl),
+    parts: continent.parts.map((part) => ({
+      ...part,
+      pmtilesUrl: resolveManifestUrl(part.pmtilesUrl, manifestUrl),
+    })),
+  }));
+}
+
 export function getEnabledContinentTiles(continents = CONTINENTS) {
   const requestedIds = enabledContinents
     .split(",")
@@ -137,7 +159,8 @@ export async function loadContinentTileManifest(): Promise<ContinentTileConfig[]
     }
 
     const manifest = (await response.json()) as TileManifest;
-    return getEnabledContinentTiles(mergeManifestContinents(manifest.continents ?? []));
+    const manifestContinents = resolveManifestContinentUrls(manifest.continents ?? [], tileManifestUrl);
+    return getEnabledContinentTiles(mergeManifestContinents(manifestContinents));
   } catch (error) {
     console.warn(error);
     return getEnabledContinentTiles();
