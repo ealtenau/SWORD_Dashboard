@@ -362,5 +362,6 @@ See `legacy/dash_folium/README.md` for details.
 More detailed migration and prototype notes live in:
 
 - `docs/react_frontend_migration_plan.md`
+- `docs/cloudflare_deployment.md`
 - `docs/one_basin_tile_prototype.md`
 - `docs/geospatial_refactor_plan.md`
