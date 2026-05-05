@@ -281,15 +281,18 @@ export function ReachCharts({ selectedReachId }: ReachChartsProps) {
   }, [selectedReachId]);
 
   return (
-    <section className="panel-section charts-section">
-      <div className="panel-heading">
-        <p className="eyebrow">Node Attributes</p>
-        <h2>{selectedReachId ? `Reach ${selectedReachId}` : "Select a reach"}</h2>
+    <section className="charts-section">
+      <div className="panel-section charts-heading-card">
+        <div className="panel-heading">
+          <p className="eyebrow">Node Attributes</p>
+          <h2>{selectedReachId ? `Reach ${selectedReachId}` : "Select a reach"}</h2>
+        </div>
+
+        {!selectedReachId ? <p className="empty-state">Click a reach to load node-level profiles.</p> : null}
+        {status === "loading" ? <p className="empty-state">Loading node profile...</p> : null}
+        {status === "error" ? <p className="empty-state">No node profile found for this reach yet.</p> : null}
       </div>
 
-      {!selectedReachId ? <p className="empty-state">Click a reach to load node-level profiles.</p> : null}
-      {status === "loading" ? <p className="empty-state">Loading node profile...</p> : null}
-      {status === "error" ? <p className="empty-state">No node profile found for this reach yet.</p> : null}
       {profile ? (
         <div className="chart-grid">
           {CHARTS.map((chart) => (

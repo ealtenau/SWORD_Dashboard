@@ -650,6 +650,8 @@ button {
 }
 
 .charts-section {
+  display: grid;
+  gap: 14px;
   min-height: 0;
 }
 

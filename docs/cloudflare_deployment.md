@@ -131,6 +131,49 @@ After the first Pages deploy, open the `*.pages.dev` URL and check:
 If map assets fail to load, check the browser Network tab. The most likely
 issues are an incorrect R2 URL or missing CORS origin.
 
+## Local Development After Deployment
+
+Keep using Vite locally for app development:
+
+```bash
+cd frontend
+npm run dev
+```
+
+The safest post-deployment local setup is to point local dev at the same R2
+asset URLs as production. This avoids needing a full local copy of every large
+PMTiles and node profile file, and it does not affect the deployed app because
+Cloudflare Pages uses the environment variables configured in Pages settings.
+
+Create a private local env file from the R2 template:
+
+```bash
+cp .env.local.example .env.local
+```
+
+Then replace `R2_PUBLIC_URL` in `.env.local` with the public bucket URL, without
+a trailing slash. Vite loads `.env.local` for local dev, while the file stays
+uncommitted.
+
+If local zoomed-in reach tiles do not appear, check:
+
+- `frontend/.env.local` has `VITE_SWORD_TILE_MANIFEST_JSON` pointing to the R2
+  `sword_tile_manifest.json`.
+- The manifest's `pmtilesUrl` paths resolve to real R2 objects.
+- The R2 CORS policy includes `http://localhost:5173`.
+- After changing env files, restart `npm run dev`; Vite reads env variables at
+  server startup.
+
+To test locally generated assets instead, use same-origin paths in
+`frontend/.env.local`:
+
+```text
+VITE_SWORD_TILE_MANIFEST_JSON=/tiles/sword_tile_manifest.json
+VITE_SWORD_NODE_BASE_URL=/nodes
+VITE_SWORD_REACH_SEARCH_INDEX_JSON=/tiles/reach_search_index.json
+VITE_SWORD_OVERVIEW_PMTILES=/tiles/global_rivers_natural_earth.pmtiles
+```
+
 ## Useful Commands
 
 Build the deployable app locally without copying local generated data:
