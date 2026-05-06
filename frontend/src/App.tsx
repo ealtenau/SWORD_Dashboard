@@ -8,8 +8,8 @@ import { ReachCharts } from "./components/ReachCharts";
 import { ReachSearch } from "./components/ReachSearch";
 import { loadColorMetadataByContinent } from "./data/colorMetadata";
 import { loadContinentTileManifest, type ContinentTileConfig } from "./data/continents";
-import { loadReachSearchIndex, selectionRecords, type ReachSearchResult } from "./data/reachSearch";
-import type { ColorMetadataByContinent, LayerMode, ReachProperties, ReachSearchRecord, ReachSearchSelection } from "./types";
+import { selectionRecords, type ReachSearchResult } from "./data/reachSearch";
+import type { ColorMetadataByContinent, LayerMode, ReachProperties, ReachSearchSelection } from "./types";
 import aboutContent from "../../about.md?raw";
 import downloadContent from "../../download.md?raw";
 import swordLogo from "../../assets/SWORD_Logo.png";
@@ -24,8 +24,6 @@ export function App() {
   const [selectedReach, setSelectedReach] = useState<ReachProperties | null>(null);
   const [hoveredReach, setHoveredReach] = useState<ReachProperties | null>(null);
   const [activeModal, setActiveModal] = useState<ActiveModal>(null);
-  const [searchRecords, setSearchRecords] = useState<ReachSearchRecord[]>([]);
-  const [isSearchLoading, setIsSearchLoading] = useState(true);
   const [searchSelection, setSearchSelection] = useState<ReachSearchSelection | null>(null);
   const [isMobileSheetExpanded, setIsMobileSheetExpanded] = useState(false);
 
@@ -71,29 +69,6 @@ export function App() {
       isMounted = false;
     };
   }, [continentTiles]);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    loadReachSearchIndex()
-      .then((records) => {
-        if (isMounted) {
-          setSearchRecords(records);
-        }
-      })
-      .catch((error) => {
-        console.warn(error);
-      })
-      .finally(() => {
-        if (isMounted) {
-          setIsSearchLoading(false);
-        }
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
 
   const selectedReachId = useMemo(() => {
     if (!selectedReach?.reach_id) {
@@ -202,11 +177,7 @@ export function App() {
             <span aria-hidden="true" />
             {isMobileSheetExpanded ? "Collapse Details" : "Explore Details"}
           </button>
-          <ReachSearch
-            isLoading={isSearchLoading}
-            onSelect={handleSearchSelect}
-            records={searchRecords}
-          />
+          <ReachSearch onSelect={handleSearchSelect} />
           <LayerPanel
             activeLayerMode={activeLayerMode}
             onLayerModeChange={setActiveLayerMode}
