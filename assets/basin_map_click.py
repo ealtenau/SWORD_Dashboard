@@ -1,6 +1,6 @@
 
 import os
-os.chdir('/Users/ealtenau/Documents/SWORD_Dev/src/SWORD_Dashboard/assets/')
+os.chdir('/Users/ealtenau/Documents/Repos/SWORD_Dashboard/assets/')
 import geopandas as gp
 import folium
 from folium.features import DivIcon
@@ -92,22 +92,17 @@ def colors_at_breaks(cmap, breaks):
 #################################################################################################
 
 # Input directory to level 2 Hydrobasins files. 
-outdir = '/Users/ealtenau/Documents/SWORD_Dev/'\
-    'src/SWORD_Dashboard/data/'
+outdir = '/Users/ealtenau/Documents/Repos/SWORD_Dashboard/data/'
 # outdir = '/Users/ealtenau/Desktop/folium_click_map_ck/data/'
-basin_dir = '/Users/ealtenau/Documents/SWORD_Dev/'\
-    'src/other_src/hb_level2/gpkg_sword/'
+basin_dir = '/Users/ealtenau/Documents/Work/UNC/HydroBASINS/hb_level2/gpkg_sword/'
 basin_paths = [basin_dir+file for file in os.listdir(basin_dir) if '.gpkg' in file]
 
 ### Loop thrugh each continent and produce the basin key map. Output to the "data" directory. 
 for ind in list(range(len(basin_paths))): #len(basin_paths)
     
     basins = gp.read_file(basin_paths[ind])
-    basins_simple = basins.copy()
-    basins_simple = basins_simple.simplify(0.01) 
-    basins_simple = gp.GeoDataFrame(basins_simple)
+    basins_simple = gp.GeoDataFrame(geometry=basins.simplify(0.01), crs=basins.crs)
     basins_simple['Basin'] = basins['PFAF_ID']
-    basins_simple.rename(columns = {0:'geometry'}, inplace = True)
     basins_simple['ID'] = list(range(len(basins_simple)))
     basins_simple['ID'] = basins_simple['ID'].apply(lambda x: str(x))
 
@@ -147,7 +142,8 @@ for ind in list(range(len(basin_paths))): #len(basin_paths)
 
     # Create map
     parent_map = folium.Map(location=center, #[40,10] global
-                tiles='cartodbpositron',
+                tiles='https://basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png?key=cb1_3ole_1_f2dd6aeeef60480000349256',
+                attr='&copy; OpenStreetMap contributors &copy; CARTO',
                 name = 'Carto Basemap', 
                 zoom_start=3)
 

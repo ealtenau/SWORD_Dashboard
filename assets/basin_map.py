@@ -48,11 +48,8 @@ basin_paths = [basin_dir+file for file in os.listdir(basin_dir) if '.gpkg' in fi
 for ind in list(range(len(basin_paths))):
     
     basins = gp.read_file(basin_paths[ind])
-    basins_simple = basins.copy()
-    basins_simple = basins_simple.simplify(0.01) 
-    basins_simple = gp.GeoDataFrame(basins_simple)
+    basins_simple = gp.GeoDataFrame(geometry=basins.simplify(0.01), crs=basins.crs)
     basins_simple['Basin'] = basins['PFAF_ID']
-    basins_simple.rename(columns = {0:'geometry'}, inplace = True)
     basins_simple['ID'] = list(range(len(basins_simple)))
     basins_simple['ID'] = basins_simple['ID'].apply(lambda x: str(x))
 
@@ -92,7 +89,8 @@ for ind in list(range(len(basin_paths))):
 
     # Create map
     parent_map = folium.Map(location=center, #[40,10] global
-                tiles='cartodbpositron',
+                tiles='https://basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png?key=cb1_3ole_1_f2dd6aeeef60480000349256',
+                attr='&copy; OpenStreetMap contributors &copy; CARTO',
                 name = 'Carto Basemap', 
                 zoom_start=3)
 

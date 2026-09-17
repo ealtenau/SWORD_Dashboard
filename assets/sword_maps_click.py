@@ -1,5 +1,5 @@
 import os
-os.chdir('/Users/ealtenau/Documents/SWORD_Dev/src/SWORD_Dashboard/assets/')
+os.chdir('/Users/ealtenau/Documents/Repos/SWORD_Dashboard/assets/')
 import geopandas as gp
 import numpy as np
 import folium
@@ -132,9 +132,7 @@ def getListOfFiles(dirName):
 
 def get_data(fn):
 	sword = gp.read_file(fn)
-	sword_simple = sword.copy()
-	sword_simple = sword_simple.simplify(0.0005) #use to be 0.005. 
-	sword_simple = gp.GeoDataFrame(sword_simple)
+	sword_simple = gp.GeoDataFrame(geometry=sword.simplify(0.0005), crs=sword.crs) #use to be 0.005. 
 	sword_simple['reach_id'] = sword['reach_id'].astype(str)
 	sword_simple['wse'] = np.round(sword['wse'] , 3)
 	sword_simple['facc'] = np.round(sword['facc'], 3)
@@ -148,7 +146,6 @@ def get_data(fn):
 	sword_simple['pass_ids'] = sword['swot_orbit']
 	sword_simple['lat'] = np.round(sword['y'], 2)
 	sword_simple['lon'] = np.round(sword['x'], 2)
-	sword_simple.rename(columns = {0:'geometry'}, inplace = True)
 	sword_json = sword_simple.to_json()
 	del(sword)
 	return sword_simple, sword_json
@@ -157,11 +154,11 @@ def get_data(fn):
 ########################################### MAIN CODE ###########################################
 #################################################################################################
 # read in and format data
-outdir = '/Users/ealtenau/Documents/SWORD_Dev/src/SWORD_Dashboard/data/'
+outdir = '/Users/ealtenau/Documents/Repos/SWORD_Dashboard/data/'
 # outdir = '/Users/ealtenau/Desktop/folium_click_map_ck/data/'
 if os.path.exists(outdir) == False:
 	os.makedirs(outdir)
-shp_dir = '/Users/ealtenau/Documents/SWORD_Dev/outputs/Reaches_Nodes/v17b/shp/'
+shp_dir = '/Users/ealtenau/Documents/Work/UNC/SWORD/shp/'
 shp_paths = [file for file in getListOfFiles(shp_dir) if '.shp' in file and 'reaches' in file]
 shp_paths = np.unique(shp_paths) 
 basins = [path[-13:-9] for path in shp_paths]
@@ -443,7 +440,8 @@ for ind in list(range(len(shp_paths))): #len(shp_paths); 35 is mississippi basin
 	# Create map
 	parent_map = folium.Map(
 			location=center, 
-			tiles='cartodbpositron',
+			tiles='https://basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png?key=cb1_3ole_1_f2dd6aeeef60480000349256',
+			attr='&copy; OpenStreetMap contributors &copy; CARTO',
 			name = 'Carto Basemap',
 			zoom_start=5)
 
