@@ -13,9 +13,7 @@ export const BASE_STYLE: StyleSpecification = {
     carto: {
       type: "raster",
       tiles: [
-        "https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
-        "https://b.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
-        "https://c.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+        "https://basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png?key=cb1_3ole_1_f2dd6aeeef60480000349256",
       ],
       tileSize: 256,
       attribution: "&copy; OpenStreetMap contributors &copy; CARTO",
