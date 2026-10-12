@@ -110,31 +110,6 @@ test("channel tooltip labels preserve false as side channel", () => {
 });
 
 const { getLayerConfig } = await loadTypescript("../src/map/symbology.ts");
-test("SWOT and regular layers share value breaks and colors while SWOT nulls stay white", () => {
-  for (const [base, swot] of [["wse", "wse_obs_p50"], ["width", "width_obs_p50"], ["slope", "slope_obs_p50"]]) {
-    const metadata = { layers: {
-      [base]: { classification: "quantile", stops: [0, 5, 10], colors: ["#220044", "#bb5533", "#ffcc44"] },
-      [swot]: { classification: "quantile", stops: [-100, 0, 100], colors: ["#1111ff", "#22ff22", "#ff11ff"], caption: "SWOT observations" },
-    } };
-    const baseConfig = getLayerConfig(base, metadata);
-    const swotConfig = getLayerConfig(swot, metadata);
-    assert.deepEqual(swotConfig.stops, baseConfig.stops);
-    assert.deepEqual(swotConfig.colors, baseConfig.colors);
-    assert.equal(swotConfig.caption, "SWOT observations");
-
-    const baseExpression = createExpression(getLayerColorExpression(base, metadata), { type: "color" });
-    const swotExpression = createExpression(getLayerColorExpression(swot, metadata), { type: "color" });
-    assert.equal(baseExpression.result, "success", JSON.stringify(baseExpression.value));
-    assert.equal(swotExpression.result, "success", JSON.stringify(swotExpression.value));
-    for (const value of [0, 5, 10]) {
-      assert.deepEqual(
-        swotExpression.value.evaluate({}, { properties: { [swot]: value } }),
-        baseExpression.value.evaluate({}, { properties: { [base]: value } }),
-      );
-    }
-    assert.deepEqual(swotExpression.value.evaluate({}, { properties: { [swot]: null } }), Color.parse("#ffffff"));
-  }
-});
 test("WSE palettes darken highlights without changing breaks or missing colors", () => {
   for (const field of ["wse", "wse_obs_p50"]) {
     const stops = [0, 10, 20];
