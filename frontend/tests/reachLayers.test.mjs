@@ -15,6 +15,15 @@ async function loadTypescript(path) {
 const { getLayerColorExpression } = await loadTypescript("../src/map/symbology.ts");
 const { reachConnectivity } = await loadTypescript("../src/data/reachConnectivity.ts");
 const { formatReachNumber, formatThreeDecimals } = await loadTypescript("../src/data/formatNumbers.ts");
+const { versionAssetUrl } = await loadTypescript("../src/data/assetUrls.ts");
+
+test("manifest version changes asset URLs without losing existing query parameters", () => {
+  const url = "https://assets.example/tiles/na_reaches_001.pmtiles?token=public";
+  const versioned = new URL(versionAssetUrl(url, "Mon, 12 Oct 2026 21:23:36 GMT"));
+  assert.equal(versioned.searchParams.get("token"), "public");
+  assert.equal(versioned.searchParams.get("assetVersion"), "Mon, 12 Oct 2026 21:23:36 GMT");
+  assert.equal(versionAssetUrl(url, null), url);
+});
 
 test("WSE, Width, and Slope hover measurements use three decimal places", () => {
   for (const field of ["wse", "wse_obs_p50", "width", "width_obs_p50", "slope", "slope_obs_p50"]) {

@@ -1,3 +1,5 @@
+import { versionAssetUrl } from "./assetUrls";
+
 export type ContinentTileConfig = {
   id: string;
   name: string;
@@ -92,13 +94,14 @@ function resolveManifestUrl(url: string, manifestUrl: string) {
 function resolveManifestContinentUrls(
   continents: ContinentTileConfig[],
   manifestUrl: string,
+  assetVersion: string | null,
 ): ContinentTileConfig[] {
   return continents.map((continent) => ({
     ...continent,
-    colorsUrl: resolveManifestUrl(continent.colorsUrl, manifestUrl),
+    colorsUrl: versionAssetUrl(resolveManifestUrl(continent.colorsUrl, manifestUrl), assetVersion),
     parts: continent.parts.map((part) => ({
       ...part,
-      pmtilesUrl: resolveManifestUrl(part.pmtilesUrl, manifestUrl),
+      pmtilesUrl: versionAssetUrl(resolveManifestUrl(part.pmtilesUrl, manifestUrl), assetVersion),
     })),
   }));
 }
@@ -153,13 +156,18 @@ export async function loadContinentTileManifest(): Promise<ContinentTileConfig[]
   }
 
   try {
-    const response = await fetch(tileManifestUrl);
+    const response = await fetch(tileManifestUrl, { cache: "no-store" });
     if (!response.ok) {
       throw new Error(`Unable to load tile manifest from ${tileManifestUrl}: ${response.status}`);
     }
 
     const manifest = (await response.json()) as TileManifest;
-    const manifestContinents = resolveManifestContinentUrls(manifest.continents ?? [], new URL(tileManifestUrl, window.location.href).href);
+    const assetVersion = response.headers.get("Last-Modified") ?? response.headers.get("ETag");
+    const manifestContinents = resolveManifestContinentUrls(
+      manifest.continents ?? [],
+      new URL(tileManifestUrl, window.location.href).href,
+      assetVersion,
+    );
     return getEnabledContinentTiles(mergeManifestContinents(manifestContinents));
   } catch (error) {
     console.warn(error);
