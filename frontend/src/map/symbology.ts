@@ -113,6 +113,12 @@ export const LAYER_CONFIGS: Record<LayerMode, LayerConfig> = {
   },
 };
 
+const SWOT_BASE_LAYERS: Partial<Record<LayerMode, LayerMode>> = {
+  wse_obs_p50: "wse",
+  width_obs_p50: "width",
+  slope_obs_p50: "slope",
+};
+
 function interpolateStops(stops: number[], colorCount: number) {
   if (stops.length === colorCount) {
     return stops;
@@ -174,12 +180,15 @@ function samplePalette(colors: string[], count: number): string[] {
 export function getLayerConfig(layerMode: LayerMode, metadata?: ColorMetadata | null): LayerConfig {
   const fallback = LAYER_CONFIGS[layerMode];
   const layerMetadata = metadata?.layers[layerMode];
-  let config = layerMetadata ? {
+  // A measured value should have the same color in the SWORD and SWOT layers.
+  const baseLayer = SWOT_BASE_LAYERS[layerMode];
+  const scaleMetadata = (baseLayer && metadata?.layers[baseLayer]) || layerMetadata;
+  let config = layerMetadata || scaleMetadata ? {
     ...fallback,
-    caption: layerMetadata.caption ?? fallback.caption,
-    colors: layerMetadata.colors.length > 0 ? layerMetadata.colors : fallback.colors,
-    stops: layerMetadata.stops.length > 0 ? layerMetadata.stops : fallback.stops,
-    units: layerMetadata.units ?? fallback.units,
+    caption: layerMetadata?.caption ?? fallback.caption,
+    colors: scaleMetadata?.colors.length ? scaleMetadata.colors : fallback.colors,
+    stops: scaleMetadata?.stops.length ? scaleMetadata.stops : fallback.stops,
+    units: layerMetadata?.units ?? fallback.units,
   } : fallback;
 
   if (layerMode === "n_chan_max") {
