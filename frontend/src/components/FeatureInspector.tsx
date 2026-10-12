@@ -1,3 +1,5 @@
+import { formatReachNumber } from "../data/formatNumbers";
+import { mainstemLabel } from "../data/reachClassification";
 import type { ReachProperties } from "../types";
 
 type FeatureInspectorProps = {
@@ -5,24 +7,29 @@ type FeatureInspectorProps = {
   selectedReach: ReachProperties | null;
 };
 
-const ATTRIBUTE_ROWS: Array<{ key: keyof ReachProperties; label: string }> = [
+const ATTRIBUTE_ROWS: Array<{ key: string; label: string }> = [
   { key: "reach_id", label: "Reach ID" },
   { key: "river_name", label: "River" },
   { key: "wse", label: "WSE" },
+  { key: "wse_obs_p50", label: "SWOT Median WSE" },
   { key: "width", label: "Width" },
-  { key: "facc", label: "Flow accumulation" },
+  { key: "width_obs_p50", label: "SWOT Median Width" },
+  { key: "facc_total", label: "Flow accumulation" },
   { key: "dist_out", label: "Distance out" },
   { key: "slope", label: "Slope" },
+  { key: "slope_obs_p50", label: "SWOT Median Slope (m/km)" },
+  { key: "is_mainstem", label: "Channel type" },
   { key: "swot_obs", label: "SWOT observations" },
 ];
 
-function formatValue(value: unknown) {
+function formatValue(value: unknown, field: string) {
   if (value === undefined || value === null || value === "") {
     return "Not available";
   }
 
   if (typeof value === "number") {
-    return Number.isInteger(value) ? value.toLocaleString() : value.toLocaleString(undefined, { maximumFractionDigits: 3 });
+    if (!Number.isFinite(value)) return "Not available";
+    return field === "reach_id" ? String(value) : formatReachNumber(value, field);
   }
 
   return String(value);
@@ -43,7 +50,7 @@ export function FeatureInspector({ hoveredReach, selectedReach }: FeatureInspect
           {ATTRIBUTE_ROWS.map((row) => (
             <div key={row.key}>
               <dt>{row.label}</dt>
-              <dd>{formatValue(reach[row.key])}</dd>
+              <dd>{row.key === "is_mainstem" ? mainstemLabel(reach[row.key]) : formatValue(reach[row.key], row.key)}</dd>
             </div>
           ))}
         </dl>

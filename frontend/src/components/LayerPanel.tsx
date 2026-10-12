@@ -9,12 +9,15 @@ type LayerPanelProps = {
 const LAYER_MODES: LayerMode[] = [
   "reach_id",
   "wse",
+  "wse_obs_p50",
   "width",
-  "facc",
+  "width_obs_p50",
+  "facc_total",
   "dist_out",
   "slope",
+  "slope_obs_p50",
   "n_chan_max",
-  "strm_order",
+  "is_mainstem",
   "swot_obs",
 ];
 

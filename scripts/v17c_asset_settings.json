@@ -1,0 +1,17 @@
+{
+  "max_reaches": 15000,
+  "minzoom": 4,
+  "maxzoom": 16,
+  "full_detail": 14,
+  "low_detail": 10,
+  "simplification": 0.75,
+  "drop_densest_as_needed": true,
+  "maximum_tile_bytes": 2000000,
+  "detail_min_zoom": 4,
+  "overview": {
+    "url": "/tiles/global_rivers_natural_earth.pmtiles",
+    "source_layer": "rivers",
+    "maxzoom": 5,
+    "download_url": "https://pub-ceb2c39205d5401cac3cf448cff9518d.r2.dev/tiles/global_rivers_natural_earth.pmtiles"
+  }
+}

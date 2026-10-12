@@ -74,7 +74,7 @@ def parse_args() -> argparse.Namespace:
         "--min-facc",
         type=float,
         help=(
-            "Optional minimum flow accumulation for overview reaches. This "
+            "Optional minimum facc_total for overview reaches. This "
             "keeps the global view focused on larger rivers."
         ),
     )
@@ -170,9 +170,9 @@ def load_global_reaches(args: argparse.Namespace) -> gpd.GeoDataFrame:
         crs="EPSG:4326",
     )
 
-    if args.min_facc is not None and "facc" in global_reaches.columns:
-        global_reaches = global_reaches[global_reaches["facc"] >= args.min_facc].copy()
-        print(f"Kept {len(global_reaches):,} reaches with facc >= {args.min_facc}")
+    if args.min_facc is not None and "facc_total" in global_reaches.columns:
+        global_reaches = global_reaches[global_reaches["facc_total"] >= args.min_facc].copy()
+        print(f"Kept {len(global_reaches):,} reaches with facc_total >= {args.min_facc}")
 
     if args.merge_connected:
         global_reaches = merge_connected_reaches(global_reaches, args.snap_tolerance_meters)
@@ -258,8 +258,8 @@ def aggregate_group(group: gpd.GeoDataFrame) -> dict:
         if column in group.columns:
             record[column] = float(group[column].median())
 
-    if "facc" in group.columns:
-        record["facc"] = float(group["facc"].max())
+    if "facc_total" in group.columns:
+        record["facc_total"] = float(group["facc_total"].max())
 
     return record
 

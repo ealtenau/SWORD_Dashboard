@@ -1,0 +1,148 @@
+{
+  "checked_at": "2026-10-11",
+  "app_url": "https://sword-dashboard.pages.dev/",
+  "manifest_url": "https://pub-ceb2c39205d5401cac3cf448cff9518d.r2.dev/tiles/sword_tile_manifest.json",
+  "note": "Generator options and native zooms read directly from deployed PMTiles metadata. Split threshold 20000 comes from the committed splitter, not PMTiles metadata.",
+  "archives": [
+    {
+      "id": "af_reaches_001",
+      "minzoom": 4,
+      "maxzoom": 16,
+      "generator": "tippecanoe v2.79.0",
+      "generator_options": "tippecanoe --force --output frontend/public/tiles/af_reaches_001.pmtiles --layer reaches --minimum-zoom 4 --maximum-zoom 16 --full-detail 14 --low-detail 10 --simplification 0.75 --simplify-only-low-zooms --extend-zooms-if-still-dropping --read-parallel --drop-densest-as-needed /var/folders/0v/0k4sdpx95l361dkfjchv8xw00000gn/T/tmpzncdsa3r/reaches.geojsonl"
+    },
+    {
+      "id": "af_reaches_002",
+      "minzoom": 4,
+      "maxzoom": 16,
+      "generator": "tippecanoe v2.79.0",
+      "generator_options": "tippecanoe --force --output frontend/public/tiles/af_reaches_002.pmtiles --layer reaches --minimum-zoom 4 --maximum-zoom 16 --full-detail 14 --low-detail 10 --simplification 0.75 --simplify-only-low-zooms --extend-zooms-if-still-dropping --read-parallel --drop-densest-as-needed /var/folders/0v/0k4sdpx95l361dkfjchv8xw00000gn/T/tmpamdbfx82/reaches.geojsonl"
+    },
+    {
+      "id": "as_reaches_001",
+      "minzoom": 4,
+      "maxzoom": 16,
+      "generator": "tippecanoe v2.79.0",
+      "generator_options": "tippecanoe --force --output frontend/public/tiles/as_reaches_001.pmtiles --layer reaches --minimum-zoom 4 --maximum-zoom 16 --full-detail 14 --low-detail 10 --simplification 0.75 --simplify-only-low-zooms --extend-zooms-if-still-dropping --read-parallel --drop-densest-as-needed /var/folders/0v/0k4sdpx95l361dkfjchv8xw00000gn/T/tmp6q7y7o2y/reaches.geojsonl"
+    },
+    {
+      "id": "as_reaches_002",
+      "minzoom": 4,
+      "maxzoom": 16,
+      "generator": "tippecanoe v2.79.0",
+      "generator_options": "tippecanoe --force --output frontend/public/tiles/as_reaches_002.pmtiles --layer reaches --minimum-zoom 4 --maximum-zoom 16 --full-detail 14 --low-detail 10 --simplification 0.75 --simplify-only-low-zooms --extend-zooms-if-still-dropping --read-parallel --drop-densest-as-needed /var/folders/0v/0k4sdpx95l361dkfjchv8xw00000gn/T/tmpj20pgppz/reaches.geojsonl"
+    },
+    {
+      "id": "as_reaches_003",
+      "minzoom": 4,
+      "maxzoom": 16,
+      "generator": "tippecanoe v2.79.0",
+      "generator_options": "tippecanoe --force --output frontend/public/tiles/as_reaches_003.pmtiles --layer reaches --minimum-zoom 4 --maximum-zoom 16 --full-detail 14 --low-detail 10 --simplification 0.75 --simplify-only-low-zooms --extend-zooms-if-still-dropping --read-parallel --drop-densest-as-needed /var/folders/0v/0k4sdpx95l361dkfjchv8xw00000gn/T/tmpwiaq4vg2/reaches.geojsonl"
+    },
+    {
+      "id": "as_reaches_004",
+      "minzoom": 4,
+      "maxzoom": 16,
+      "generator": "tippecanoe v2.79.0",
+      "generator_options": "tippecanoe --force --output frontend/public/tiles/as_reaches_004.pmtiles --layer reaches --minimum-zoom 4 --maximum-zoom 16 --full-detail 14 --low-detail 10 --simplification 0.75 --simplify-only-low-zooms --extend-zooms-if-still-dropping --read-parallel --drop-densest-as-needed /var/folders/0v/0k4sdpx95l361dkfjchv8xw00000gn/T/tmp0uqi0j5f/reaches.geojsonl"
+    },
+    {
+      "id": "as_reaches_005",
+      "minzoom": 4,
+      "maxzoom": 16,
+      "generator": "tippecanoe v2.79.0",
+      "generator_options": "tippecanoe --force --output frontend/public/tiles/as_reaches_005.pmtiles --layer reaches --minimum-zoom 4 --maximum-zoom 16 --full-detail 14 --low-detail 10 --simplification 0.75 --simplify-only-low-zooms --extend-zooms-if-still-dropping --read-parallel --drop-densest-as-needed /var/folders/0v/0k4sdpx95l361dkfjchv8xw00000gn/T/tmpousdsvhu/reaches.geojsonl"
+    },
+    {
+      "id": "as_reaches_006",
+      "minzoom": 4,
+      "maxzoom": 16,
+      "generator": "tippecanoe v2.79.0",
+      "generator_options": "tippecanoe --force --output frontend/public/tiles/as_reaches_006.pmtiles --layer reaches --minimum-zoom 4 --maximum-zoom 16 --full-detail 14 --low-detail 10 --simplification 0.75 --simplify-only-low-zooms --extend-zooms-if-still-dropping --read-parallel --drop-densest-as-needed /var/folders/0v/0k4sdpx95l361dkfjchv8xw00000gn/T/tmpw4isbf0r/reaches.geojsonl"
+    },
+    {
+      "id": "as_reaches_007",
+      "minzoom": 4,
+      "maxzoom": 16,
+      "generator": "tippecanoe v2.79.0",
+      "generator_options": "tippecanoe --force --output frontend/public/tiles/as_reaches_007.pmtiles --layer reaches --minimum-zoom 4 --maximum-zoom 16 --full-detail 14 --low-detail 10 --simplification 0.75 --simplify-only-low-zooms --extend-zooms-if-still-dropping --read-parallel --drop-densest-as-needed /var/folders/0v/0k4sdpx95l361dkfjchv8xw00000gn/T/tmph2mudctj/reaches.geojsonl"
+    },
+    {
+      "id": "eu_reaches_001",
+      "minzoom": 4,
+      "maxzoom": 16,
+      "generator": "tippecanoe v2.79.0",
+      "generator_options": "tippecanoe --force --output frontend/public/tiles/eu_reaches_001.pmtiles --layer reaches --minimum-zoom 4 --maximum-zoom 16 --full-detail 14 --low-detail 10 --simplification 0.75 --simplify-only-low-zooms --extend-zooms-if-still-dropping --read-parallel --drop-densest-as-needed /var/folders/0v/0k4sdpx95l361dkfjchv8xw00000gn/T/tmp7zm2chpa/reaches.geojsonl"
+    },
+    {
+      "id": "eu_reaches_002",
+      "minzoom": 4,
+      "maxzoom": 16,
+      "generator": "tippecanoe v2.79.0",
+      "generator_options": "tippecanoe --force --output frontend/public/tiles/eu_reaches_002.pmtiles --layer reaches --minimum-zoom 4 --maximum-zoom 16 --full-detail 14 --low-detail 10 --simplification 0.75 --simplify-only-low-zooms --extend-zooms-if-still-dropping --read-parallel --drop-densest-as-needed /var/folders/0v/0k4sdpx95l361dkfjchv8xw00000gn/T/tmpwba5pkzc/reaches.geojsonl"
+    },
+    {
+      "id": "na_reaches_001",
+      "minzoom": 4,
+      "maxzoom": 16,
+      "generator": "tippecanoe v2.79.0",
+      "generator_options": "tippecanoe --force --output frontend/public/tiles/na_reaches_001.pmtiles --layer reaches --minimum-zoom 4 --maximum-zoom 16 --full-detail 14 --low-detail 10 --simplification 0.75 --simplify-only-low-zooms --extend-zooms-if-still-dropping --read-parallel --drop-densest-as-needed /var/folders/0v/0k4sdpx95l361dkfjchv8xw00000gn/T/tmpgstmmmei/reaches.geojsonl"
+    },
+    {
+      "id": "na_reaches_002",
+      "minzoom": 4,
+      "maxzoom": 16,
+      "generator": "tippecanoe v2.79.0",
+      "generator_options": "tippecanoe --force --output frontend/public/tiles/na_reaches_002.pmtiles --layer reaches --minimum-zoom 4 --maximum-zoom 16 --full-detail 14 --low-detail 10 --simplification 0.75 --simplify-only-low-zooms --extend-zooms-if-still-dropping --read-parallel --drop-densest-as-needed /var/folders/0v/0k4sdpx95l361dkfjchv8xw00000gn/T/tmphl63bw2g/reaches.geojsonl"
+    },
+    {
+      "id": "oc_reaches",
+      "minzoom": 4,
+      "maxzoom": 16,
+      "generator": "tippecanoe v2.79.0",
+      "generator_options": "tippecanoe --force --output frontend/public/tiles/oc_reaches.pmtiles --layer reaches --minimum-zoom 4 --maximum-zoom 16 --full-detail 14 --low-detail 10 --simplification 0.75 --simplify-only-low-zooms --extend-zooms-if-still-dropping --read-parallel --drop-densest-as-needed /var/folders/0v/0k4sdpx95l361dkfjchv8xw00000gn/T/tmp7xpipr7j/reaches.geojsonl"
+    },
+    {
+      "id": "sa_reaches_001",
+      "minzoom": 4,
+      "maxzoom": 16,
+      "generator": "tippecanoe v2.79.0",
+      "generator_options": "tippecanoe --force --output frontend/public/tiles/sa_reaches_001.pmtiles --layer reaches --minimum-zoom 4 --maximum-zoom 16 --full-detail 14 --low-detail 10 --simplification 0.75 --simplify-only-low-zooms --extend-zooms-if-still-dropping --read-parallel --drop-densest-as-needed /var/folders/0v/0k4sdpx95l361dkfjchv8xw00000gn/T/tmpgkso37fu/reaches.geojsonl"
+    },
+    {
+      "id": "sa_reaches_002",
+      "minzoom": 4,
+      "maxzoom": 16,
+      "generator": "tippecanoe v2.79.0",
+      "generator_options": "tippecanoe --force --output frontend/public/tiles/sa_reaches_002.pmtiles --layer reaches --minimum-zoom 4 --maximum-zoom 16 --full-detail 14 --low-detail 10 --simplification 0.75 --simplify-only-low-zooms --extend-zooms-if-still-dropping --read-parallel --drop-densest-as-needed /var/folders/0v/0k4sdpx95l361dkfjchv8xw00000gn/T/tmpa6251qe9/reaches.geojsonl"
+    },
+    {
+      "id": "sa_reaches_003",
+      "minzoom": 4,
+      "maxzoom": 16,
+      "generator": "tippecanoe v2.79.0",
+      "generator_options": "tippecanoe --force --output frontend/public/tiles/sa_reaches_003.pmtiles --layer reaches --minimum-zoom 4 --maximum-zoom 16 --full-detail 14 --low-detail 10 --simplification 0.75 --simplify-only-low-zooms --extend-zooms-if-still-dropping --read-parallel --drop-densest-as-needed /var/folders/0v/0k4sdpx95l361dkfjchv8xw00000gn/T/tmpuezhnwfm/reaches.geojsonl"
+    },
+    {
+      "id": "sa_reaches_004",
+      "minzoom": 4,
+      "maxzoom": 16,
+      "generator": "tippecanoe v2.79.0",
+      "generator_options": "tippecanoe --force --output frontend/public/tiles/sa_reaches_004.pmtiles --layer reaches --minimum-zoom 4 --maximum-zoom 16 --full-detail 14 --low-detail 10 --simplification 0.75 --simplify-only-low-zooms --extend-zooms-if-still-dropping --read-parallel --drop-densest-as-needed /var/folders/0v/0k4sdpx95l361dkfjchv8xw00000gn/T/tmpbtnmhchw/reaches.geojsonl"
+    },
+    {
+      "id": "sa_reaches_005",
+      "minzoom": 4,
+      "maxzoom": 16,
+      "generator": "tippecanoe v2.79.0",
+      "generator_options": "tippecanoe --force --output frontend/public/tiles/sa_reaches_005.pmtiles --layer reaches --minimum-zoom 4 --maximum-zoom 16 --full-detail 14 --low-detail 10 --simplification 0.75 --simplify-only-low-zooms --extend-zooms-if-still-dropping --read-parallel --drop-densest-as-needed /var/folders/0v/0k4sdpx95l361dkfjchv8xw00000gn/T/tmp0cp_imqz/reaches.geojsonl"
+    },
+    {
+      "id": "natural_earth",
+      "minzoom": 0,
+      "maxzoom": 5,
+      "generator": "tippecanoe v2.79.0",
+      "generator_options": "tippecanoe --force --output frontend/public/tiles/global_rivers_natural_earth.pmtiles --layer rivers --minimum-zoom 0 --maximum-zoom 5 --simplification 1.5 --drop-densest-as-needed /Users/ealtenau/Documents/Work/UNC/Natural_Earth_Rivers/ne_10m_rivers_lake_centerlines/ne_10m_rivers_lake_centerlines_scale_rank/ne_10m_rivers_lake_centerlines_scale_rank.geojson"
+    }
+  ]
+}

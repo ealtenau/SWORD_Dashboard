@@ -1,3 +1,6 @@
+import { mainstemLabel } from "../data/reachClassification";
+import { reachConnectivity } from "../data/reachConnectivity";
+import { formatReachNumber } from "../data/formatNumbers";
 import { useEffect, useRef, useState } from "react";
 import maplibregl, { MapLayerMouseEvent } from "maplibre-gl";
 import { Protocol } from "pmtiles";
@@ -51,6 +54,21 @@ const TOOLTIP_FIELDS: Record<LayerMode, { field: string; label: string }[]> = {
     { field: "lat", label: "Lat" },
     { field: "lon", label: "Lon" },
   ],
+  wse_obs_p50: [
+    { field: "reach_id", label: "Reach ID" },
+    { field: "river_name", label: "River" },
+    { field: "wse_obs_p50", label: "SWOT Median WSE" },
+  ],
+  width_obs_p50: [
+    { field: "reach_id", label: "Reach ID" },
+    { field: "river_name", label: "River" },
+    { field: "width_obs_p50", label: "SWOT Median Width" },
+  ],
+  slope_obs_p50: [
+    { field: "reach_id", label: "Reach ID" },
+    { field: "river_name", label: "River" },
+    { field: "slope_obs_p50", label: "SWOT Median Slope (m/km)" },
+  ],
   wse: [
     { field: "reach_id", label: "Reach ID" },
     { field: "river_name", label: "River" },
@@ -61,10 +79,10 @@ const TOOLTIP_FIELDS: Record<LayerMode, { field: string; label: string }[]> = {
     { field: "river_name", label: "River" },
     { field: "width", label: "Width" },
   ],
-  facc: [
+  facc_total: [
     { field: "reach_id", label: "Reach ID" },
     { field: "river_name", label: "River" },
-    { field: "facc", label: "Flow Accum." },
+    { field: "facc_total", label: "Flow Accum." },
   ],
   dist_out: [
     { field: "reach_id", label: "Reach ID" },
@@ -81,16 +99,15 @@ const TOOLTIP_FIELDS: Record<LayerMode, { field: string; label: string }[]> = {
     { field: "river_name", label: "River" },
     { field: "n_chan_max", label: "Channels" },
   ],
-  strm_order: [
+  is_mainstem: [
     { field: "reach_id", label: "Reach ID" },
     { field: "river_name", label: "River" },
-    { field: "strm_order", label: "Stream Order" },
+    { field: "is_mainstem", label: "Channel type" },
   ],
   swot_obs: [
     { field: "reach_id", label: "Reach ID" },
     { field: "river_name", label: "River" },
     { field: "swot_obs", label: "SWOT Obs." },
-    { field: "pass_ids", label: "Pass IDs" },
   ],
 };
 
@@ -127,6 +144,11 @@ function escapeHtml(value: string) {
 }
 
 function tooltipValue(properties: ReachProperties, field: string) {
+  if (field === "is_mainstem") return mainstemLabel(properties.is_mainstem);
+  if (field === "rch_id_up" || field === "rch_id_dn") {
+    return reachConnectivity(properties, field === "rch_id_up" ? "up" : "dn");
+  }
+
   if (field === "lat") {
     return properties.lat ?? properties.y;
   }
@@ -142,13 +164,14 @@ function tooltipValue(properties: ReachProperties, field: string) {
   return properties[field];
 }
 
-function formatTooltipValue(value: unknown) {
+function formatTooltipValue(value: unknown, field: string) {
   if (value === null || value === undefined || value === "") {
     return "--";
   }
 
   if (typeof value === "number") {
-    return Number.isFinite(value) ? value.toLocaleString(undefined, { maximumFractionDigits: 6 }) : "--";
+    if (!Number.isFinite(value)) return "--";
+    return field === "reach_id" ? String(value) : formatReachNumber(value, field);
   }
 
   return String(value);
@@ -157,7 +180,7 @@ function formatTooltipValue(value: unknown) {
 function tooltipHtml(properties: ReachProperties, layerMode: LayerMode) {
   const rows = TOOLTIP_FIELDS[layerMode]
     .map(({ field, label }) => {
-      const value = formatTooltipValue(tooltipValue(properties, field));
+      const value = formatTooltipValue(tooltipValue(properties, field), field);
       return `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`;
     })
     .join("");

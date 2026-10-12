@@ -13,6 +13,11 @@ type InlineToken = {
   href?: string;
 };
 
+type ListItem = {
+  text: string;
+  children: ListItem[];
+};
+
 const inlinePattern = /(\*\*([^*]+)\*\*|_([^_]+)_|\[([^\]]+)\]\s?\(([^)]+)\))/g;
 
 function renderInline(text: string): ReactNode[] {
@@ -63,21 +68,28 @@ function renderInline(text: string): ReactNode[] {
 function renderMarkdown(content: string): ReactNode[] {
   const lines = content.split(/\r?\n/);
   const blocks: ReactNode[] = [];
-  let listItems: string[] = [];
+  let listItems: ListItem[] = [];
+  let listStack: Array<{ indent: number; items: ListItem[] }> = [];
+
+  const renderList = (items: ListItem[]): ReactNode => (
+    <ul>
+      {items.map((item, index) => (
+        <li key={index}>
+          {renderInline(item.text)}
+          {item.children.length > 0 ? renderList(item.children) : null}
+        </li>
+      ))}
+    </ul>
+  );
 
   const flushList = () => {
     if (!listItems.length) {
       return;
     }
 
-    blocks.push(
-      <ul key={`list-${blocks.length}`}>
-        {listItems.map((item, index) => (
-          <li key={index}>{renderInline(item)}</li>
-        ))}
-      </ul>,
-    );
+    blocks.push(<div key={`list-${blocks.length}`}>{renderList(listItems)}</div>);
     listItems = [];
+    listStack = [];
   };
 
   lines.forEach((line) => {
@@ -88,8 +100,20 @@ function renderMarkdown(content: string): ReactNode[] {
       return;
     }
 
-    if (trimmed.startsWith("- ")) {
-      listItems.push(trimmed.slice(2));
+    const listMatch = /^(\s*)-\s+(.+)$/.exec(line);
+    if (listMatch) {
+      const indent = listMatch[1].replace(/\t/g, "    ").length;
+      if (listStack.length === 0) {
+        listStack.push({ indent, items: listItems });
+      } else if (indent > listStack[listStack.length - 1].indent) {
+        const parentItems = listStack[listStack.length - 1].items;
+        listStack.push({ indent, items: parentItems[parentItems.length - 1].children });
+      } else {
+        while (listStack.length > 1 && indent < listStack[listStack.length - 1].indent) {
+          listStack.pop();
+        }
+      }
+      listStack[listStack.length - 1].items.push({ text: listMatch[2], children: [] });
       return;
     }
 

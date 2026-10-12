@@ -117,7 +117,7 @@ export function App() {
           </div>
           <div>
             <p className="eyebrow">SWORD Explorer</p>
-            <h1>SWOT River Database - Version 17b</h1>
+            <h1>SWOT River Database - Version 17c</h1>
           </div>
         </div>
         <div className="header-actions" aria-label="SWORD information">

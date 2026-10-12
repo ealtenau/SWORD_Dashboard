@@ -137,6 +137,7 @@ dmypy.json
 frontend/node_modules/
 frontend/dist/
 frontend/.env.local
+frontend/.env.*.local
 scripts/frontend/
 frontend/public/tiles/*
 !frontend/public/tiles/.gitkeep

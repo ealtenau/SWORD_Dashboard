@@ -1,4 +1,6 @@
 import { PointerEvent, useEffect, useMemo, useState } from "react";
+import { formatOneDecimal, formatThreeDecimals } from "../data/formatNumbers";
+import { nodeChartPath, nodeChartPoints } from "../data/nodeChartSeries";
 import { loadNodeProfile } from "../data/nodeProfiles";
 import type { NodeProfile, NodeRecord } from "../types";
 
@@ -10,13 +12,12 @@ type ChartConfig = {
   key: keyof NodeRecord;
   label: string;
   units?: string;
+  swotKey?: "wse_obs_p50" | "width_obs_p50";
 };
 
 const CHARTS: ChartConfig[] = [
-  { key: "wse", label: "Water surface elevation", units: "m" },
-  { key: "width", label: "Width", units: "m" },
-  { key: "node_order", label: "Node order" },
-  { key: "facc", label: "Flow accumulation", units: "sq.km" },
+  { key: "wse", label: "Water surface elevation", units: "m", swotKey: "wse_obs_p50" },
+  { key: "width", label: "Width", units: "m", swotKey: "width_obs_p50" },
   { key: "n_chan_mod", label: "Channels" },
   { key: "sinuosity", label: "Sinuosity" },
 ];
@@ -31,16 +32,9 @@ type HoveredPoint = {
   y: number;
   screenX: number;
   screenY: number;
+  seriesLabel: string;
+  isSwot: boolean;
 } | null;
-
-function finiteValues(profile: NodeProfile, key: keyof NodeRecord) {
-  return profile.nodes
-    .map((node) => ({
-      x: node.dist_out === null ? null : node.dist_out / 1000,
-      y: typeof node[key] === "number" ? node[key] : null,
-    }))
-    .filter((point): point is { x: number; y: number } => point.x !== null && point.y !== null);
-}
 
 function extent(values: number[]) {
   const min = Math.min(...values);
@@ -76,13 +70,17 @@ function formatTick(value: number) {
 }
 
 function MiniLineChart({ config, profile }: { config: ChartConfig; profile: NodeProfile }) {
-  const points = useMemo(() => finiteValues(profile, config.key), [config.key, profile]);
+  const series = useMemo(() => [
+    { label: "SWORD", isSwot: false, points: nodeChartPoints(profile, config.key) },
+    ...(config.swotKey ? [{ label: "SWOT median", isSwot: true, points: nodeChartPoints(profile, config.swotKey) }] : []),
+  ], [config.key, config.swotKey, profile]);
+  const points = series.flatMap((item) => item.points);
   const [zoomDomain, setZoomDomain] = useState<ZoomDomain>(null);
   const [dragStart, setDragStart] = useState<number | null>(null);
   const [dragEnd, setDragEnd] = useState<number | null>(null);
   const [hoveredPoint, setHoveredPoint] = useState<HoveredPoint>(null);
 
-  if (points.length < 2) {
+  if (points.length === 0) {
     return (
       <div className="chart-placeholder">
         <span>{config.label}</span>
@@ -96,15 +94,18 @@ function MiniLineChart({ config, profile }: { config: ChartConfig; profile: Node
   const [fullXMin, fullXMax] = extent(points.map((point) => point.x));
   const xMin = zoomDomain?.xMin ?? fullXMin;
   const xMax = zoomDomain?.xMax ?? fullXMax;
-  const visiblePoints = points.filter((point) => point.x >= xMin && point.x <= xMax);
-  const displayedPoints = visiblePoints.length >= 2 ? visiblePoints : points;
-  const [yMin, yMax] = extent(displayedPoints.map((point) => point.y));
+  const displayedSeries = series.map((item) => ({
+    ...item, points: item.points.filter((point) => point.x >= xMin && point.x <= xMax),
+  }));
+  const displayedPoints = displayedSeries.flatMap((item) => item.points.map((point) => ({
+    ...point, seriesLabel: item.label, isSwot: item.isSwot,
+  })));
+  const [yMin, yMax] = extent((displayedPoints.length > 0 ? displayedPoints : points).map((point) => point.y));
   const xTicks = ticks(xMin, xMax, 3);
   const yTicks = ticks(yMin, yMax, 3);
 
   const xScale = (value: number) => pad.left + ((value - xMin) / (xMax - xMin)) * (width - pad.left - pad.right);
   const yScale = (value: number) => height - pad.bottom - ((value - yMin) / (yMax - yMin)) * (height - pad.top - pad.bottom);
-  const path = displayedPoints.map((point, index) => `${index === 0 ? "M" : "L"}${xScale(point.x)},${yScale(point.y)}`).join(" ");
   const plotLeft = pad.left;
   const plotRight = width - pad.right;
   const plotTop = pad.top;
@@ -128,10 +129,17 @@ function MiniLineChart({ config, profile }: { config: ChartConfig; profile: Node
       return;
     }
 
+    if (displayedPoints.length === 0) {
+      setHoveredPoint(null);
+      return;
+    }
     const x = pointerX(event);
-    const dataX = xFromPixel(x);
+    const rect = event.currentTarget.getBoundingClientRect();
+    const y = ((event.clientY - rect.top) / rect.height) * height;
+    const distance = (point: typeof displayedPoints[number]) =>
+      Math.hypot(xScale(point.x) - x, yScale(point.y) - y);
     const nearest = displayedPoints.reduce((best, point) => {
-      return Math.abs(point.x - dataX) < Math.abs(best.x - dataX) ? point : best;
+      return distance(point) < distance(best) ? point : best;
     }, displayedPoints[0]);
 
     setHoveredPoint({
@@ -139,10 +147,12 @@ function MiniLineChart({ config, profile }: { config: ChartConfig; profile: Node
       y: nearest.y,
       screenX: xScale(nearest.x),
       screenY: yScale(nearest.y),
+      seriesLabel: nearest.seriesLabel,
+      isSwot: nearest.isSwot,
     });
   };
   const tooltipWidth = 112;
-  const tooltipHeight = 34;
+  const tooltipHeight = config.swotKey ? 47 : 34;
   const tooltipX = hoveredPoint ? Math.min(Math.max(hoveredPoint.screenX + 8, plotLeft), width - tooltipWidth - 4) : 0;
   const tooltipY = hoveredPoint ? Math.max(hoveredPoint.screenY - tooltipHeight - 8, plotTop) : 0;
 
@@ -152,6 +162,12 @@ function MiniLineChart({ config, profile }: { config: ChartConfig; profile: Node
         <span>{config.label}</span>
         {config.units ? <span>{config.units}</span> : null}
       </div>
+      {config.swotKey ? (
+        <div className="chart-series-legend">
+          <span><i className="chart-series-swatch" />SWORD</span>
+          <span><i className="chart-series-swatch swot" />SWOT median{series[1].points.length === 0 ? " (no data)" : ""}</span>
+        </div>
+      ) : null}
       {zoomDomain ? (
         <button className="chart-reset" onClick={resetZoom} type="button">
           Reset zoom
@@ -220,21 +236,32 @@ function MiniLineChart({ config, profile }: { config: ChartConfig; profile: Node
         {selectionStart !== null && selectionWidth > 0 ? (
           <rect className="chart-selection" x={selectionStart} y={plotTop} width={selectionWidth} height={plotBottom - plotTop} />
         ) : null}
-        <path className="chart-line" d={path} />
-        {displayedPoints.map((point) => (
-          <circle className="chart-point" cx={xScale(point.x)} cy={yScale(point.y)} key={`${point.x}-${point.y}`} r="2" />
+        {displayedSeries.map((item) => (
+          <g key={item.label}>
+            <path className={item.isSwot ? "chart-line chart-line-swot" : "chart-line"}
+              d={nodeChartPath(item.points, xScale, yScale)} />
+            {item.points.map((point) => (
+              <circle className={item.isSwot ? "chart-point chart-point-swot" : "chart-point"}
+                cx={xScale(point.x)} cy={yScale(point.y)} key={point.nodeIndex} r="2" />
+            ))}
+          </g>
         ))}
         {hoveredPoint ? (
           <g className="chart-tooltip">
             <line className="chart-hover-line" x1={hoveredPoint.screenX} x2={hoveredPoint.screenX} y1={plotTop} y2={plotBottom} />
-            <circle className="chart-hover-point" cx={hoveredPoint.screenX} cy={hoveredPoint.screenY} r="4" />
+            <circle className={hoveredPoint.isSwot ? "chart-hover-point chart-hover-point-swot" : "chart-hover-point"} cx={hoveredPoint.screenX} cy={hoveredPoint.screenY} r="4" />
             <rect className="chart-tooltip-box" x={tooltipX} y={tooltipY} width={tooltipWidth} height={tooltipHeight} rx="5" />
-            <text className="chart-tooltip-text" x={tooltipX + 7} y={tooltipY + 14}>
-              {formatTick(hoveredPoint.y)}
+            {config.swotKey ? (
+              <text className="chart-tooltip-text muted" x={tooltipX + 7} y={tooltipY + 12}>
+                {hoveredPoint.seriesLabel}
+              </text>
+            ) : null}
+            <text className="chart-tooltip-text" x={tooltipX + 7} y={tooltipY + (config.swotKey ? 26 : 14)}>
+              {config.key === "wse" || config.key === "width" ? formatThreeDecimals(hoveredPoint.y) : formatOneDecimal(hoveredPoint.y)}
               {config.units ? ` ${config.units}` : ""}
             </text>
-            <text className="chart-tooltip-text muted" x={tooltipX + 7} y={tooltipY + 27}>
-              {formatTick(hoveredPoint.x)} km
+            <text className="chart-tooltip-text muted" x={tooltipX + 7} y={tooltipY + (config.swotKey ? 40 : 27)}>
+              {formatOneDecimal(hoveredPoint.x)} km
             </text>
           </g>
         ) : null}
@@ -258,6 +285,7 @@ export function ReachCharts({ selectedReachId }: ReachChartsProps) {
     }
 
     let isMounted = true;
+    setProfile(null);
     setStatus("loading");
 
     loadNodeProfile(selectedReachId)
@@ -296,7 +324,7 @@ export function ReachCharts({ selectedReachId }: ReachChartsProps) {
       {profile ? (
         <div className="chart-grid">
           {CHARTS.map((chart) => (
-            <MiniLineChart config={chart} key={chart.key} profile={profile} />
+            <MiniLineChart config={chart} key={`${profile.reach_id}-${chart.key}`} profile={profile} />
           ))}
         </div>
       ) : null}

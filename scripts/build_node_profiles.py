@@ -6,6 +6,8 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import sqlite3
+from itertools import groupby
 import time
 from pathlib import Path
 
@@ -21,6 +23,8 @@ NODE_VARIABLES = (
     "node_id",
     "wse",
     "width",
+    "wse_obs_p50",
+    "width_obs_p50",
     "facc",
     "dist_out",
     "n_chan_mod",
@@ -219,7 +223,10 @@ def export_netcdf_file(path: Path, output_dir: Path, precision: int) -> int:
     basin_id = basin_id_from_path(path)
 
     with nc.Dataset(path) as dataset:
-        arrays = {variable: as_array(dataset, variable) for variable in NODE_VARIABLES}
+        arrays = {variable: as_array(dataset, variable) for variable in NODE_VARIABLES
+                  if variable not in ("wse_obs_p50", "width_obs_p50") or variable in dataset["nodes"].variables}
+        for variable in ("wse_obs_p50", "width_obs_p50"):
+            arrays.setdefault(variable, np.full(len(arrays["reach_id"]), np.nan))
 
     reach_ids = arrays["reach_id"].astype(np.int64)
     unique_reach_ids = np.unique(reach_ids)
@@ -238,6 +245,8 @@ def export_netcdf_file(path: Path, output_dir: Path, precision: int) -> int:
                     "node_id": str(int(arrays["node_id"][index])),
                     "wse": to_value(arrays["wse"][index], precision),
                     "width": to_value(arrays["width"][index], precision),
+                    "wse_obs_p50": to_value(arrays["wse_obs_p50"][index], precision),
+                    "width_obs_p50": to_value(arrays["width_obs_p50"][index], precision),
                     "facc": to_value(arrays["facc"][index], precision),
                     "dist_out": to_value(arrays["dist_out"][index], precision),
                     "n_chan_mod": to_value(arrays["n_chan_mod"][index], precision),
@@ -274,12 +283,61 @@ def add_coordinate_columns(nodes) -> None:
         nodes["y"] = nodes_4326.geometry.y
 
 
+def export_geopackage_file(path: Path, output_dir: Path, precision: int) -> int | None:
+    """Stream node attributes without loading millions of geometries into memory.
+
+    Return None for inputs needing geometry-derived coordinates, so the vector
+    reader can handle their reprojection.
+    """
+    load_numpy()
+    with sqlite3.connect(path.resolve().as_uri() + "?mode=ro", uri=True) as connection:
+        tables = [row[0] for row in connection.execute(
+            "SELECT table_name FROM gpkg_contents WHERE data_type='features'"
+        )]
+        if not tables:
+            return None
+        table = "nodes" if "nodes" in tables else tables[0]
+        quoted_table = '"' + table.replace('"', '""') + '"'
+        columns = {row[1] for row in connection.execute(f"PRAGMA table_info({quoted_table})")}
+        if not {"x", "y", "reach_id", "node_id"}.issubset(columns):
+            return None
+
+        selected = [field for field in NODE_VARIABLES if field in columns]
+        fields_sql = ",".join(f'"{field}"' for field in selected)
+        order_sql = 'CAST("reach_id" AS TEXT)' + (',"dist_out"' if "dist_out" in columns else "")
+        total = connection.execute(f'SELECT count(DISTINCT reach_id) FROM {quoted_table}').fetchone()[0]
+        print(f"Streaming {total:,} node profiles from {path} ({table} layer)", flush=True)
+        connection.row_factory = sqlite3.Row
+        rows = connection.execute(f"SELECT {fields_sql} FROM {quoted_table} ORDER BY {order_sql}")
+        count = 0
+        for reach_id, group in groupby(rows, key=lambda row: reach_id_to_string(row["reach_id"])):
+            nodes = []
+            for row in group:
+                values = dict(row)
+                node = {field: to_value(values.get(field), precision)
+                        for field in NODE_VARIABLES if field not in ("reach_id", "node_id")}
+                node["node_id"] = reach_id_to_string(values["node_id"])
+                if node["node_order"] is None:
+                    node["node_order"] = node_order_from_node_id(values["node_id"])
+                nodes.append(node)
+            write_profile(output_dir, basin_id_from_reach_id(reach_id), reach_id, nodes)
+            count += 1
+            if count % 10000 == 0:
+                print(f"  Wrote {count:,}/{total:,} reach profiles", flush=True)
+        return count
+
+
 def export_vector_file(path: Path, output_dir: Path, precision: int) -> int:
     load_vector_dependencies()
 
     start_time = time.perf_counter()
     print(f"Loading node GeoPackage: {path}", flush=True)
-    nodes = gpd.read_file(path)
+    layer_options = {}
+    if path.suffix.lower() == ".gpkg":
+        import fiona
+        if "nodes" in fiona.listlayers(path):
+            layer_options["layer"] = "nodes"
+    nodes = gpd.read_file(path, **layer_options)
     print(f"Loaded {len(nodes):,} nodes from {path} in {time.perf_counter() - start_time:.1f}s", flush=True)
     if nodes.empty:
         return 0
@@ -316,6 +374,8 @@ def export_vector_file(path: Path, output_dir: Path, precision: int) -> int:
                     "node_id": reach_id_to_string(row["node_id"]),
                     "wse": to_value(row.get("wse"), precision),
                     "width": to_value(row.get("width"), precision),
+                    "wse_obs_p50": to_value(row.get("wse_obs_p50"), precision),
+                    "width_obs_p50": to_value(row.get("width_obs_p50"), precision),
                     "facc": to_value(row.get("facc"), precision),
                     "dist_out": to_value(row.get("dist_out"), precision),
                     "n_chan_mod": to_value(row.get("n_chan_mod"), precision),
@@ -339,6 +399,10 @@ def export_vector_file(path: Path, output_dir: Path, precision: int) -> int:
 def export_file(path: Path, output_dir: Path, precision: int) -> int:
     if path.suffix.lower() == ".nc":
         return export_netcdf_file(path, output_dir, precision)
+    if path.suffix.lower() == ".gpkg":
+        count = export_geopackage_file(path, output_dir, precision)
+        if count is not None:
+            return count
     return export_vector_file(path, output_dir, precision)
 
 

@@ -159,7 +159,7 @@ export async function loadContinentTileManifest(): Promise<ContinentTileConfig[]
     }
 
     const manifest = (await response.json()) as TileManifest;
-    const manifestContinents = resolveManifestContinentUrls(manifest.continents ?? [], tileManifestUrl);
+    const manifestContinents = resolveManifestContinentUrls(manifest.continents ?? [], new URL(tileManifestUrl, window.location.href).href);
     return getEnabledContinentTiles(mergeManifestContinents(manifestContinents));
   } catch (error) {
     console.warn(error);

@@ -113,6 +113,12 @@ cd ..
 
 ## Rebuild Static Assets
 
+For the complete v17c rebuild using verified production zoom 4–16 settings,
+spatial splits, and the production Natural Earth overview, follow
+[the demo workflow](docs/v17c-demo.md). Editable settings are saved in
+`scripts/v17c_asset_settings.json`. The runner rebuilds all six continents in
+isolated local folders and can resume completed stages.
+
 Run these commands from the repository root.
 
 ### 1. Split Continent Reach Files
@@ -130,7 +136,7 @@ python scripts/split_continent_reaches.py \
   /path/to/oc_sword_reaches_v17b.gpkg \
   /path/to/sa_sword_reaches_v17b.gpkg \
   --max-reaches 20000 \
-  --minzoom 2
+  --minzoom 4 --maxzoom 16 --full-detail 14 --low-detail 10 --simplification 0.75
 ```
 
 Outputs:

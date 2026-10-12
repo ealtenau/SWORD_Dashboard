@@ -5,11 +5,15 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 from pathlib import Path
 
 import geopandas as gpd
 
+
+if os.environ.get("SWORD_IO_ENGINE"):
+    gpd.options.io_engine = os.environ["SWORD_IO_ENGINE"]
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -35,7 +39,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def infer_continent_id(path: Path) -> str | None:
-    match = re.match(r"^(af|as|eu|na|oc|sa)(?:_|-)", path.stem.lower())
+    match = re.search(r"(?:^|_)(af|as|eu|na|oc|sa)(?:_|-|$)", path.stem.lower())
     return match.group(1) if match else None
 
 
@@ -51,7 +55,7 @@ def load_records(path: Path) -> list[dict]:
     if not path.exists():
         raise SystemExit(f"Input file does not exist: {path}")
 
-    reaches = gpd.read_file(path)
+    reaches = gpd.read_file(path, layer="reaches") if path.suffix.lower() == ".gpkg" else gpd.read_file(path)
     if reaches.empty:
         return []
 

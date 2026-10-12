@@ -2,12 +2,15 @@ export type LayerMode =
   | "reach_id"
   | "wse"
   | "width"
-  | "facc"
+  | "facc_total"
   | "dist_out"
+  | "wse_obs_p50"
+  | "width_obs_p50"
+  | "slope_obs_p50"
   | "slope"
   | "swot_obs"
   | "n_chan_max"
-  | "strm_order";
+  | "is_mainstem";
 
 export type ReachProperties = {
   reach_id?: string | number;
@@ -16,12 +19,25 @@ export type ReachProperties = {
   _continent_name?: string;
   wse?: number;
   width?: number;
-  facc?: number;
+  facc_total?: number;
   dist_out?: number;
   slope?: number;
+  wse_obs_p50?: number | null;
+  width_obs_p50?: number | null;
+  slope_obs_p50?: number | null;
+  rch_id_up_1?: string | number | null;
+  rch_id_up_2?: string | number | null;
+  rch_id_up_3?: string | number | null;
+  rch_id_up_4?: string | number | null;
+  rch_id_dn_1?: string | number | null;
+  rch_id_dn_2?: string | number | null;
+  rch_id_dn_3?: string | number | null;
+  rch_id_dn_4?: string | number | null;
+
   swot_obs?: number;
   n_chan_max?: number;
   strm_order?: number;
+  is_mainstem?: boolean | number | string | null;
   rch_id_up?: string;
   rch_id_dn?: string;
   [key: string]: unknown;
@@ -46,6 +62,8 @@ export type ColorMetadata = {
 export type ColorMetadataByContinent = Record<string, ColorMetadata | null>;
 
 export type NodeRecord = {
+  wse_obs_p50?: number | null;
+  width_obs_p50?: number | null;
   x: number | null;
   y: number | null;
   node_id: string;

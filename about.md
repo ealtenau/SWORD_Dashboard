@@ -11,9 +11,22 @@ The SWORD database is an evolving product that is intended to undergo continued 
 ### Notes for Users
 
 - The global view displays general river vector features with a single symbology for contextual purposes. Different layers and symbologies appear for the SWORD database as users zoom in to specific areas. 
-- 9 attribute layers are provided for display at the reach scale: reach boundaries, water surface elevation (WSE), width, flow accumulation, distance from outlet, slope, number of channels, stream order, and number of SWOT observations. Layers can be toggled on and off using the layers panel in the top-right of the side information panel.
+- 12 attribute layers are provided for display at the reach scale:
+    - Reach boundaries
+    - Water surface elevation (WSE) derived from MERIT Hydro
+    - SWOT observed median WSE
+    - Widths derived from Landsat
+    - SWOT observed median width
+    - Flow accumulation
+    - Distance from outlet
+    - Slope derived from MERIT Hydro
+    - SWOT observed median slope
+    - Number of channels
+    - Mainstem vs side channels
+    - Number of SWOT observations
+- Layers can be toggled on and off using the layers panel in the top-right of the side information panel.
 - Users can hover or click on a reach to view attribute information.
-- Clicking on a reach will plot node-level properties of node order, width, elevation, flow accumulation, sinuosity, and number of channels along a specified reach located in the side information panel.
+- Clicking on a reach will plot node-level properties of width, elevation, sinuosity, and number of channels along a specified reach located in the side information panel.
 - Native SWORD reach geometries are built at 30 m resolution, however, for map efficiency gemetries have been simplified. To examine full reach geometries, please download the full SWORD Database.
 
 ### Contact Information:

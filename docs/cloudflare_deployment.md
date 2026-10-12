@@ -31,11 +31,13 @@ Use the public URL as `R2_PUBLIC_URL` below.
 
 ## 2. Upload Generated Assets To R2
 
-The generated assets are too large for Pages and should be uploaded to R2:
+The generated assets are too large for Pages and should be uploaded to R2.
+For the v17c release, upload to new prefixes so the live application can keep
+using its existing assets until Pages is updated:
 
 ```bash
-frontend/public/tiles/
-frontend/public/nodes/
+frontend/public/tiles/v17c_demo/
+frontend/public/nodes/v17c_demo/
 ```
 
 For this project, `rclone` is the most practical upload tool because the node
@@ -44,15 +46,15 @@ profiles contain many small JSON files.
 After configuring an R2 remote named `r2`, upload with:
 
 ```bash
-rclone copy frontend/public/tiles r2:sword-explorer-assets/tiles --progress
-rclone copy frontend/public/nodes r2:sword-explorer-assets/nodes --progress
+rclone copy frontend/public/tiles/v17c_demo r2:sword-explorer-assets/tiles/v17c_demo --progress
+rclone copy frontend/public/nodes/v17c_demo r2:sword-explorer-assets/nodes/v17c_demo --progress
 ```
 
 Check a few expected files:
 
 ```bash
-rclone ls r2:sword-explorer-assets/tiles | head
-rclone ls r2:sword-explorer-assets/nodes | head
+rclone ls r2:sword-explorer-assets/tiles/v17c_demo | head
+rclone ls r2:sword-explorer-assets/nodes/v17c_demo | head
 ```
 
 ## 3. Configure R2 CORS
@@ -104,9 +106,9 @@ In the Pages project settings, add these production environment variables:
 ```text
 VITE_SWORD_REACHES_SOURCE_LAYER=reaches
 VITE_SWORD_CONTINENTS=all
-VITE_SWORD_TILE_MANIFEST_JSON=R2_PUBLIC_URL/tiles/sword_tile_manifest.json
-VITE_SWORD_NODE_BASE_URL=R2_PUBLIC_URL/nodes
-VITE_SWORD_REACH_SEARCH_INDEX_JSON=R2_PUBLIC_URL/tiles/reach_search_index.json
+VITE_SWORD_TILE_MANIFEST_JSON=R2_PUBLIC_URL/tiles/v17c_demo/sword_tile_manifest.json
+VITE_SWORD_NODE_BASE_URL=R2_PUBLIC_URL/nodes/v17c_demo
+VITE_SWORD_REACH_SEARCH_INDEX_JSON=R2_PUBLIC_URL/tiles/v17c_demo/reach_search_index.json
 VITE_SWORD_OVERVIEW_PMTILES=R2_PUBLIC_URL/tiles/global_rivers_natural_earth.pmtiles
 VITE_SWORD_OVERVIEW_SOURCE_LAYER=rivers
 VITE_SWORD_OVERVIEW_MAX_ZOOM=5
@@ -158,7 +160,7 @@ uncommitted.
 If local zoomed-in reach tiles do not appear, check:
 
 - `frontend/.env.local` has `VITE_SWORD_TILE_MANIFEST_JSON` pointing to the R2
-  `sword_tile_manifest.json`.
+  `tiles/v17c_demo/sword_tile_manifest.json`.
 - The manifest's `pmtilesUrl` paths resolve to real R2 objects.
 - The R2 CORS policy includes `http://localhost:5173`.
 - After changing env files, restart `npm run dev`; Vite reads env variables at
@@ -168,9 +170,9 @@ To test locally generated assets instead, use same-origin paths in
 `frontend/.env.local`:
 
 ```text
-VITE_SWORD_TILE_MANIFEST_JSON=/tiles/sword_tile_manifest.json
-VITE_SWORD_NODE_BASE_URL=/nodes
-VITE_SWORD_REACH_SEARCH_INDEX_JSON=/tiles/reach_search_index.json
+VITE_SWORD_TILE_MANIFEST_JSON=/tiles/v17c_demo/sword_tile_manifest.json
+VITE_SWORD_NODE_BASE_URL=/nodes/v17c_demo
+VITE_SWORD_REACH_SEARCH_INDEX_JSON=/tiles/v17c_demo/reach_search_index.json
 VITE_SWORD_OVERVIEW_PMTILES=/tiles/global_rivers_natural_earth.pmtiles
 ```
 

@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import shutil
 import subprocess
 import tempfile
@@ -18,27 +19,55 @@ from typing import Iterable
 
 import geopandas as gpd
 import numpy as np
+import pandas as pd
 from matplotlib import colormaps as cm
-from matplotlib.colors import rgb2hex
+from matplotlib.colors import LinearSegmentedColormap, rgb2hex
 
+
+if os.environ.get("SWORD_IO_ENGINE"):
+    gpd.options.io_engine = os.environ["SWORD_IO_ENGINE"]
 
 DEFAULT_PROPERTIES = (
     "reach_id",
     "river_name",
     "wse",
     "width",
-    "facc",
+    "facc_total",
     "dist_out",
     "slope",
+    "wse_obs_p50",
+    "width_obs_p50",
+    "slope_obs_p50",
     "swot_obs",
     "swot_orbit",
     "n_chan_max",
     "strm_order",
+    "is_mainstem",
     "rch_id_up",
     "rch_id_dn",
+    "rch_id_up_1",
+    "rch_id_up_2",
+    "rch_id_up_3",
+    "rch_id_up_4",
+    "rch_id_dn_1",
+    "rch_id_dn_2",
+    "rch_id_dn_3",
+    "rch_id_dn_4",
     "x",
     "y",
 )
+
+STRM_ORDER_COLORS = [
+    "#3b0f70",
+    "#3f60d5",
+    "#13a7e8",
+    "#12d9a3",
+    "#00e51a",
+    "#a8f000",
+    "#ffb000",
+    "#ff5a00",
+    "#d90000",
+]
 
 COLOR_LAYER_CONFIG = {
     "wse": {
@@ -51,11 +80,10 @@ COLOR_LAYER_CONFIG = {
         "units": "m",
         "cmap": "viridis",
     },
-    "facc": {
+    "facc_total": {
         "caption": "Flow accumulation",
         "units": "sq.km",
-        "cmap": "Spectral",
-        "reverse": True,
+        "colors": STRM_ORDER_COLORS,
     },
     "dist_out": {
         "caption": "Distance from outlet",
@@ -69,21 +97,17 @@ COLOR_LAYER_CONFIG = {
     },
 }
 
+COLOR_LAYER_CONFIG.update({
+    "wse_obs_p50": {**COLOR_LAYER_CONFIG["wse"], "caption": "SWOT Median WSE"},
+    "width_obs_p50": {**COLOR_LAYER_CONFIG["width"], "caption": "SWOT Median Width"},
+    "slope_obs_p50": {**COLOR_LAYER_CONFIG["slope"], "caption": "SWOT Median Slope"},
+})
+
 SWOT_OBS_STOPS = [0, 1, 2, 4, 6, 8, 10]
 N_CHAN_MAX_STOPS = [1, 2, 4, 6, 8, 36]
 N_CHAN_MAX_COLORS = ["#ffffcc", "#a1dab4", "#00bfc4", "#0570b0", "#253494"]
 STRM_ORDER_STOPS = [-9999, 1, 2, 3, 4, 5, 6, 7, 8]
-STRM_ORDER_COLORS = [
-    "#3b0f70",
-    "#3f60d5",
-    "#13a7e8",
-    "#12d9a3",
-    "#00e51a",
-    "#a8f000",
-    "#ffb000",
-    "#ff5a00",
-    "#d90000",
-]
+
 
 
 def parse_args() -> argparse.Namespace:
@@ -215,7 +239,7 @@ def load_reaches(path: Path, properties: Iterable[str]) -> gpd.GeoDataFrame:
     if not path.exists():
         raise SystemExit(f"Input file does not exist: {path}")
 
-    reaches = gpd.read_file(path)
+    reaches = gpd.read_file(path, layer="reaches") if path.suffix.lower() == ".gpkg" else gpd.read_file(path)
     if reaches.empty:
         raise SystemExit(f"Input file has no features: {path}")
 
@@ -223,6 +247,9 @@ def load_reaches(path: Path, properties: Iterable[str]) -> gpd.GeoDataFrame:
         raise SystemExit("Input file has no CRS. Reproject to EPSG:4326 before tiling.")
 
     reaches = reaches.to_crs("EPSG:4326")
+    # v17c renamed stream order; retain the tile field used by existing clients.
+    if "strm_order" not in reaches.columns and "stream_order" in reaches.columns:
+        reaches["strm_order"] = reaches["stream_order"]
     keep_columns = [column for column in properties if column in reaches.columns]
     missing_columns = sorted(set(properties) - set(keep_columns))
 
@@ -235,14 +262,26 @@ def load_reaches(path: Path, properties: Iterable[str]) -> gpd.GeoDataFrame:
     reaches = reaches[keep_columns + ["geometry"]].copy()
     reaches["reach_id"] = reaches["reach_id"].astype(str)
 
-    for column in ("wse", "width", "facc", "dist_out", "slope", "n_chan_max", "strm_order"):
+    for column in ("wse", "width", "facc_total", "dist_out", "slope", "n_chan_max", "strm_order"):
         if column in reaches.columns:
             reaches[column] = reaches[column].round(6)
 
     return reaches
 
 
+def display_values(reaches: gpd.GeoDataFrame, column: str):
+    """Keep source/split values in m/m; convert observed slope for display outputs."""
+    values = reaches[column]
+    return (values * 1000).round(6) if column == "slope_obs_p50" else values
+
+
 def write_geojsonl(reaches: gpd.GeoDataFrame, output: Path) -> None:
+    reaches = reaches.copy()
+    if "slope_obs_p50" in reaches.columns:
+        reaches["slope_obs_p50"] = display_values(reaches, "slope_obs_p50")
+    for column in reaches.columns:
+        if column.startswith(("rch_id_up_", "rch_id_dn_")) and column.rsplit("_", 1)[-1].isdigit():
+            reaches[column] = reaches[column].map(lambda value: str(int(value)) if pd.notna(value) else None)
     with output.open("w", encoding="utf-8") as file_obj:
         for feature in json.loads(reaches.to_json())["features"]:
             feature.pop("id", None)
@@ -252,6 +291,13 @@ def write_geojsonl(reaches: gpd.GeoDataFrame, output: Path) -> None:
 def colors_at_breaks(cmap_name: str, count: int, reverse: bool = False) -> list[str]:
     colors = [rgb2hex(cm.get_cmap(cmap_name)(value)) for value in np.linspace(0, 1, count)]
     return colors[::-1] if reverse else colors
+
+
+def layer_colors(config: dict, count: int) -> list[str]:
+    if "colors" in config:
+        palette = LinearSegmentedColormap.from_list("reach_palette", config["colors"])
+        return [rgb2hex(palette(value)) for value in np.linspace(0, 1, count)]
+    return colors_at_breaks(config["cmap"], count, reverse=bool(config.get("reverse", False)))
 
 
 def quantile_stops(values, bin_count: int) -> list[float]:
@@ -278,7 +324,7 @@ def write_color_metadata(reaches: gpd.GeoDataFrame, output: Path, bin_count: int
         if column not in reaches.columns:
             continue
 
-        stops = quantile_stops(reaches[column], bin_count)
+        stops = quantile_stops(display_values(reaches, column), bin_count)
         if not stops:
             continue
 
@@ -287,11 +333,7 @@ def write_color_metadata(reaches: gpd.GeoDataFrame, output: Path, bin_count: int
             "units": config["units"],
             "classification": "quantile",
             "stops": stops,
-            "colors": colors_at_breaks(
-                config["cmap"],
-                len(stops),
-                reverse=bool(config.get("reverse", False)),
-            ),
+            "colors": layer_colors(config, len(stops)),
         }
 
     layers["swot_obs"] = {
@@ -313,6 +355,14 @@ def write_color_metadata(reaches: gpd.GeoDataFrame, output: Path, bin_count: int
             "classification": "categorical",
             "stops": STRM_ORDER_STOPS,
             "colors": STRM_ORDER_COLORS,
+        }
+
+    if "is_mainstem" in reaches.columns:
+        layers["is_mainstem"] = {
+            "caption": "Mainstem / Side channel",
+            "classification": "categorical",
+            "stops": [1, 0],
+            "colors": ["#2b3b90", "#d90000"],
         }
 
     metadata = {
