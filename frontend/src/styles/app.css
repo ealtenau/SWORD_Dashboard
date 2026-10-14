@@ -410,6 +410,27 @@ button {
   margin: 0;
 }
 
+.clear-selection-button {
+  justify-self: start;
+  margin-top: 6px;
+  padding: 6px 10px;
+  color: #18212f;
+  background: #f3f6f9;
+  border: 1px solid #ccd6e2;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.clear-selection-button:hover {
+  background: #e4ebf3;
+}
+
+.clear-selection-button:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
 .segmented-control {
   display: grid;
   gap: 6px;

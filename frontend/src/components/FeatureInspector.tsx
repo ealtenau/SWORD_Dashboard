@@ -5,6 +5,7 @@ import type { ReachProperties } from "../types";
 type FeatureInspectorProps = {
   hoveredReach: ReachProperties | null;
   selectedReach: ReachProperties | null;
+  onClearSelection: () => void;
 };
 
 const ATTRIBUTE_ROWS: Array<{ key: string; label: string }> = [
@@ -35,7 +36,7 @@ function formatValue(value: unknown, field: string) {
   return String(value);
 }
 
-export function FeatureInspector({ hoveredReach, selectedReach }: FeatureInspectorProps) {
+export function FeatureInspector({ hoveredReach, selectedReach, onClearSelection }: FeatureInspectorProps) {
   const reach = selectedReach ?? hoveredReach;
 
   return (
@@ -43,6 +44,11 @@ export function FeatureInspector({ hoveredReach, selectedReach }: FeatureInspect
       <div className="panel-heading">
         <p className="eyebrow">Feature Inspector</p>
         <h2>{selectedReach ? "Selected reach" : hoveredReach ? "Hovered reach" : "No reach selected"}</h2>
+        {selectedReach ? (
+          <button className="clear-selection-button" onClick={onClearSelection} type="button">
+            Clear selection
+          </button>
+        ) : null}
       </div>
 
       {reach ? (

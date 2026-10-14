@@ -17,6 +17,7 @@ type MapViewProps = {
   selectedReachId: string | null;
   onReachHover: (properties: ReachProperties | null) => void;
   onReachSelect: (properties: ReachProperties) => void;
+  onVisibleScaleChange: (continentId: string | null) => void;
 };
 
 const initialCenter: [number, number] = [
@@ -196,12 +197,14 @@ export function MapView({
   selectedReachId,
   onReachHover,
   onReachSelect,
+  onVisibleScaleChange,
 }: MapViewProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const continentTilesRef = useRef(continentTiles);
   const onReachHoverRef = useRef(onReachHover);
   const onReachSelectRef = useRef(onReachSelect);
+  const onVisibleScaleChangeRef = useRef(onVisibleScaleChange);
   const activeLayerModeRef = useRef(activeLayerMode);
   const hoverPopupRef = useRef<maplibregl.Popup | null>(null);
   const [basemapMode, setBasemapMode] = useState<BasemapMode>("light");
@@ -210,7 +213,8 @@ export function MapView({
   useEffect(() => {
     onReachHoverRef.current = onReachHover;
     onReachSelectRef.current = onReachSelect;
-  }, [onReachHover, onReachSelect]);
+    onVisibleScaleChangeRef.current = onVisibleScaleChange;
+  }, [onReachHover, onReachSelect, onVisibleScaleChange]);
 
   useEffect(() => {
     activeLayerModeRef.current = activeLayerMode;
@@ -249,6 +253,38 @@ export function MapView({
     map.on("mouseout", () => {
       setMouseCoordinates(null);
     });
+
+    const updateVisibleScale = () => {
+      if (!map.isStyleLoaded()) return;
+      const continents = continentTilesRef.current;
+      const layerContinents = new Map(continents.flatMap((continent) =>
+        continent.parts.map((part) => [reachLayerId(part.id), continent.id] as const),
+      ));
+      const layers = [...layerContinents.keys()].filter((id) => !!map.getLayer(id));
+      if (map.getZoom() >= detailMinZoom && layers.length) {
+        // Map queries use CSS pixels, including on high-density displays.
+        const canvas = map.getCanvas();
+        const centerX = canvas.clientWidth / 2;
+        const centerY = canvas.clientHeight / 2;
+        const viewportRadius = Math.max(centerX, centerY);
+        const radii = [32, 128, 512].filter((radius) => radius < viewportRadius);
+        for (const radius of [...radii, viewportRadius]) {
+          const features = map.queryRenderedFeatures([
+            [Math.max(0, centerX - radius), Math.max(0, centerY - radius)],
+            [Math.min(canvas.clientWidth, centerX + radius), Math.min(canvas.clientHeight, centerY + radius)],
+          ], { layers });
+          if (features.length) {
+            onVisibleScaleChangeRef.current(layerContinents.get(features[0].layer.id) ?? null);
+            return;
+          }
+        }
+      }
+      const overviewVisible = OVERVIEW_TILE && map.getLayer(overviewLayerId) &&
+        map.getZoom() >= OVERVIEW_TILE.minzoom && map.getZoom() < OVERVIEW_TILE.maxzoom;
+      onVisibleScaleChangeRef.current(overviewVisible ? OVERVIEW_TILE?.id ?? null : null);
+    };
+    map.on("moveend", updateVisibleScale);
+    map.on("idle", updateVisibleScale);
 
     map.on("load", () => {
       const initialContinentTiles = continentTilesRef.current;

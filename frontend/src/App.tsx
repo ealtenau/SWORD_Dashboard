@@ -7,7 +7,7 @@ import { MapView } from "./components/MapView";
 import { ReachCharts } from "./components/ReachCharts";
 import { ReachSearch } from "./components/ReachSearch";
 import { loadColorMetadataByContinent } from "./data/colorMetadata";
-import { loadContinentTileManifest, type ContinentTileConfig } from "./data/continents";
+import { OVERVIEW_TILE, loadContinentTileManifest, type ContinentTileConfig } from "./data/continents";
 import { selectionRecords, type ReachSearchResult } from "./data/reachSearch";
 import type { ColorMetadataByContinent, LayerMode, ReachProperties, ReachSearchSelection } from "./types";
 import aboutContent from "../../about.md?raw";
@@ -23,6 +23,7 @@ export function App() {
   const [continentTiles, setContinentTiles] = useState<ContinentTileConfig[] | null>(null);
   const [selectedReach, setSelectedReach] = useState<ReachProperties | null>(null);
   const [hoveredReach, setHoveredReach] = useState<ReachProperties | null>(null);
+  const [visibleScaleId, setVisibleScaleId] = useState<string | null>(null);
   const [activeModal, setActiveModal] = useState<ActiveModal>(null);
   const [searchSelection, setSearchSelection] = useState<ReachSearchSelection | null>(null);
   const [isMobileSheetExpanded, setIsMobileSheetExpanded] = useState(false);
@@ -79,14 +80,13 @@ export function App() {
   }, [selectedReach]);
 
   const legendContinentId =
-    selectedReach?._continent_id ??
-    hoveredReach?._continent_id ??
+    visibleScaleId ??
     (continentTiles?.length === 1 ? continentTiles[0].id : undefined);
   const legendColorMetadata = legendContinentId ? colorMetadataByContinent[legendContinentId] ?? null : null;
   const legendScope =
-    selectedReach?._continent_name ??
-    hoveredReach?._continent_name ??
-    (continentTiles?.length === 1 ? continentTiles[0].name : "Local continent scales");
+    (legendContinentId === OVERVIEW_TILE?.id ? OVERVIEW_TILE?.name :
+      continentTiles?.find((continent) => continent.id === legendContinentId)?.name) ??
+    "Local continent scales";
 
   const handleSearchSelect = (result: ReachSearchResult) => {
     const records = selectionRecords(result);
@@ -153,6 +153,7 @@ export function App() {
               selectedReachId={selectedReachId}
               onReachHover={setHoveredReach}
               onReachSelect={setSelectedReach}
+              onVisibleScaleChange={setVisibleScaleId}
             />
           ) : (
             <div className="map-wrap">
@@ -187,7 +188,11 @@ export function App() {
             colorMetadata={legendColorMetadata}
             scopeLabel={legendScope}
           />
-          <FeatureInspector hoveredReach={hoveredReach} selectedReach={selectedReach} />
+          <FeatureInspector
+            hoveredReach={hoveredReach}
+            selectedReach={selectedReach}
+            onClearSelection={() => setSelectedReach(null)}
+          />
           <ReachCharts selectedReachId={selectedReachId} />
         </aside>
       </main>
